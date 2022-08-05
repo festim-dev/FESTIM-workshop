@@ -1,7 +1,24 @@
 # FESTIM-workshop
 
-- intro (FESTIM, installing)
-- Simple case (1 material, constant temperature)
-- TDS (Ogorodnikova)
-- 2 materials
-- Post-processing and visualisation
+
+## Getting started
+
+1. Clone this repo
+
+```
+git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
+```
+2. [Install FESTIM](https://festim.readthedocs.io/en/latest/getting_started.html)
+
+
+## Contents
+
+[Task 1](): Simple hydrogen transport simulation
+
+[Task 2](): Simulation of a Thermo-Desorption experiment
+
+[Task 3](): Multi-material simulations
+
+[Task 4](): Post-processing and visualisation
+
+[Task 5](): Coupling with CFD

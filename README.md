@@ -13,7 +13,7 @@ git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
 
 ## Contents
 
-[Task 1](): Simple hydrogen transport simulation
+[Task 1](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task1.ipynb): Simple hydrogen transport simulation
 
 [Task 2](): Simulation of a Thermo-Desorption experiment
 

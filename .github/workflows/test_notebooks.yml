@@ -31,3 +31,5 @@ jobs:
         run: |
           jupyter-nbconvert --to python tasks/task1.ipynb
           python3 -m tasks.task1
+          jupyter-nbconvert --to python tasks/task2.ipynb
+          python3 -m tasks.task2

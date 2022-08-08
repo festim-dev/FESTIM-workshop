@@ -29,12 +29,10 @@ jobs:
       - name: Install dependencies
         run : pip install meshio[all]
 
-      - name: Navigate to folder
-        run : cd tasks
-
       # Runs a single command using the runners shell
       - name: Run Task 1
         run: |
+          cd tasks
           jupyter-nbconvert --to python task1.ipynb
           python3 task1.py
       - name: Run Task 2

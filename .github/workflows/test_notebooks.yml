@@ -25,6 +25,9 @@ jobs:
 
       - name: Install FESTIM
         run : pip install festim
+      
+      - name: Install dependencies
+        run : pip install meshio[all]
 
       # Runs a single command using the runners shell
       - name: Run Task 1
@@ -51,3 +54,7 @@ jobs:
         run: |
           jupyter-nbconvert --to python tasks/task6.ipynb
           python3 -m tasks.task6
+      - name: Run Task 7
+        run: |
+          jupyter-nbconvert --to python tasks/task7.ipynb
+          python3 -m tasks.task7

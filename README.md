@@ -1,5 +1,6 @@
 # FESTIM-workshop
 
+[![Test](https://github.com/RemDelaporteMathurin/FESTIM-workshop/actions/workflows/test_notebooks.yml/badge.svg)](https://github.com/RemDelaporteMathurin/FESTIM-workshop/actions/workflows/test_notebooks.yml)
 
 ## Getting started
 

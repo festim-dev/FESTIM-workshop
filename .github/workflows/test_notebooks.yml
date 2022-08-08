@@ -29,32 +29,35 @@ jobs:
       - name: Install dependencies
         run : pip install meshio[all]
 
+      - name: Navigate to folder
+        run : cd tasks
+
       # Runs a single command using the runners shell
       - name: Run Task 1
         run: |
-          jupyter-nbconvert --to python tasks/task1.ipynb
-          python3 -m tasks.task1
+          jupyter-nbconvert --to python task1.ipynb
+          python3 task1.py
       - name: Run Task 2
         run: |
-          jupyter-nbconvert --to python tasks/task2.ipynb
-          python3 -m tasks.task2
+          jupyter-nbconvert --to python task2.ipynb
+          python3 task2.py
       - name: Run Task 3
         run: |
-          jupyter-nbconvert --to python tasks/task3.ipynb
-          python3 -m tasks.task3
+          jupyter-nbconvert --to python task3.ipynb
+          python3 task3.py
       - name: Run Task 4
         run: |
-          jupyter-nbconvert --to python tasks/task4.ipynb
-          python3 -m tasks.task4
+          jupyter-nbconvert --to python task4.ipynb
+          python3 task4.py
       - name: Run Task 5
         run: |
-          jupyter-nbconvert --to python tasks/task5.ipynb
-          python3 -m tasks.task5
+          jupyter-nbconvert --to python task5.ipynb
+          python3 task5.py
       - name: Run Task 6
         run: |
-          jupyter-nbconvert --to python tasks/task6.ipynb
-          python3 -m tasks.task6
+          jupyter-nbconvert --to python task6.ipynb
+          python3 task6.py
       - name: Run Task 7
         run: |
-          jupyter-nbconvert --to python tasks/task7.ipynb
-          python3 -m tasks.task7
+          jupyter-nbconvert --to python task7.ipynb
+          python3 task7.py

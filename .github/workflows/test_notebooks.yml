@@ -57,6 +57,7 @@ jobs:
           python3 task5.py
       - name: Run Task 6
         run: |
+          cd tasks
           jupyter-nbconvert --to python task6.ipynb
           python3 task6.py
       - name: Run Task 7

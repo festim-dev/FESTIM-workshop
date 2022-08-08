@@ -27,13 +27,27 @@ jobs:
         run : pip install festim
 
       # Runs a single command using the runners shell
-      - name: Run the notebooks
+      - name: Run Task 1
         run: |
           jupyter-nbconvert --to python tasks/task1.ipynb
           python3 -m tasks.task1
+      - name: Run Task 2
+        run: |
           jupyter-nbconvert --to python tasks/task2.ipynb
           python3 -m tasks.task2
+      - name: Run Task 3
+        run: |
           jupyter-nbconvert --to python tasks/task3.ipynb
           python3 -m tasks.task3
+      - name: Run Task 4
+        run: |
+          jupyter-nbconvert --to python tasks/task4.ipynb
+          python3 -m tasks.task4
+      - name: Run Task 5
+        run: |
           jupyter-nbconvert --to python tasks/task5.ipynb
           python3 -m tasks.task5
+      - name: Run Task 6
+        run: |
+          jupyter-nbconvert --to python tasks/task6.ipynb
+          python3 -m tasks.task6

@@ -15,10 +15,10 @@ git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
 
 [Task 1](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task1.ipynb): Simple hydrogen transport simulation
 
-[Task 2](): Simulation of a Thermo-Desorption experiment
+[Task 2](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task2.ipynb): Simulation of a Thermo-Desorption experiment
 
-[Task 3](): Multi-material simulations
+[Task 3](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task3.ipynb): Multi-material simulations
 
-[Task 4](): Post-processing and visualisation
+[Task 4](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task4.ipynb): Post-processing and visualisation
 
-[Task 5](): Advection-diffusion problem
+[Task 5](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task5.ipynb): Advection-diffusion problem

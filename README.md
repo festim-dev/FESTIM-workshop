@@ -25,3 +25,5 @@ git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
 [Task 5](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task5.ipynb): Advection-diffusion problem
 
 [Task 6](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task6.ipynb): Heat transfer simulation
+
+[Task 7](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task7.ipynb): CAD integration

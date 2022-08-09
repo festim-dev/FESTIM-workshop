@@ -26,6 +26,7 @@ jobs:
 
       - name: Test fenics
         run : |
+          conda activate base
           python -c "import fenics as f; mesh = f.UnitSquareMesh(3, 3);V = f.FunctionSpace(mesh, 'P', 1)"
 
       # - name: Install dependencies

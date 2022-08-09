@@ -28,10 +28,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Test fenics
-        run : |
-          python -c "import fenics as f; mesh = f.UnitSquareMesh(3, 3);V = f.FunctionSpace(mesh, 'P', 1)"
-
       - name: Install dependencies
         run : |
           pip install nbconvert

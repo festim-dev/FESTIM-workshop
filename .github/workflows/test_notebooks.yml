@@ -32,6 +32,13 @@ jobs:
       - name: Install FESTIM
         run : pip install festim
 
+
+      - name: env
+        run : conda info
+      
+      - name: packages
+        run : conda list
+
       # Runs a single command using the runners shell
       - name: Run Task 1
         run: |

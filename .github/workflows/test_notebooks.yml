@@ -11,6 +11,11 @@ on:
     - dev
   pull_request:
 
+defaults:
+  run:
+    # ensure base env is activated when running commands
+    shell: bash -eo pipefail -c "source /opt/conda/etc/profile.d/conda.sh; conda activate base; source {0}"
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -27,21 +32,10 @@ jobs:
         run : |
           python -c "import fenics as f; mesh = f.UnitSquareMesh(3, 3);V = f.FunctionSpace(mesh, 'P', 1)"
 
-      # - name: Install dependencies
-      #   run : |
-      #     pip install nbconvert
+      - name: Install dependencies
+        run : |
+          pip install nbconvert
 
-      # - name: Install FESTIM
-      #   run : pip install festim
-
-
-      # - name: env
-      #   run : conda info
-      
-      # - name: packages
-      #   run : conda list
-
-      # Runs a single command using the runners shell
       - name: Run Task 1
         run: |
           cd tasks

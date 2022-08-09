@@ -11,57 +11,64 @@ on:
     - dev
   pull_request:
 
+defaults:
+  run:
+    # ensure base env is activated when running commands
+    shell: bash -eo pipefail -c "source /opt/conda/etc/profile.d/conda.sh; conda activate base; source {0}"
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: quay.io/fenicsproject/stable:latest
+    container: remdelaportemathurin/festim-workshop
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Install FESTIM
-        run : pip install festim
-      
       - name: Install dependencies
-        run : pip install meshio[all]
+        run : |
+          pip install nbconvert
 
-      # Runs a single command using the runners shell
       - name: Run Task 1
         run: |
           cd tasks
           jupyter-nbconvert --to python task1.ipynb
-          python3 task1.py
+          python task1.py
       - name: Run Task 2
         run: |
           cd tasks
           jupyter-nbconvert --to python task2.ipynb
-          python3 task2.py
+          python task2.py
       - name: Run Task 3
         run: |
           cd tasks
           jupyter-nbconvert --to python task3.ipynb
-          python3 task3.py
+          python task3.py
       - name: Run Task 4
         run: |
           cd tasks
           jupyter-nbconvert --to python task4.ipynb
-          python3 task4.py
+          python task4.py
       - name: Run Task 5
         run: |
           cd tasks
           jupyter-nbconvert --to python task5.ipynb
-          python3 task5.py
+          python task5.py
       - name: Run Task 6
         run: |
           cd tasks
           jupyter-nbconvert --to python task6.ipynb
-          python3 task6.py
+          python task6.py
       - name: Run Task 7
         run: |
           cd tasks
           jupyter-nbconvert --to python task7.ipynb
-          python3 task7.py
+          python task7.py
+      - name: Run Task 8
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task8.ipynb
+          python task8.py

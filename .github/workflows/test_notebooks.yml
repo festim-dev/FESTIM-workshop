@@ -37,39 +37,39 @@ jobs:
         run: |
           cd tasks
           jupyter-nbconvert --to python task1.ipynb
-          python3 task1.py
+          python task1.py
       - name: Run Task 2
         run: |
           cd tasks
           jupyter-nbconvert --to python task2.ipynb
-          python3 task2.py
+          python task2.py
       - name: Run Task 3
         run: |
           cd tasks
           jupyter-nbconvert --to python task3.ipynb
-          python3 task3.py
+          python task3.py
       - name: Run Task 4
         run: |
           cd tasks
           jupyter-nbconvert --to python task4.ipynb
-          python3 task4.py
+          python task4.py
       - name: Run Task 5
         run: |
           cd tasks
           jupyter-nbconvert --to python task5.ipynb
-          python3 task5.py
+          python task5.py
       - name: Run Task 6
         run: |
           cd tasks
           jupyter-nbconvert --to python task6.ipynb
-          python3 task6.py
+          python task6.py
       - name: Run Task 7
         run: |
           cd tasks
           jupyter-nbconvert --to python task7.ipynb
-          python3 task7.py
+          python task7.py
       - name: Run Task 8
         run: |
           cd tasks
           jupyter-nbconvert --to python task8.ipynb
-          python3 task8.py
+          python task8.py

@@ -30,7 +30,7 @@ jobs:
         run : |
           conda install -c conda-forge fenics
           pip install --upgrade pip
-          pip install meshio[all] h-transport-materials==0.4.0
+          pip install nbconvert meshio[all] h-transport-materials==0.4.0
 
       # Runs a single command using the runners shell
       - name: Run Task 1

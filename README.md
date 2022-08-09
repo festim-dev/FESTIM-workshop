@@ -27,3 +27,5 @@ git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
 [Task 6](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task6.ipynb): Heat transfer simulation
 
 [Task 7](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task7.ipynb): CAD integration
+
+[Task 78](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task8.ipynb): Integration with the HTM library

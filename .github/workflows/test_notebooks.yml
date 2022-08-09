@@ -22,15 +22,15 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Install FESTIM
-        run : pip install festim
       
       - name: Install dependencies
         run : |
           conda install -c conda-forge fenics
           pip install --upgrade pip
           pip install nbconvert meshio[all] h-transport-materials==0.4.0
+
+      - name: Install FESTIM
+        run : pip install festim
 
       # Runs a single command using the runners shell
       - name: Run Task 1

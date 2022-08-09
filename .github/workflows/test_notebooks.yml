@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Conda init
-        run : conda init  
+        run : conda init bash
 
       - name: Test fenics
         run : |

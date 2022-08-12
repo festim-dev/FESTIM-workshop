@@ -24,7 +24,7 @@
 
 ### A. Codespaces (recommended)
 
-1. [Sign up to Codespace beta](https://github.com/codespaces)
+1. [Sign up to Codespace beta](https://github.com/features/codespaces/signup)
 
 2. [Create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=main&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
 

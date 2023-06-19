@@ -36,6 +36,7 @@ jobs:
         run : |
           conda install -c conda-forge mamba
           mamba install -c conda-forge fenics
+          conda activate base
           pip install -r requirements.txt
           pip install nbconvert
 

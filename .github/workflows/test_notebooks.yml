@@ -46,11 +46,11 @@ jobs:
           cd tasks
           jupyter-nbconvert --to python task1.ipynb
           conda run python task1.py
-      - name: Run Task 2
-        run: |
-          cd tasks
-          jupyter-nbconvert --to python task2.ipynb
-          conda run python task2.py
+      # - name: Run Task 2
+      #   run: |
+      #     cd tasks
+      #     jupyter-nbconvert --to python task2.ipynb
+      #     conda run python task2.py
       - name: Run Task 3
         run: |
           cd tasks

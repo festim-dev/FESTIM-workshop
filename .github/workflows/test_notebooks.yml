@@ -11,10 +11,10 @@ on:
     - dev
   pull_request:
 
-defaults:
-  run:
-    # ensure base env is activated when running commands
-    shell: bash -eo pipefail -c "source /opt/conda/etc/profile.d/conda.sh; conda activate base; source {0}"
+# defaults:
+#   run:
+#     # ensure base env is activated when running commands
+#     shell: bash -eo pipefail -c "source /opt/conda/etc/profile.d/conda.sh; conda activate base; source {0}"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

@@ -1,0 +1,5 @@
+festim==0.10.2
+matplotlib
+meshio[all]
+ipykernel
+h-transport-materials==0.12.7

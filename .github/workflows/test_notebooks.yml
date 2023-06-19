@@ -30,12 +30,12 @@ jobs:
           auto-update-conda: true
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install dependencies
         run : |
-          conda install mamba
-          mamba install -c conda-forge fenics
+          # conda install mamba
+          conda install -c conda-forge fenics
           pip install -r requirements.txt
           pip install nbconvert
 

@@ -1,4 +1,4 @@
-festim==0.10.2
+festim==0.11.0
 matplotlib
 meshio[all]
 ipykernel

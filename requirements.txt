@@ -2,4 +2,5 @@ festim==0.10.2
 matplotlib
 meshio[all]
 ipykernel
+sympy
 h-transport-materials==0.12.7

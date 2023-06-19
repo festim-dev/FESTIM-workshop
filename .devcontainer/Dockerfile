@@ -5,4 +5,4 @@ RUN mamba install -c conda-forge fenics
 
 RUN apt-get update && apt-get install -y libgl1
 
-RUN pip install festim matplotlib meshio[all] ipykernel h-transport-materials==0.4.0
+RUN pip install festim matplotlib meshio[all] ipykernel h-transport-materials==0.12.7

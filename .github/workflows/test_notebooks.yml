@@ -18,7 +18,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     container:
-      image: continuumio/miniconda3:4.11.0
+      image: continuumio/miniconda3:4.12.0
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
@@ -27,8 +27,8 @@ jobs:
 
       - name: Install dependencies
         run : |
-          conda install -c conda-forge mamba
-          mamba install -c conda-forge fenics
+          # conda install -c conda-forge mamba
+          conda install -c conda-forge fenics
           pip install -r requirements.txt
           pip install nbconvert
 

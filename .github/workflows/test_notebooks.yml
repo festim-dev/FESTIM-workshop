@@ -11,11 +11,6 @@ on:
     - dev
   pull_request:
 
-# defaults:
-#   run:
-#     # ensure base env is activated when running commands
-#     shell: bash -eo pipefail -c "source /opt/conda/etc/profile.d/conda.sh; conda activate base; source {0}"
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -26,12 +21,6 @@ jobs:
       image: continuumio/miniconda3:4.12.0
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # - name: Setup conda
-      #   uses: conda-incubator/setup-miniconda@v2
-      #   with:
-      #     auto-update-conda: true
-      #     auto-activate-base: true
-      #     activate-environment: ""
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -48,11 +37,11 @@ jobs:
           cd tasks
           jupyter-nbconvert --to python task1.ipynb
           conda run python task1.py
-      # - name: Run Task 2
-      #   run: |
-      #     cd tasks
-      #     jupyter-nbconvert --to python task2.ipynb
-      #     conda run python task2.py
+      - name: Run Task 2
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task2.ipynb
+          conda run python task2.py
       - name: Run Task 3
         run: |
           cd tasks

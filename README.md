@@ -40,5 +40,5 @@ git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
 3. Install dependencies
 
 ```
-pip install matplotlib meshio[all] h-transport-materials
+pip install -r requirements.txt
 ```

@@ -31,6 +31,8 @@ jobs:
           mamba install -c conda-forge fenics
           pip install -r requirements.txt
           pip install nbconvert
+          apt-get update
+          apt-get install -y libgl1
 
       - name: Run Task 1
         run: |

@@ -5,3 +5,5 @@ pyparsing
 # ipykernel
 h-transport-materials==0.12.7
 numpy==1.24
+jupyter-server-proxy
+dolfin_pyvista_adapter @ git+https://github.com/jorgensd/dolfin_pyvista_adapter

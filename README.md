@@ -8,25 +8,25 @@
 
 [Task 2](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task2.ipynb): Simulation of a Thermo-Desorption experiment
 
-[Task 3](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task3.ipynb): Multi-material simulations
+[Task 3](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task3.ipynb): Simple permeation model
 
-[Task 4](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task4.ipynb): Post-processing and visualisation
+[Task 4](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task4.ipynb): Permeation barrier modelling
 
-[Task 5](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task5.ipynb): Advection-diffusion problem
+[Task 5](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task5.ipynb): Post-processing and visualisation
 
-[Task 6](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task6.ipynb): Heat transfer simulation
+[Task 6](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task6.ipynb): Advection-diffusion problem
 
-[Task 7](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task7.ipynb): CAD integration
+[Task 7](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task7.ipynb): Heat transfer simulation
 
-[Task 8](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task8.ipynb): Integration with the HTM library
+[Task 8](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task8.ipynb): CAD integration
+
+[Task 9](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task8.ipynb): Integration with the HTM library
 
 ## Getting started
 
 ### A. Codespaces (recommended)
 
-1. [Sign up to Codespace beta](https://github.com/features/codespaces/signup)
-
-2. [Create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=main&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
+You can [create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=main&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
 
 ### B. Local install
 

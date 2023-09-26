@@ -6,7 +6,7 @@
 
 [Task 1](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task1.ipynb): Simple hydrogen transport simulation
 
-[Task 2](8https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task2.ipynb): Gas driven permeation
+[Task 2](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task2.ipynb): Gas driven permeation
 
 [Task 3](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task3.ipynb): Multi-material modelling: LiPb pipe flow
 

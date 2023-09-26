@@ -4,23 +4,14 @@
 
 ## Contents
 
-[Task 1](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task1.ipynb): Simple hydrogen transport simulation
+[Task 1](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task1.ipynb): Simple hydrogen transport simulation
 
-[Task 2](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task2.ipynb): Simulation of a Thermo-Desorption experiment
+[Task 2](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task2.ipynb): Gas driven permeation
 
-[Task 3](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task3.ipynb): Simple permeation model
+[Task 3](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task3.ipynb): Multi-material modelling: LiPb pipe flow
 
-[Task 4](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task4.ipynb): Permeation barrier modelling
+[Task 4](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task4.ipynb): Simulation of a Thermo-Desorption experiment
 
-[Task 5](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task5.ipynb): Post-processing and visualisation
-
-[Task 6](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task6.ipynb): Advection-diffusion problem
-
-[Task 7](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task7.ipynb): Heat transfer simulation
-
-[Task 8](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task8.ipynb): CAD integration
-
-[Task 9](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/main/tasks/task8.ipynb): Integration with the HTM library
 
 ## Getting started
 
@@ -28,12 +19,19 @@
 
 You can [create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=main&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
 
+Once in the codespace run the following commands:
+```
+conda create -n festim-env
+source activate festim-env
+bash setup.sh
+```
+
 ### B. Local install
 
 1. Clone this repo
 
 ```
-git clone https://github.com/RemDelaporteMathurin/FESTIM-workshop
+git clone https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop
 ```
 2. [Install FESTIM](https://festim.readthedocs.io/en/latest/getting_started.html)
 

@@ -4,27 +4,21 @@
 
 ## Contents
 
-[Task 1](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task1.ipynb): Simple hydrogen transport simulation
+[Task 1](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task1.ipynb): Simple hydrogen transport simulation
 
-[Task 2](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task2.ipynb): Gas driven permeation
+[Task 2](8https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task2.ipynb): Gas driven permeation
 
-[Task 3](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task3.ipynb): Multi-material modelling: LiPb pipe flow
+[Task 3](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task3.ipynb): Multi-material modelling: LiPb pipe flow
 
-[Task 4](https://github.com/jhdark/FESTIM-workshop/tree/KF_workshop/tasks/task4.ipynb): Simulation of a Thermo-Desorption experiment
+[Task 4](https://github.com/RemDelaporteMathurin/FESTIM-workshop/blob/KF_workshop/tasks/task4.ipynb): Simulation of a Thermo-Desorption experiment
 
 
 ## Getting started
 
 ### A. Codespaces (recommended)
 
-You can [create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=main&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
+You can [create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=KF_workshop&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
 
-Once in the codespace run the following commands:
-```
-conda create -n festim-env
-source activate festim-env
-bash setup.sh
-```
 
 ### B. Local install
 

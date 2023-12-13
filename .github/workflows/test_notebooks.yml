@@ -82,3 +82,9 @@ jobs:
           cd tasks
           jupyter-nbconvert --to python task8.ipynb
           conda run python task8.py
+      - name: Run Task 9
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task9.ipynb
+          conda run python task9.py

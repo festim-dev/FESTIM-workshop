@@ -33,11 +33,11 @@ jobs:
           use-mamba: true
           channels: conda-forge
 
-      - name: Install dependencies
-        shell: bash -l {0}
-        run : |
-          apt-get update
-          apt-get install -y libgl1
+      # - name: Install dependencies
+      #   shell: bash -l {0}
+      #   run : |
+      #     apt-get update
+      #     apt-get install -y libgl1
 
       - name: Run Task 1
         shell: bash -l {0}

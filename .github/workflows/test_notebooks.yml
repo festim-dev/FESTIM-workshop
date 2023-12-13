@@ -33,12 +33,6 @@ jobs:
           use-mamba: true
           channels: conda-forge
 
-      # - name: Install dependencies
-      #   shell: bash -l {0}
-      #   run : |
-      #     apt-get update
-      #     apt-get install -y libgl1
-
       - name: Run Task 1
         shell: bash -l {0}
         run: |
@@ -53,6 +47,7 @@ jobs:
           jupyter-nbconvert --to python task2.ipynb
           conda run python task2.py
       - name: Run Task 3
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task3.ipynb
@@ -64,6 +59,7 @@ jobs:
           jupyter-nbconvert --to python task4.ipynb
           conda run python task4.py
       - name: Run Task 5
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task5.ipynb
@@ -75,6 +71,7 @@ jobs:
           jupyter-nbconvert --to python task6.ipynb
           conda run python task6.py
       - name: Run Task 7
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task7.ipynb

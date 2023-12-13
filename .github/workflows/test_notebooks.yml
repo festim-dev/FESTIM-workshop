@@ -10,6 +10,9 @@ on:
     - main
     - dev
   pull_request:
+  schedule:
+    # runs every day at 00:00 UTC
+    - cron:  '0 0 * * *'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

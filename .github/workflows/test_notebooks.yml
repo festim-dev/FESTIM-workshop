@@ -10,6 +10,9 @@ on:
     - main
     - dev
   pull_request:
+  schedule:
+    # runs every day at 00:00 UTC
+    - cron:  '0 0 * * *'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -17,60 +20,74 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container:
-      image: condaforge/mambaforge
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run : |
-          # conda install -c conda-forge mamba
-          mamba install -c conda-forge fenics
-          pip install -r requirements.txt
-          pip install nbconvert
-          apt-get update
-          apt-get install -y libgl1
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: festim-workshop
+          miniforge-version: latest
+          environment-file: environment.yml
+          use-mamba: true
+          channels: conda-forge
 
       - name: Run Task 1
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task1.ipynb
           conda run python task1.py
+
       - name: Run Task 2
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task2.ipynb
           conda run python task2.py
       - name: Run Task 3
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task3.ipynb
           conda run python task3.py
       - name: Run Task 4
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task4.ipynb
           conda run python task4.py
       - name: Run Task 5
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task5.ipynb
           conda run python task5.py
       - name: Run Task 6
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task6.ipynb
           conda run python task6.py
       - name: Run Task 7
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task7.ipynb
           conda run python task7.py
       - name: Run Task 8
+        shell: bash -l {0}
         run: |
           cd tasks
           jupyter-nbconvert --to python task8.ipynb
           conda run python task8.py
+      - name: Run Task 9
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task9.ipynb
+          conda run python task9.py

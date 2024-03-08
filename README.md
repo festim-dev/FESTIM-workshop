@@ -20,7 +20,7 @@
 
 [Task 8](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task8.ipynb): CAD integration
 
-[Task 9](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task8.ipynb): Integration with the HTM library
+[Task 9](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task9.ipynb): Integration with the HTM library
 
 ## Getting started
 

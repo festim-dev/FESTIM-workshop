@@ -22,6 +22,8 @@
 
 [Task 9](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task9.ipynb): Integration with the HTM library
 
+[Task 10](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task10.ipynb): Fitting a TDS spectrum
+
 ## Getting started
 
 ### A. Codespaces (recommended)

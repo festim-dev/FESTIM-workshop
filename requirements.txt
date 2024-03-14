@@ -1,4 +1,4 @@
-festim==1.1.1
+festim==1.2
 matplotlib==3.7.1
 meshio[all]
 pyparsing

@@ -40,57 +40,57 @@ jobs:
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task1.ipynb
-          conda run python task1.py
+          jupyter-nbconvert --to python task01.ipynb
+          conda run python task01.py
 
       - name: Run Task 2
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task2.ipynb
-          conda run python task2.py
+          jupyter-nbconvert --to python task02.ipynb
+          conda run python task02.py
       - name: Run Task 3
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task3.ipynb
-          conda run python task3.py
+          jupyter-nbconvert --to python task03.ipynb
+          conda run python task03.py
       - name: Run Task 4
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task4.ipynb
-          conda run python task4.py
+          jupyter-nbconvert --to python task04.ipynb
+          conda run python task04.py
       - name: Run Task 5
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task5.ipynb
-          conda run python task5.py
+          jupyter-nbconvert --to python task05.ipynb
+          conda run python task05.py
       - name: Run Task 6
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task6.ipynb
-          conda run python task6.py
+          jupyter-nbconvert --to python task06.ipynb
+          conda run python task06.py
       - name: Run Task 7
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task7.ipynb
-          conda run python task7.py
+          jupyter-nbconvert --to python task07.ipynb
+          conda run python task07.py
       - name: Run Task 8
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task8.ipynb
-          conda run python task8.py
+          jupyter-nbconvert --to python task08.ipynb
+          conda run python task08.py
       - name: Run Task 9
         shell: bash -l {0}
         run: |
           cd tasks
-          jupyter-nbconvert --to python task9.ipynb
-          conda run python task9.py
+          jupyter-nbconvert --to python task09.ipynb
+          conda run python task09.py
       - name: Run Task 10
         shell: bash -l {0}
         run: |

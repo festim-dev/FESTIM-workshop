@@ -4,23 +4,25 @@
 
 ## Contents
 
-[Task 1](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task1.ipynb): Simple hydrogen transport simulation
+[Task 1](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task01.ipynb): Simple hydrogen transport simulation
 
-[Task 2](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task2.ipynb): Simulation of a Thermo-Desorption experiment
+[Task 2](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task02.ipynb): Simulation of a Thermo-Desorption experiment
 
-[Task 3](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task3.ipynb): Simple permeation model
+[Task 3](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task03.ipynb): Simple permeation model
 
-[Task 4](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task4.ipynb): Permeation barrier modelling
+[Task 4](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task04.ipynb): Permeation barrier modelling
 
-[Task 5](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task5.ipynb): Post-processing and visualisation
+[Task 5](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task05.ipynb): Post-processing and visualisation
 
-[Task 6](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task6.ipynb): Advection-diffusion problem
+[Task 6](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task06.ipynb): Advection-diffusion problem
 
-[Task 7](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task7.ipynb): Heat transfer simulation
+[Task 7](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task07.ipynb): Heat transfer simulation
 
-[Task 8](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task8.ipynb): CAD integration
+[Task 8](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task08.ipynb): CAD integration
 
-[Task 9](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task9.ipynb): Integration with the HTM library
+[Task 9](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task09.ipynb): Integration with the HTM library
+
+[Task 10](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task10.ipynb): Fitting a TDS spectrum
 
 ## Getting started
 

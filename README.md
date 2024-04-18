@@ -37,10 +37,8 @@ You can [create a Codespace](https://github.com/codespaces/new?machine=standardL
 ```
 git clone https://github.com/festim-dev/FESTIM-workshop
 ```
-2. [Install FESTIM](https://festim.readthedocs.io/en/latest/getting_started.html)
-
-3. Install dependencies
+2. Create Conda environment (requires conda)
 
 ```
-pip install -r requirements.txt
+conda env create -f environment.yml
 ```

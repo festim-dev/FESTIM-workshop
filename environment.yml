@@ -5,13 +5,12 @@ channels:
 dependencies:
   - fenics
   - matplotlib==3.7.1
+  - meshio[all]
+  - numpy==1.24
   - pip>=20.1
   - pip:
     - festim==1.2
-    - matplotlib==3.7.1
-    - meshio[all]
     - pyparsing
     # - ipykernel
     - h-transport-materials==0.12.7
-    - numpy==1.24
     - nbconvert

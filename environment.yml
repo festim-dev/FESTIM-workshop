@@ -8,9 +8,9 @@ dependencies:
   - meshio[all]
   - numpy==1.24
   - pip>=20.1
+  - ipykernel
   - pip:
     - festim==1.2
     - pyparsing
-    # - ipykernel
     - h-transport-materials==0.12.7
     - nbconvert

@@ -9,7 +9,7 @@ dependencies:
   - numpy==1.24
   - pip>=20.1
   - pip:
-    - festim==1.2
+    - git+https://github.com/festim-dev/festim@main  # TODO change this once 1.3 is released
     - pyparsing
     # - ipykernel
     - h-transport-materials==0.12.7

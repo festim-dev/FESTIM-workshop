@@ -1,12 +1,15 @@
 {
-    "name": "Python 3",
+    "name": "festim-workshop",
     "build": {
         "dockerfile": "Dockerfile",
-        "context": "..",
-        "args": {
-            "VARIANT": "3.10-bullseye"
-        }
+        "context": ".."
+        // "args": {
+        //     "VARIANT": "3.10-bullseye"
+        // }
     },
+    // Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "conda init",
+
     // Configure tool-specific properties.
     "customizations": {
         // Configure properties specific to VS Code.
@@ -37,6 +40,6 @@
     // Allows port 8888 used for Jupyter Notebook to be available locally.
     "forwardPorts": [
         8888
-    ],
-    "remoteUser": "vscode"
+    ]
+    // "remoteUser": "vscode"
 }

@@ -1,7 +1,7 @@
 # FESTIM-workshop
 
 [![Test](https://github.com/festim-dev/FESTIM-workshop/actions/workflows/test_notebooks.yml/badge.svg)](https://github.com/festim-dev/FESTIM-workshop/actions/workflows/test_notebooks.yml)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/festim-dev/FESTIM-workshop/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/festim-dev/FESTIM-workshop/main)
 
 ## Tasks
 
@@ -46,15 +46,15 @@
 
 ## Getting started
 
-### A. Codespaces (recommended)
+### A. Binder (recommended)
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/festim-dev/FESTIM-workshop/main)
+
+[Run this workshop](https://mybinder.org/v2/gh/festim-dev/FESTIM-workshop/main) in BinderHub
+
+### B. Codespaces
 
 You can [create a Codespace](https://github.com/codespaces/new?machine=standardLinux32gb&repo=520445592&ref=main&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope) based on this repo
-
-### B. Binder
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/festim-dev/FESTIM-workshop/HEAD)
-
-[Run this workshop](https://mybinder.org/v2/gh/festim-dev/FESTIM-workshop/HEAD) in BinderHub
 
 ### C. Local install
 

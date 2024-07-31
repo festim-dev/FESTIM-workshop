@@ -97,3 +97,39 @@ jobs:
           cd tasks
           jupyter-nbconvert --to python task10.ipynb
           conda run python task10.py
+      - name: Run Task 11
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task11.ipynb
+          conda run python task11.py
+      - name: Run Task 12
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task12.ipynb
+          conda run python task12.py
+      - name: Run Task 13
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task13.ipynb
+          conda run python task13.py
+      - name: Run Task 14
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task14.ipynb
+          conda run python task14.py
+      - name: Run Task 15
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task15.ipynb
+          conda run python task15.py
+      - name: Run Task 16
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task16.ipynb
+          conda run python task16.py

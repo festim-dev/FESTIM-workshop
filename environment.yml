@@ -10,6 +10,7 @@ dependencies:
   - pip>=20.1
   - ipykernel
   - nbconvert
+  - mpi4py<4
   - pip:
     - festim==1.3
     - pyparsing

@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - fenics
-  - matplotlib==3.7.1
+  - matplotlib
   - meshio[all]
   - numpy==1.24
   - pip>=20.1

@@ -133,3 +133,9 @@ jobs:
           cd tasks
           jupyter-nbconvert --to python task16.ipynb
           conda run python task16.py
+      - name: Run Task 17
+        shell: bash -l {0}
+        run: |
+          cd tasks
+          jupyter-nbconvert --to python task17.ipynb
+          conda run python task17.py

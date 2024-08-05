@@ -42,6 +42,8 @@
 
 [Task 16](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task16.ipynb): Custom classes
 
+[Task 17](https://github.com/festim-dev/FESTIM-workshop/blob/main/tasks/task17.ipynb): Neutron damage-induced trapping
+
 
 
 ## Getting started

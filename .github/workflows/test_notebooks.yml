@@ -33,7 +33,6 @@ jobs:
           activate-environment: festim-workshop
           miniforge-version: latest
           environment-file: environment.yml
-          use-mamba: true
           channels: conda-forge
 
       - name: Run Task 1

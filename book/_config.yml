@@ -4,10 +4,7 @@
 title: FESTIM tutorial
 author: The FESTIM community
 
-# Force re-execution of notebooks on each build.
-# See https://jupyterbook.org/content/execute.html
-# execute:
-#   execute_notebooks: force
+
 
 # Information about where the book exists on the web
 repository:
@@ -20,3 +17,9 @@ repository:
 html:
   use_issues_button: true
   use_repository_button: true
+
+execute:
+  # Force re-execution of notebooks on each build.
+  # See https://jupyterbook.org/content/execute.html
+  # execute_notebooks: force
+  timeout: -1  # Disable timeouts for executing notebooks cells

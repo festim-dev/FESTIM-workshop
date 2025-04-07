@@ -27,4 +27,4 @@ parts:
     - file: content/task16
     - file: content/task17
 
-  - caption: Challenges
+  # - caption: Challenges

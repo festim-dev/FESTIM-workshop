@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Xdmf Version="3.0">
+  <Domain>
+    <Grid GridType="Collection" CollectionType="Temporal" Name="mobile_concentration">
+      <Grid Name="mobile_concentration_0" GridType="Uniform">
+        <Topology NumberOfElements="106966" TopologyType="Tetrahedron" NodesPerElement="4">
+          <DataItem Dimensions="106966 4" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Dimensions="22341 3" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="0.000000" />
+        <Attribute ItemType="FiniteElementFunction" ElementFamily="DG" ElementDegree="1" ElementCell="tetrahedron" Name="mobile_concentration" Center="Other" AttributeType="Scalar">
+          <DataItem Dimensions="427864 1" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/cell_dofs</DataItem>
+          <DataItem Dimensions="427864 1" NumberType="Float" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/vector</DataItem>
+          <DataItem Dimensions="106967 1" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/x_cell_dofs</DataItem>
+          <DataItem Dimensions="106966 1" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/cells</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>

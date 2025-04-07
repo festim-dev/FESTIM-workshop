@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Xdmf Version="3.0">
+  <Domain>
+    <Grid GridType="Collection" CollectionType="Temporal" Name="mobile_concentration">
+      <Grid Name="mobile_concentration_0" GridType="Uniform">
+        <Topology NumberOfElements="800" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="800 3" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="441 2" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="0.000000" />
+        <Attribute ItemType="FiniteElementFunction" ElementFamily="CG" ElementDegree="1" ElementCell="triangle" Name="mobile_concentration" Center="Other" AttributeType="Scalar">
+          <DataItem Dimensions="2400 1" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/cell_dofs</DataItem>
+          <DataItem Dimensions="882 1" NumberType="Float" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/vector</DataItem>
+          <DataItem Dimensions="801 1" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/x_cell_dofs</DataItem>
+          <DataItem Dimensions="800 1" NumberType="UInt" Format="HDF">mobile_concentration.h5:mobile_concentration/mobile_concentration_0/cells</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>

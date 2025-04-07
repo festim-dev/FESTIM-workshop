@@ -7,7 +7,7 @@ build:
   jobs:
     pre_build:
       # Generate the Sphinx configuration for this Jupyter Book so it builds.
-      - "jupyter-book config sphinx report/"
+      - "jupyter-book config sphinx book/"
 
 conda:
   environment: environment.yml
@@ -15,4 +15,4 @@ conda:
 sphinx:
   builder: html
   fail_on_warning: true
-  configuration: report/_config.yml
+  configuration: book/_config.yml

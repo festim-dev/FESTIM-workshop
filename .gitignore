@@ -130,3 +130,5 @@ dmypy.json
 
 
 *_build
+*/*.h5
+*/*.xdmf

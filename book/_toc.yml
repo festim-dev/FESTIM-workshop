@@ -3,21 +3,26 @@
 
 format: jb-book
 root: intro
-chapters:
-- file: content/task01
-- file: content/task02
-- file: content/task03
-- file: content/task04
-- file: content/task05
-- file: content/task06
-- file: content/task07
-- file: content/task08
-- file: content/task09
-- file: content/task10
-- file: content/task11
-- file: content/task12
-- file: content/task13
-- file: content/task14
-- file: content/task15
-- file: content/task16
-- file: content/task17
+parts:
+  - caption: Basic
+    chapters:
+    - file: content/task01
+    - file: content/task02
+    - file: content/task03
+    - file: content/task04
+    - file: content/task05
+    - file: content/task07
+    - file: content/task08
+    - file: content/task09
+
+  - caption: Advanced
+    chapters:
+    - file: content/task06
+    - file: content/task10
+    - file: content/task11
+    - file: content/task12
+    - file: content/task13
+    - file: content/task14
+    - file: content/task15
+    - file: content/task16
+    - file: content/task17

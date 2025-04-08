@@ -4,6 +4,10 @@ channels:
   - defaults
 dependencies:
   - fenics
+  - python
+  - jupyter-book
+  - jupytext # necessary to open MyST files using BinderHub https://jupyterbook.org/en/stable/interactive/launchbuttons.html#launchbuttons-binder
+  - sphinx-tags
   - matplotlib
   - meshio[all]
   - numpy==1.24
@@ -12,7 +16,7 @@ dependencies:
   - nbconvert
   - mpi4py<4
   - mshr
+  - festim~=1.3
   - pip:
-    - festim~=1.3
     - pyparsing
     - h-transport-materials==0.16

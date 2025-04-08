@@ -1,0 +1,51 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+parts:
+  - caption: Basic
+    chapters:
+    - file: content/task01
+    - file: content/task02
+    - file: content/task03
+    - file: content/task04
+    - file: content/task05
+    - file: content/task07
+    - file: content/task08
+    - file: content/task09
+
+  - caption: Advanced
+    chapters:
+    - file: content/task06
+    - file: content/task10
+    - file: content/task11
+    - file: content/task12
+    - file: content/task13
+    - file: content/task14
+    - file: content/task15
+    - file: content/task16
+    - file: content/task17
+
+  - caption: Challenges
+    chapters:
+    - file: content/challenges/challenge_a_head
+      sections:
+      - file: content/challenges/challenge_A
+      - file: content/challenges/solutions/solution_A
+    - file: content/challenges/challenge_b_head
+      sections:
+      - file: content/challenges/challenge_B
+      - file: content/challenges/solutions/solution_B
+    - file: content/challenges/challenge_c_head
+      sections:
+      - file: content/challenges/challenge_C
+      - file: content/challenges/solutions/solution_C
+    - file: content/challenges/challenge_d_head
+      sections:
+      - file: content/challenges/challenge_D
+      - file: content/challenges/solutions/solution_D
+    - file: content/challenges/challenge_e_head
+      sections:
+      - file: content/challenges/challenge_E
+      - file: content/challenges/solutions/solution_E

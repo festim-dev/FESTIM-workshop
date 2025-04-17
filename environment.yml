@@ -3,20 +3,16 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - fenics
-  - python
   - jupyter-book
   - jupytext # necessary to open MyST files using BinderHub https://jupyterbook.org/en/stable/interactive/launchbuttons.html#launchbuttons-binder
   - sphinx-tags
   - matplotlib
   - meshio[all]
-  - numpy==1.24
   - pip>=20.1
   - ipykernel
   - nbconvert
-  - mpi4py<4
-  - mshr
-  - festim~=1.4
+  - fenics-dolfinx
+  - festim=2.0a2
   - pip:
     - pyparsing
     - h-transport-materials==0.16

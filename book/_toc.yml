@@ -9,7 +9,6 @@ parts:
     - file: content/task01
     - file: content/task02
     - file: content/task03
-    # - file: content/task04
     - file: content/task07
     - file: content/task08
     - file: content/task09

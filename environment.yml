@@ -9,7 +9,6 @@ dependencies:
   - matplotlib
   - meshio[all]
   - pip>=20.1
-  - pyvista
   - ipykernel
   - nbconvert
   - fenics-dolfinx

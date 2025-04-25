@@ -17,4 +17,3 @@ parts:
     chapters:
     - file: content/task06
     - file: content/task10
-    # - file: content/task11

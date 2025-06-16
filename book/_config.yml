@@ -24,6 +24,7 @@ execute:
   # See https://jupyterbook.org/content/execute.html
   # execute_notebooks: force
   timeout: -1  # Disable timeouts for executing notebooks cells
+  # allow_errors: true  # Allow errors in notebook cells
 
 
 launch_buttons:

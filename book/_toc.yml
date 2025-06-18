@@ -13,6 +13,13 @@ parts:
     - file: content/task08
     - file: content/task09
 
+  - caption: Meshing
+    chapters:
+    - file: content/mesh_festim
+    - file: content/mesh_fenics
+    - file: content/mesh_gmsh
+    - file: content/mesh_salome
+
   - caption: Advanced
     chapters:
     - file: content/task06

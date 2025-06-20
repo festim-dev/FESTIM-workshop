@@ -13,6 +13,7 @@ dependencies:
   - nbconvert
   - fenics-dolfinx
   - festim=2.0a3
+  - python-gmsh
   - pip:
     - pyparsing
     - h-transport-materials==0.16

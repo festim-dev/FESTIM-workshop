@@ -20,6 +20,11 @@ parts:
     - file: content/mesh_gmsh
     - file: content/mesh_salome
 
+  - caption: Meshing
+    chapters:
+    - file: content/species
+    - file: content/reactions
+
   - caption: Advanced
     chapters:
     - file: content/task06

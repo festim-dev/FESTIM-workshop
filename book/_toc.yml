@@ -20,7 +20,7 @@ parts:
     - file: content/mesh_gmsh
     - file: content/mesh_salome
 
-  - caption: Meshing
+  - caption: Species & Reactions
     chapters:
     - file: content/species
     - file: content/reactions

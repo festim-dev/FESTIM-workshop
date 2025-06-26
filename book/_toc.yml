@@ -12,6 +12,10 @@ parts:
     - file: content/task07
     - file: content/task08
     - file: content/task09
+  
+  - caption: Boundary conditions
+    chapters:
+    - file: content/boundary_conditions/fixed_value
 
   - caption: Advanced
     chapters:

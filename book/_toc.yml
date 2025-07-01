@@ -25,6 +25,7 @@ parts:
     chapters:
     - file: content/species
     - file: content/reactions
+    - file: content/surface_reactions
 
   - caption: Advanced
     chapters:

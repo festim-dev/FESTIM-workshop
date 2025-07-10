@@ -21,6 +21,12 @@ parts:
     - file: content/mesh_gmsh
     - file: content/mesh_salome
 
+  - caption: Species & Reactions
+    chapters:
+    - file: content/species
+    - file: content/reactions
+    - file: content/surface_reactions
+
   - caption: Advanced
     chapters:
     - file: content/task06

@@ -4,15 +4,9 @@
 format: jb-book
 root: intro
 parts:
-  - caption: Basic
+  - caption: Getting started
     chapters:
-    - file: content/task01
-    - file: content/task02
-    - file: content/task03
-    - file: content/task04
-    - file: content/task07
-    - file: content/task08
-    - file: content/task09
+    - file: content/applications/task01
 
   - caption: Meshing
     chapters:
@@ -27,7 +21,13 @@ parts:
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
 
-  - caption: Advanced
+  - caption: Applications
     chapters:
-    - file: content/task06
-    - file: content/task10
+    - file: content/applications/task02
+    - file: content/applications/task03
+    - file: content/applications/task04
+    - file: content/applications/task07
+    - file: content/applications/task08
+    - file: content/applications/task09
+    - file: content/applications/task06
+    - file: content/applications/task10

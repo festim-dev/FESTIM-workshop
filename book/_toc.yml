@@ -16,16 +16,16 @@ parts:
 
   - caption: Meshing
     chapters:
-    - file: content/mesh_festim
-    - file: content/mesh_fenics
-    - file: content/mesh_gmsh
-    - file: content/mesh_salome
+    - file: content/meshes/mesh_festim
+    - file: content/meshes/mesh_fenics
+    - file: content/meshes/mesh_gmsh
+    - file: content/meshes/mesh_salome
 
   - caption: Species & Reactions
     chapters:
-    - file: content/species
-    - file: content/reactions
-    - file: content/surface_reactions
+    - file: content/species_reactions/species
+    - file: content/species_reactions/reactions
+    - file: content/species_reactions/surface_reactions
 
   - caption: Advanced
     chapters:

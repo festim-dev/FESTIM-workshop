@@ -24,7 +24,14 @@ execute:
   # See https://jupyterbook.org/content/execute.html
   # execute_notebooks: force
   timeout: -1  # Disable timeouts for executing notebooks cells
+  # allow_errors: true  # Allow errors in notebook cells
 
+parse:
+  myst_enable_extensions:
+    # don't forget to list any other extensions you want enabled,
+    # including those that are enabled by default!
+    - amsmath
+    - dollarmath
 
 launch_buttons:
   notebook_interface: "jupyterlab"

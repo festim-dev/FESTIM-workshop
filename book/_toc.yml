@@ -9,6 +9,7 @@ parts:
     - file: content/task01
     - file: content/task02
     - file: content/task03
+    - file: content/task04
     - file: content/task07
     - file: content/task08
     - file: content/task09
@@ -16,6 +17,19 @@ parts:
   - caption: Boundary conditions
     chapters:
     - file: content/boundary_conditions/fixed_value
+
+  - caption: Meshing
+    chapters:
+    - file: content/mesh_festim
+    - file: content/mesh_fenics
+    - file: content/mesh_gmsh
+    - file: content/mesh_salome
+
+  - caption: Species & Reactions
+    chapters:
+    - file: content/species
+    - file: content/reactions
+    - file: content/surface_reactions
 
   - caption: Advanced
     chapters:

@@ -12,7 +12,8 @@ dependencies:
   - ipykernel
   - nbconvert
   - fenics-dolfinx
-  - festim=2.0a3
+  - festim=2.0a5
+  - python-gmsh
   - pip:
     - pyparsing
     - h-transport-materials==0.16

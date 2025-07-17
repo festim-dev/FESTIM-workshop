@@ -18,3 +18,4 @@ dependencies:
     - pyparsing
     - h-transport-materials==0.16
     - pyvista[all,trame]  # trame cannot be installed on conda
+    - git+https://github.com/festim-dev/festim@fenicsx  #temporary

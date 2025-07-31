@@ -20,6 +20,10 @@ parts:
     - file: content/species_reactions/species
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
+  
+  - caption: Boundary Conditions
+    chapters:
+    - file: content/boundary_conditions/fixed_value
 
   - caption: Applications
     chapters:

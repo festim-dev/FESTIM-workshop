@@ -26,6 +26,10 @@ parts:
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
 
+  - caption: Materials
+    chapters:
+    - file: content/materials/basics
+
   - caption: Applications
     chapters:
     - file: content/applications/task02

@@ -8,6 +8,11 @@ parts:
     chapters:
     - file: content/applications/task01
 
+  - caption: Materials
+    chapters: 
+    - file: content/material/material_basics
+    - file: content/material/material_advanced
+
   - caption: Meshing
     chapters:
     - file: content/meshes/mesh_festim

@@ -8,6 +8,10 @@ parts:
     chapters:
     - file: content/applications/task01
 
+  - caption: Temperature
+    chapters:
+    - file: content/temperatures/temperatures_basic
+
   - caption: Meshing
     chapters:
     - file: content/meshes/mesh_festim

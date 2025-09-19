@@ -8,17 +8,18 @@ parts:
     chapters:
     - file: content/applications/task01
 
-  - caption: Materials
-    chapters: 
-    - file: content/material/material_basics
-    - file: content/material/material_advanced
-
   - caption: Meshing
     chapters:
     - file: content/meshes/mesh_festim
     - file: content/meshes/mesh_fenics
     - file: content/meshes/mesh_gmsh
     - file: content/meshes/mesh_salome
+
+  - caption: Materials
+    chapters: 
+    - file: content/material/material_basics
+    - file: content/material/material_htm
+    - file: content/material/material_advanced
 
   - caption: Species & Reactions
     chapters:

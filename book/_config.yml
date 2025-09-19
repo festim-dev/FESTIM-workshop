@@ -18,11 +18,12 @@ html:
   use_issues_button: true
   use_repository_button: true
   use_edit_page_button: true
+  announcement: "ℹ️ This is the FESTIM1 tutorial. For the FESTIM2 tutorial, see <a href='https://festim-workshop.readthedocs.io/en/festim2/intro.html'>here</a>."
 
 execute:
   # Force re-execution of notebooks on each build.
   # See https://jupyterbook.org/content/execute.html
-  # execute_notebooks: force
+  # execute_notebooks: off
   timeout: -1  # Disable timeouts for executing notebooks cells
 
 

@@ -16,7 +16,9 @@ kernelspec:
 
 +++
 
-Another helpful feature we show is how to integrate FESTIM with HTM. H-transport-materials (HTM) is a python library for accessing hydrogen transport properties such as diffusivities, solubilities, recombination coefficients, etc. It is an __[open-source project](https://github.com/RemDelaporteMathurin/h-transport-materials)__. and contributions to the database are more than welcome! See the online dashboard __[here](https://htm-dashboard-uan5l4xr6a-od.a.run.app/)__!
+FESTIM can be coupled to the hydrogen transport properties database [HTM](https://github.com/RemDelaporteMathurin/h-transport-materials).
+
+H-transport-materials (HTM) is a python library for accessing hydrogen transport properties such as diffusivities, solubilities, recombination coefficients, etc. HTM is open-source and contributions to the database are more than welcome! See the online dashboard __[here](https://htm-dashboard-uan5l4xr6a-od.a.run.app/)__!
 
 Objectives:
 * Learn how to install and use the HTM library
@@ -24,13 +26,13 @@ Objectives:
 
 +++
 
-## Using the HTM Library ##
+## Using the HTM Property Database ##
 
 First, install HTM by running: 
 
 ` pip install h-transport-materials `
 
-Now that HTM is installed, let's look at at the HTM api.
+Now that HTM is installed, let's look at at the HTM API.
 
 The diffusivities in the HTM database are stored in ` htm.diffusivities `. They can be filtered by material, isotope, author, year with the ` .filter() ` method. 
 
@@ -41,7 +43,6 @@ import h_transport_materials as htm
 
 # filter only tungsten and H
 diffusivities = htm.diffusivities.filter(material="tungsten").filter(isotope="h")
-
 
 # plot the properties
 htm.plotting.plot(diffusivities)
@@ -105,5 +106,5 @@ tungsten = F.Material(
     K_S_0=S.pre_exp.magnitude, E_K_S=S.act_energy.magnitude
     )
 
-print(tungsten)
+print(tungsten.D_0, tungsten.E_D)
 ```

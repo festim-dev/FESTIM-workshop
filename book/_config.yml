@@ -11,6 +11,13 @@ repository:
   path_to_book: book  # Optional path to your book, relative to the repository root
   branch: festim2  # Which branch of the repository should be used when creating links (optional)
 
+
+sphinx:
+  config:
+    html_theme_options:
+      logo:
+        image_light: images/logo_light.png
+        image_dark: images/logo_dark.svg
 # Add GitHub buttons to your book
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
 html:

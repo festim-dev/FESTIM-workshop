@@ -79,7 +79,7 @@ Consider the following volume with two subdomains separated halfway through the 
 To define one material on each subdomain:
 
 ```{code-cell} ipython3
-mat1 = F.Material(D_0=1.11e-6, E_D=0.4)  # m2/s, eV
+mat = F.Material(D_0=1.11e-6, E_D=0.4)  # m2/s, eV
 
 top = F.VolumeSubdomain(id=1, material=mat, locator=lambda x: x[0] >= 0.5)
 bottom = F.VolumeSubdomain(id=2, material=mat, locator=lambda x: x[0] < 0.5)

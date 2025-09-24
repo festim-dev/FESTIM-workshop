@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Basic Material Features #
+# Basic functionality
 
 Materials are key components of hydrogen transport simulations. They hold the properties like diffusivity, solubility and even thermal properties like thermal conductivity or heat capacity. Read more about the `Materials` class and syntax at __[Materials](https://festim.readthedocs.io/en/fenicsx/userguide/subdomains.html)__.
 
@@ -117,9 +117,9 @@ festim_mesh = F.Mesh(fenics_mesh)
 my_model = F.HydrogenTransportProblemDiscontinuous()
 ```
 
-<div class="alert alert-block alert-info">
+```{note}
 Be sure to use an even number of cells in each direction when creating the mesh in a discontinuous problem.
-</div>
+```
 
 +++
 
@@ -214,5 +214,5 @@ else:
 ```
 
 <div class="alert alert-block alert-success">
-Sucess! We see diffusion from the top surface downwards, with a discontinuity at the interface! 
+Success! We see diffusion from the top surface downwards, with a discontinuity at the interface! 
 </div>

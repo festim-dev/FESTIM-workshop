@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Using HTM with FESTIM #
+# Using the HTM database
 
 +++
 

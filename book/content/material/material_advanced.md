@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Advanced Material Features #
+# Advanced functionality #
 
 +++
 

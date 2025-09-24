@@ -15,6 +15,12 @@ parts:
     - file: content/meshes/mesh_gmsh
     - file: content/meshes/mesh_salome
 
+  - caption: Materials
+    chapters: 
+    - file: content/material/material_basics
+    - file: content/material/material_htm
+    - file: content/material/material_advanced
+
   - caption: Species & Reactions
     chapters:
     - file: content/species_reactions/species

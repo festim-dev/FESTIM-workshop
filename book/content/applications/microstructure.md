@@ -1,16 +1,15 @@
 ---
-jupyter:
-  jupytext:
-    formats: ipynb,md
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.17.3
-  kernelspec:
-    display_name: festim-workshop
-    language: python
-    name: python3
+jupytext:
+  formats: ipynb,md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.17.3
+kernelspec:
+  display_name: festim-workshop
+  language: python
+  name: python3
 ---
 
 # Hydrogen diffusion along grain boundaries
@@ -19,6 +18,7 @@ This tutorial shows how to use FESTIM to simulate hydrogen diffusion in metal mi
 
 We'll show how to generate a microstructure using Voronoi cells, mesh it with GMSH, and solve a transport problem with FESTIM.
 
++++
 
 ## Geometry
 
@@ -26,7 +26,7 @@ We'll show how to generate a microstructure using Voronoi cells, mesh it with GM
 
 First, we use `scipy` to make a [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) mimicking a microstructure.
 
-```python
+```{code-cell} ipython3
 import numpy as np
 from scipy.spatial import Voronoi, voronoi_plot_2d
 import matplotlib.pyplot as plt
@@ -53,7 +53,7 @@ plt.show()
 Now that we have vertices for each voronoi cell, we can use `shapely` to turn them into `shapely.Polygon` objects for easy manipulation.
 We then shrink the voronoi cells to make grain boundaries appear. Note that the grain boundary thickness is arbitrary here. 
 
-```python
+```{code-cell} ipython3
 from shapely.geometry import Polygon
 from shapely import difference, union_all
 from shapely.plotting import plot_polygon, plot_points
@@ -84,7 +84,7 @@ plt.show()
 
 To make a new `Polygon` for our grain boundaries by substracting all the grains from a square polygon.
 
-```python
+```{code-cell} ipython3
 # Grain boundary = everything not covered by grains
 eps = gap / 2
 domain = Polygon(
@@ -104,7 +104,7 @@ plt.show()
 
 We can now pass this geometry to GMSH for meshing. We tag the grains, grain boundaries, and the left and right surfaces as different subdomains. 
 
-```python
+```{code-cell} ipython3
 gmsh.initialize()
 gmsh.model.add("voronoi")
 
@@ -283,7 +283,7 @@ Simulation time: $t_f = 1.5$
 
 ### Convert mesh to dolfinx
 
-```python
+```{code-cell} ipython3
 from dolfinx.io import gmshio
 from mpi4py import MPI
 
@@ -294,7 +294,9 @@ mesh, cell_tags, facet_tags = gmshio.read_from_msh(
 )
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 from dolfinx import plot
 import pyvista
 
@@ -317,14 +319,13 @@ p.add_mesh(grid, show_edges=False)
 if pyvista.OFF_SCREEN:
     figure = p.screenshot("cell_marker.png")
 p.show()
-
 ```
 
 ### Case 1: GBs are more diffusive
 
 In this first case, $D_\mathrm{GB}= 1000 \ D_\mathrm{grain}$
 
-```python
+```{code-cell} ipython3
 import festim as F
 
 grain_mat = F.Material(D_0=0.001, E_D=0)
@@ -368,7 +369,9 @@ my_model.run()
 
 At the end of the simulation, we can see on the concentration field the preferential diffusion along the grain boundaries!
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 hydrogen_concentration = H.solution
 
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)
@@ -391,7 +394,7 @@ else:
 
 We can also look at the opposite case with grain boundaries less diffusive the the grain themselves.
 
-```python
+```{code-cell} ipython3
 gb_mat.D_0 = 0.1
 grain_mat.D_0 = 1
 
@@ -399,7 +402,9 @@ my_model.initialise()
 my_model.run()
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 hydrogen_concentration = H.solution
 
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)

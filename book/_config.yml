@@ -4,18 +4,20 @@
 title: FESTIM tutorial
 author: The FESTIM community
 
-
-sphinx:
-  config:
-    html_theme_options:
-      logo:
-        image_light: images/logo_light.png
-        image_dark: images/logo_dark.svg
+# NOTE turning this off while we figure out how to do dark mode properly
+# sphinx:
+#   config:
+#     html_theme_options:
+#       logo:
+#         image_light: images/logo_light.png
+#         image_dark: images/logo_dark.svg
 # Information about where the book exists on the web
 repository:
   url: https://github.com/festim-dev/FESTIM-workshop  # Online location of your book
   path_to_book: book  # Optional path to your book, relative to the repository root
   branch: main  # Which branch of the repository should be used when creating links (optional)
+
+logo: images/logo_light.png
 
 # Add GitHub buttons to your book
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository

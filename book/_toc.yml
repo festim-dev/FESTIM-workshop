@@ -11,6 +11,7 @@ parts:
   - caption: Temperature
     chapters:
     - file: content/temperatures/temperatures_basic
+    - file: content/temperatures/temperatures_advanced
 
   - caption: Meshing
     chapters:

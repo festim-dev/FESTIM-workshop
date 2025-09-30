@@ -275,8 +275,8 @@ where $D=D_\mathrm{GB}$ and $D=D_\mathrm{grain}$ in the grain boundary and grain
 
 Boundary conditions:
 
-- $ c = 1 $ on the left surface
-- $ c = 0 $ on the right surface
+- $ c = 0 $ on the left surface
+- $ c = 1 $ on the right surface
 
 Interface condition:
 - We assume continuity of concentration at the GB/grain interfaces.

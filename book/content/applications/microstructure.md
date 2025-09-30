@@ -105,6 +105,8 @@ plt.show()
 We can now pass this geometry to GMSH for meshing. We tag the grains, grain boundaries, and the left and right surfaces as different subdomains. 
 
 ```{code-cell} ipython3
+:tags: [hide-output]
+
 gmsh.initialize()
 gmsh.model.add("voronoi")
 

@@ -50,8 +50,8 @@ voronoi_plot_2d(vor, show_vertices=False, show_points=True)
 plt.show()
 ```
 
-Now that we have vertices for each voronoi cell, we can use `shapely` to turn them into `shapely.Polygon` objects for easy manipulation.
-We then shrink the voronoi cells to make grain boundaries appear. Note that the grain boundary thickness is arbitrary here. 
+Now that we have vertices for each Voronoi cell, we can use `shapely` to turn them into `shapely.Polygon` objects for easy manipulation.
+We then shrink the Voronoi cells to make grain boundaries appear. Note that the grain boundary thickness is arbitrary here. 
 
 ```{code-cell} ipython3
 from shapely.geometry import Polygon
@@ -82,7 +82,7 @@ for polygon in grains:
 plt.show()
 ```
 
-To make a new `Polygon` for our grain boundaries by substracting all the grains from a square polygon.
+We can make a new `Polygon` for our grain boundaries by subtracting all the grains from a square polygon.
 
 ```{code-cell} ipython3
 # Grain boundary = everything not covered by grains
@@ -271,7 +271,7 @@ $$
 \frac{\partial c}{\partial t} = \nabla \cdot (D \nabla c)
 $$
 
-where $D=D_\mathrm{GB}$ and $D=D_\mathrm{grain}$ in the grain boundary and in the grain, respectively.
+where $D=D_\mathrm{GB}$ and $D=D_\mathrm{grain}$ in the grain boundary and grain, respectively.
 
 Boundary conditions:
 

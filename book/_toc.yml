@@ -36,3 +36,4 @@ parts:
     - file: content/applications/task08
     - file: content/applications/task06
     - file: content/applications/task10
+    - file: content/applications/microstructure

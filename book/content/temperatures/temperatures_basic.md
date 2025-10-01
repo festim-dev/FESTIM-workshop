@@ -36,7 +36,7 @@ my_model = F.HydrogenTransportProblem()
 my_model.temperature = 300  # K 
 ```
 
-To to define a temperature function we can use ` lambda ` functions, such as this space-dependent function:
+To define a temperature function we can use ` lambda ` functions, such as this space-dependent function:
 
 $$ 
 
@@ -88,7 +88,7 @@ Users can define temperature as a Dolfinx `Function`, which can be helpful when 
 
 $$
 
-T(x,y) = 300 e^{((x-0.5)^2 + (y-0.5)^2)}
+T(x,y) = 300 e^{-((x-0.5)^2 + (y-0.5)^2)}
 
 $$
 
@@ -112,7 +112,7 @@ temperature = dolfinx.fem.Function(V)
 x = ufl.SpatialCoordinate(temperature.function_space.mesh)[0]
 y = ufl.SpatialCoordinate(temperature.function_space.mesh)[1]
 interpolation = temperature.function_space.element.interpolation_points()
-expr = dolfinx.fem.Expression(300*ufl.exp((x-0.5)**2 + (y-0.5)**2), interpolation)
+expr = dolfinx.fem.Expression(300*ufl.exp(-((x-0.5)**2 + (y-0.5)**2)), interpolation)
                                 
 temperature.interpolate(expr)
 ```
@@ -132,7 +132,7 @@ pyvista.set_jupyter_backend("html")
 plotter = pyvista.Plotter()
 plotter.add_mesh(function_grid, cmap="inferno", show_edges=False, opacity=1)
 plotter.view_xy()
-plotter.add_text("Spatially varying diffusivity", font_size=12)
+plotter.add_text("Temperature", font_size=12)
 
 if not pyvista.OFF_SCREEN:
     plotter.show()

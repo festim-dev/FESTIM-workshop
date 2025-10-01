@@ -44,7 +44,7 @@ We define a thermal conductivity function $ \lambda $ and assign it to our mater
 
 ```python
 def thermal_cond_function(T):
-    return 3 + 0.1 * T
+    return 3 + 0.1 * T  # W/m/K
 
 mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function)
 ```
@@ -193,7 +193,7 @@ else:
 To run a transient heat transfer simulation (with no hydrogen transport coupling), we must add the density $\rho$ and heat capacity $C_p$:
 
 ```python
-mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)
+mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)    # kg/m3, J/kg/K
 volume_subdomain = F.VolumeSubdomain(id=1, material=mat)
 
 heat_transfer_model.subdomains = [volume_subdomain, top_bot, left, right]

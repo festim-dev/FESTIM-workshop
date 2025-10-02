@@ -3,7 +3,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - jupyter-book==2.*
   - jupytext # necessary to open MyST files using BinderHub https://jupyterbook.org/en/stable/interactive/launchbuttons.html#launchbuttons-binder
   - sphinx-tags
   - matplotlib
@@ -17,6 +16,7 @@ dependencies:
   - shapely
   - scipy
   - pip:
+    - jupyter-book==2.*
     - pyparsing
     - h-transport-materials==0.16
     - pyvista[all,trame]  # trame cannot be installed on conda

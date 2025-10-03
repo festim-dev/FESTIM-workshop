@@ -8,15 +8,11 @@ build:
     - libglx-mesa0
     - libgl1
     - xvfb
-  jobs:
-    pre_build:
-      # Generate the Sphinx configuration for this Jupyter Book so it builds.
-      - "python -m jupyter-book config sphinx book/"
+  commands:
+  # this may need the --execute flag to run the notebooks
+    - cd book && jupyter book build --html
 
 conda:
   environment: environment.yml
 
-sphinx:
-  builder: html
-  fail_on_warning: true
-  configuration: book/_config.yml
+formats: []

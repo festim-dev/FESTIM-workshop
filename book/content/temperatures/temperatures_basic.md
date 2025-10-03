@@ -1,16 +1,15 @@
 ---
-jupyter:
-  jupytext:
-    formats: ipynb,md
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.17.3
-  kernelspec:
-    display_name: festim-workshop
-    language: python
-    name: python3
+jupytext:
+  formats: ipynb,md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.17.3
+kernelspec:
+  display_name: festim-workshop
+  language: python
+  name: python3
 ---
 
 # Basic functionality #
@@ -24,12 +23,13 @@ Objectives:
 * Learn how to define space and time dependent temperature functions
 * Learn how to define temperature as a Dolfinx expression
 
++++
 
 ## Defining temperatures in FESTIM ##
 
 The simplest way to define temperature is as a fixed value:
 
-```python
+```{code-cell} ipython3
 import festim as F
 
 my_model = F.HydrogenTransportProblem()
@@ -44,7 +44,7 @@ T(x) = T_0 e^{-x}
 
 $$
 
-```python
+```{code-cell} ipython3
 import festim as F
 import ufl
 
@@ -61,7 +61,7 @@ T(t) = T_0 sin(t)
 
 $$
 
-```python
+```{code-cell} ipython3
 my_model.temperature = lambda t: T0 * ufl.sin(t)
 ```
 
@@ -73,7 +73,7 @@ T(x,y,z,t) = T_0 cos(x)sin(t) + 5y - 2z
 
 $$
 
-```python
+```{code-cell} ipython3
 my_model.temperature = lambda x,t: T0 * ufl.cos(x[0])*ufl.sin(t) + 5*x[1] - 2*x[2]
 ```
 
@@ -81,6 +81,7 @@ my_model.temperature = lambda x,t: T0 * ufl.cos(x[0])*ufl.sin(t) + 5*x[1] - 2*x[
 When defining custom functions for values, only the arguments x, t and T can be defined. Spatial coordinates can be referred to by their indices, such as x[0], x[1], and x[2], regardless of the coordinate system used. Time dependence must use t, and T for temperature dependence.
 </div>
 
++++
 
 ## Defining temperature as a FEniCS expression or function ##
 
@@ -94,7 +95,7 @@ $$
 
 To define the temperature as a function or expression, we can use `ufl`:
 
-```python
+```{code-cell} ipython3
 import dolfinx
 from dolfinx.mesh import create_unit_square
 from mpi4py import MPI
@@ -117,7 +118,9 @@ expr = dolfinx.fem.Expression(300*ufl.exp(-((x-0.5)**2 + (y-0.5)**2)), interpola
 temperature.interpolate(expr)
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 from dolfinx import plot
 import pyvista
 
@@ -140,6 +143,6 @@ if not pyvista.OFF_SCREEN:
 
 To set this temperature for our FESTIM simulation, we simply need to pass it to our model's temperature attribute:
 
-```python
+```{code-cell} ipython3
 my_model.temperature = temperature
 ```

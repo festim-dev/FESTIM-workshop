@@ -1,16 +1,15 @@
 ---
-jupyter:
-  jupytext:
-    formats: ipynb,md
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.17.3
-  kernelspec:
-    display_name: festim-workshop
-    language: python
-    name: python3
+jupytext:
+  formats: ipynb,md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.17.3
+kernelspec:
+  display_name: festim-workshop
+  language: python
+  name: python3
 ---
 
 # Advanced functionality #
@@ -21,8 +20,9 @@ Objectives:
 * Solve steady-state and transient heat-transfer problems in FESTIM
 * Couple transient hydrogen transport and heat-transfer simulations
 
++++
 
-## Solving steady-state and transient heat-transfer problems ##
+## Temperature field from a steady state heat transfer simulation ##
 
 The governing equation for transient heat transfer is:
 
@@ -34,7 +34,7 @@ $$  \nabla \cdot (\lambda \ \nabla T) + \dot{Q} = 0 $$
 
 Consider the following steady-state heat transfer problem:
 
-```python
+```{code-cell} ipython3
 import festim as F
 
 heat_transfer_model = F.HeatTransferProblem()
@@ -42,16 +42,16 @@ heat_transfer_model = F.HeatTransferProblem()
 
 We define a thermal conductivity function $ \lambda $ and assign it to our material:  
 
-```python
+```{code-cell} ipython3
 def thermal_cond_function(T):
-    return 3 + 0.1 * T  # W/m/K
+    return 3 + 0.1 * T
 
 mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function)
 ```
 
 We can also add heat sources (`HeatSource`), fixed temperature (`FixedTemperatureBC`), and heat flux (`HeatFluxBC`) boundary conditions. We also prescribe a convective heat flux by defining an external temperature $T_{ext}$ and heat transfer coefficient $h$:
 
-```python
+```{code-cell} ipython3
 import dolfinx
 from mpi4py import MPI
 import numpy as np
@@ -108,7 +108,9 @@ heat_transfer_model.initialise()
 heat_transfer_model.run()
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 import pyvista
 
 pyvista.start_xvfb()
@@ -139,7 +141,7 @@ else:
 
 To use this temperature field for a hydrogen transport simulation, we need to define another problem `hydrogen_problem` using `HydrogenTransportProblem`. We simply assign the output from the heat transfer simulation to the temperature attribute of our hydrogen simulation:
 
-```python
+```{code-cell} ipython3
 hydrogen_problem = F.HydrogenTransportProblem()
 
 hydrogen_problem.mesh = heat_transfer_model.mesh
@@ -164,7 +166,9 @@ hydrogen_problem.initialise()
 hydrogen_problem.run()
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
@@ -192,8 +196,8 @@ else:
 
 To run a transient heat transfer simulation (with no hydrogen transport coupling), we must add the density $\rho$ and heat capacity $C_p$:
 
-```python
-mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)    # kg/m3, J/kg/K
+```{code-cell} ipython3
+mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)
 volume_subdomain = F.VolumeSubdomain(id=1, material=mat)
 
 heat_transfer_model.subdomains = [volume_subdomain, top_bot, left, right]
@@ -209,7 +213,9 @@ heat_transfer_model.initialise()
 heat_transfer_model.run() 
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
@@ -234,13 +240,13 @@ else:
     figure = u_plotter.screenshot("temperature.png")
 ```
 
-## Coupling a transient heat-transfer and hydrogen transport problem ##
+## Temperature from a transient heat transfer simulation ##
 
 For a coupled heat-transfer and hydrogen transient simulation, we need to use another problem class `CoupledTransientHeatTransferHydrogenTransport` to ensure the solution solves each problem at each step.
 
 First, we must define a `HydrogenTransportProblem` and `HeatTransferProblem` with each model's settings. We also define a common mesh:
 
-```python
+```{code-cell} ipython3
 import festim as F
 import dolfinx
 from mpi4py import MPI
@@ -305,13 +311,15 @@ heat_transfer_model.settings = F.Settings(
 
 Finally, we define and solve a new `problem` using `CoupledTransientHeatTransferHydrogenTransport`:
 
-```python
+```{code-cell} ipython3
 problem = F.CoupledTransientHeatTransferHydrogenTransport(heat_problem=heat_transfer_model, hydrogen_problem=hydrogen_problem)
 problem.initialise()
 problem.run()
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
+
 import pyvista
 
 pyvista.start_xvfb()

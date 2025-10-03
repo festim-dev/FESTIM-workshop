@@ -1,5 +1,8 @@
 version: 2
 
+conda:
+  environment: environment.yml
+
 build:
   os: ubuntu-22.04
   tools:
@@ -12,8 +15,6 @@ build:
     post_build:
       # this may need the --execute flag to run the notebooks
       - cd book && jupyter book build --html
-
-conda:
-  environment: environment.yml
+      - cp -r book/_build/html/* $READTHEDOCS_OUTPUT/html/
 
 formats: []

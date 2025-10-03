@@ -44,5 +44,6 @@ project:
 site:
   options:
     logo: images/logo_light.png
+    logo_dark: images/logo_dark.svg
     folders: true
   template: book-theme

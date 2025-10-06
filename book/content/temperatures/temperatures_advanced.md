@@ -46,7 +46,7 @@ $$q_n = 10 + 3 \cos(x) + \sin(y)$$
 
 **Volume source term**: 
 
-$$Q(x,y) = 1 + 0.1 x$$
+$$Q(x) = 1 + 0.1 x$$
 
 ```{code-cell} ipython3
 import festim as F
@@ -58,7 +58,7 @@ We first define a thermal conductivity function $ \lambda $ and assign it to our
 
 ```{code-cell} ipython3
 def thermal_cond_function(T):
-    return 0.3 + 0.1 * T
+    return 3 + 0.1 * T
 
 mat = F.Material(D_0=1, E_D=0.1, thermal_conductivity=thermal_cond_function)
 ```
@@ -199,9 +199,6 @@ u_grid.set_active_scalars("c")
 u_plotter = pyvista.Plotter()
 u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
 
-contours = u_grid.contour(9)
-u_plotter.add_mesh(contours, color="white")
-
 u_plotter.view_xy()
 
 if not pyvista.OFF_SCREEN:
@@ -214,10 +211,10 @@ The governing equation for transient heat transfer is:
 
 $$\rho \ C_p \frac{\partial T}{\partial t} = \nabla \cdot (\lambda \ \nabla T) + \dot{Q} $$
 
-Therefore, to run a transient heat transfer simulation (with no hydrogen transport coupling), we must add the density $\rho$ and heat capacity $C_p$:
+Therefore, to run a transient heat transfer simulation (with no hydrogen transport coupling), we must add the `density` and `heat_capacity`:
 
 ```{code-cell} ipython3
-mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)
+mat = F.Material(D_0=1 ,E_D=0.01, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)
 volume_subdomain = F.VolumeSubdomain(id=1, material=mat)
 
 heat_transfer_model.subdomains = [volume_subdomain, top_bot, left, right]
@@ -260,7 +257,7 @@ else:
     figure = u_plotter.screenshot("temperature.png")
 ```
 
-## Temperature from a transient heat transfer simulation ##
+## Temperature from a coupled transient heat transfer simulation ##
 
 For a coupled heat-transfer and hydrogen transient simulation, we need to use another problem class `CoupledTransientHeatTransferHydrogenTransport` to ensure the solution solves each problem at each step.
 
@@ -277,11 +274,9 @@ nx = ny = 20
 mesh_fenics = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, nx, ny)
 mesh = F.Mesh(mesh=mesh_fenics)
 
-
-mat = F.Material(D_0=4.1e-4, E_D=0.0, thermal_conductivity=3, density=20, heat_capacity=5)
+mat = F.Material(D_0=1, E_D=0.01, thermal_conductivity=3, density=2, heat_capacity=5)
 
 volume_subdomain = F.VolumeSubdomain(id=1, material=mat)
-
 top_bot = F.SurfaceSubdomain(id=2, locator=lambda x: np.logical_or(np.isclose(x[1], 0.0), np.isclose(x[1], 1.0)))
 left = F.SurfaceSubdomain(id=3, locator=lambda x: np.isclose(x[0], 0.0))
 right = F.SurfaceSubdomain(id=4, locator=lambda x: np.isclose(x[0], 1.0))
@@ -297,7 +292,7 @@ H = F.Species("H")
 hydrogen_problem.species = [H]
 
 hydrogen_problem.boundary_conditions = [
-    F.FixedConcentrationBC(subdomain=top_bot, value=1e10, species=H),
+    F.FixedConcentrationBC(subdomain=top_bot, value=1, species=H),
     F.FixedConcentrationBC(subdomain=left, value=0, species=H),
 ]
 

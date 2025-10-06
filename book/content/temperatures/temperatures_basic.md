@@ -114,7 +114,6 @@ my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
 
 my_model.initialise()
 my_model.run()
-
 ```
 
 ```{code-cell} ipython3
@@ -135,8 +134,6 @@ u_grid.set_active_scalars("c")
 u_plotter = pyvista.Plotter()
 u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
 u_plotter.add_mesh(u_grid, style="wireframe", color="white", opacity=0.2)
-
-contours = u_grid.contour(9)
 
 u_plotter.view_xy()
 

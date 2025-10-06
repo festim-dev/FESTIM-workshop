@@ -22,17 +22,31 @@ Objectives:
 
 +++
 
-## Temperature field from a steady state heat transfer simulation ##
+## Defining and running a steady-state heat transfer simulation ##
 
-The governing equation for transient heat transfer is:
 
-$$\rho \ C_p \frac{\partial T}{\partial t} = \nabla \cdot (\lambda \ \nabla T) + \dot{Q} $$
-
-For steady-state problems, the left side of the equation is equal to 0:
+Consider the following 2D heat transfer problem, where we want to find the temperature field by solving the steady-state heat transfer equation:
 
 $$  \nabla \cdot (\lambda \ \nabla T) + \dot{Q} = 0 $$
 
-Consider the following steady-state heat transfer problem:
+Additionally, we define the following boundary conditions in our problem:
+
+**Left boundary** ($x=0$): Fixed temperature  
+
+$$T(x,y) = 350 + 20 \cos(x)\, \sin(y)$$
+
+**Top and bottom boundaries** ($y=0$ and $y=1$): Convective heat flux  
+
+$$q_n = h(x) \left(T_{\text{ext}}(x) - T\right), \quad h(x) = 100 x, \quad T_{\text{ext}}(x) = 300 + 3 y$$
+
+
+**Right boundary** ($x=1$): Prescribed heat flux  
+
+$$q_n = 10 + 3 \cos(x) + \sin(y)$$
+
+**Volume source term**: 
+
+$$Q(x,y) = 1 + 0.1 x$$
 
 ```{code-cell} ipython3
 import festim as F
@@ -40,16 +54,16 @@ import festim as F
 heat_transfer_model = F.HeatTransferProblem()
 ```
 
-We define a thermal conductivity function $ \lambda $ and assign it to our material:  
+We first define a thermal conductivity function $ \lambda $ and assign it to our material:  
 
 ```{code-cell} ipython3
 def thermal_cond_function(T):
-    return 3 + 0.1 * T
+    return 0.3 + 0.1 * T
 
-mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function)
+mat = F.Material(D_0=1, E_D=0.1, thermal_conductivity=thermal_cond_function)
 ```
 
-We can also add heat sources (`HeatSource`), fixed temperature (`FixedTemperatureBC`), and heat flux (`HeatFluxBC`) boundary conditions. We also prescribe a convective heat flux by defining an external temperature $T_{ext}$ and heat transfer coefficient $h$:
+We can now add heat sources (`HeatSource`), fixed temperature (`FixedTemperatureBC`), and heat flux (`HeatFluxBC`) boundary conditions. We also prescribe a convective heat flux by defining an external temperature `T_ext` and heat transfer coefficient `h`:
 
 ```{code-cell} ipython3
 import dolfinx
@@ -113,7 +127,7 @@ heat_transfer_model.run()
 
 import pyvista
 
-pyvista.start_xvfb()
+# pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 from dolfinx import plot
@@ -139,6 +153,8 @@ else:
     figure = u_plotter.screenshot("temperature.png")
 ```
 
+## Running a hydrogen transport simulation ##
+
 To use this temperature field for a hydrogen transport simulation, we need to define another problem `hydrogen_problem` using `HydrogenTransportProblem`. We simply assign the output from the heat transfer simulation to the temperature attribute of our hydrogen simulation:
 
 ```{code-cell} ipython3
@@ -150,7 +166,7 @@ hydrogen_problem.species = [H]
 hydrogen_problem.temperature = heat_transfer_model.u
 
 hydrogen_problem.boundary_conditions = [
-    F.FixedConcentrationBC(subdomain=left, value=1e15, species=H),
+    F.FixedConcentrationBC(subdomain=left, value=1, species=H),
     F.FixedConcentrationBC(subdomain=right, value=0, species=H),
 ]
 
@@ -169,7 +185,7 @@ hydrogen_problem.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-pyvista.start_xvfb()
+# pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 from dolfinx import plot
@@ -194,7 +210,11 @@ else:
     figure = u_plotter.screenshot("temperature.png")
 ```
 
-To run a transient heat transfer simulation (with no hydrogen transport coupling), we must add the density $\rho$ and heat capacity $C_p$:
+The governing equation for transient heat transfer is:
+
+$$\rho \ C_p \frac{\partial T}{\partial t} = \nabla \cdot (\lambda \ \nabla T) + \dot{Q} $$
+
+Therefore, to run a transient heat transfer simulation (with no hydrogen transport coupling), we must add the density $\rho$ and heat capacity $C_p$:
 
 ```{code-cell} ipython3
 mat = F.Material(D_0=4.1e-7, E_D=0.39, thermal_conductivity=thermal_cond_function, density=20, heat_capacity=50)
@@ -216,7 +236,7 @@ heat_transfer_model.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-pyvista.start_xvfb()
+# pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 T = heat_transfer_model.u
@@ -309,10 +329,14 @@ heat_transfer_model.settings = F.Settings(
 )
 ```
 
-Finally, we define and solve a new `problem` using `CoupledTransientHeatTransferHydrogenTransport`:
+Finally, we define and solve a new problem using the `CoupledTransientHeatTransferHydrogenTransport` class:
 
 ```{code-cell} ipython3
-problem = F.CoupledTransientHeatTransferHydrogenTransport(heat_problem=heat_transfer_model, hydrogen_problem=hydrogen_problem)
+problem = F.CoupledTransientHeatTransferHydrogenTransport(
+    heat_problem=heat_transfer_model,
+    hydrogen_problem=hydrogen_problem
+    )
+    
 problem.initialise()
 problem.run()
 ```

@@ -19,15 +19,15 @@ Definition of a temperature field or problem is essential for hydrogen transport
 This tutorial will go over the basics of defining the temperature in a FESTIM simulation.
 
 Objectives:
-* Learn how to define fixed temperature values
+* Learn how to define homogeneous temperature
 * Learn how to define space and time dependent temperature functions
-* Learn how to define temperature as a Dolfinx expression
+* Learn how to define temperature as a `dolfinx.fem.Function`
 
 +++
 
 ## Defining temperatures in FESTIM ##
 
-The simplest way to define temperature is as a fixed value:
+The simplest way to define temperature is as a homogeneous value:
 
 ```{code-cell} ipython3
 import festim as F
@@ -36,7 +36,7 @@ my_model = F.HydrogenTransportProblem()
 my_model.temperature = 300  # K 
 ```
 
-To define a temperature function we can use ` lambda ` functions, such as this space-dependent function:
+To define a space-dependent temperature function we can use ` lambda ` functions:
 
 $$ 
 
@@ -53,7 +53,7 @@ my_model = F.HydrogenTransportProblem()
 my_model.temperature = lambda x: T0 * ufl.exp(-x)  # K
 ```
 
-For a time dependent function such as:
+For a time-dependent function such as:
 
 $$
 
@@ -83,7 +83,71 @@ When defining custom functions for values, only the arguments x, t and T can be 
 
 +++
 
-## Defining temperature as a FEniCS expression or function ##
+We can assign a unit cube mesh and run the simulation to see how a spatially-dependent temperature field affects the transport:
+
+```{code-cell} ipython3
+from dolfinx.mesh import create_unit_cube
+from mpi4py import MPI
+import ufl
+import festim as F
+import numpy as np
+
+mesh = F.Mesh(create_unit_cube(MPI.COMM_WORLD, 10, 10, 10))
+my_model.mesh = mesh
+
+mat = F.Material(D_0=1, E_D=0)
+
+volume = F.VolumeSubdomain(id=1, material=mat)
+top_surface = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[2], 1.0))
+bottom_surface = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[2], 0.0))
+my_model.subdomains = [top_surface, bottom_surface, volume]
+
+H = F.Species("H")
+my_model.species = [H]
+
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=top_surface, value=1.0, species=H),
+    F.FixedConcentrationBC(subdomain=bottom_surface, value=0.0, species=H),
+]
+
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
+
+my_model.initialise()
+my_model.run()
+
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+from dolfinx import plot
+import pyvista
+
+# pyvista.start_xvfb()
+pyvista.set_jupyter_backend("html")
+
+c = H.solution
+
+topology, cell_types, geometry = plot.vtk_mesh(c.function_space)
+u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+u_grid.point_data["c"] = c.x.array.real
+u_grid.set_active_scalars("c")
+u_plotter = pyvista.Plotter()
+u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
+u_plotter.add_mesh(u_grid, style="wireframe", color="white", opacity=0.2)
+
+contours = u_grid.contour(9)
+# u_plotter.add_mesh(contours, color="white")
+
+u_plotter.view_xy()
+
+if not pyvista.OFF_SCREEN:
+    u_plotter.show()
+else:
+    figure = u_plotter.screenshot("concentration.png")
+```
+
+## Defining temperature as a FEniCS function ##
 
 Users can define temperature as a Dolfinx `Function`, which can be helpful when implementing multiphysics simulations (such as in OpenFOAM or OpenMC). For example, we want to have temperature function defined as:
 
@@ -110,8 +174,11 @@ el = element("Lagrange", mesh_fenics.topology.cell_name(), 2)
 V = dolfinx.fem.functionspace(my_model.mesh.mesh, el)
 
 temperature = dolfinx.fem.Function(V)
-x = ufl.SpatialCoordinate(temperature.function_space.mesh)[0]
-y = ufl.SpatialCoordinate(temperature.function_space.mesh)[1]
+
+coords = ufl.SpatialCoordinate(temperature.function_space.mesh)
+x = coords[0]
+y = coords[1]
+
 interpolation = temperature.function_space.element.interpolation_points()
 expr = dolfinx.fem.Expression(300*ufl.exp(-((x-0.5)**2 + (y-0.5)**2)), interpolation)
                                 
@@ -129,7 +196,7 @@ function_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 function_grid.point_data["T"] = temperature.x.array.real
 function_grid.set_active_scalars("T")
 
-pyvista.start_xvfb()
+# pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()

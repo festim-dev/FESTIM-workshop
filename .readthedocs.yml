@@ -15,7 +15,7 @@ build:
     build:
       html:
         # this may need the --execute flag to run the notebooks
-        - cd book && jupyter book build --html
+        - cd book && jupyter-book build --html
         - cp -r book/_build/html/* $READTHEDOCS_OUTPUT/html/
 
 formats: []

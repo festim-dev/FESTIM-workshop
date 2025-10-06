@@ -123,7 +123,7 @@ my_model.run()
 from dolfinx import plot
 import pyvista
 
-# pyvista.start_xvfb()
+pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 c = H.solution
@@ -137,7 +137,6 @@ u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
 u_plotter.add_mesh(u_grid, style="wireframe", color="white", opacity=0.2)
 
 contours = u_grid.contour(9)
-# u_plotter.add_mesh(contours, color="white")
 
 u_plotter.view_xy()
 
@@ -196,7 +195,7 @@ function_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 function_grid.point_data["T"] = temperature.x.array.real
 function_grid.set_active_scalars("T")
 
-# pyvista.start_xvfb()
+pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()

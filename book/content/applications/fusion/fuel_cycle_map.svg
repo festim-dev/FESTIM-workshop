@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 595.28 841.89">
+  <!-- Generator: Adobe Illustrator 29.8.2, SVG Export Plug-In . SVG Version: 2.1.1 Build 3)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke: #1a4848;
+      }
+
+      .st0, .st1, .st2, .st3, .st4, .st5 {
+        stroke-miterlimit: 10;
+      }
+
+      .st0, .st5 {
+        fill: #f27fa9;
+      }
+
+      .st1, .st6 {
+        fill: #231f20;
+      }
+
+      .st1, .st3, .st4, .st5 {
+        stroke: #231f20;
+        stroke-linecap: round;
+      }
+
+      .st7 {
+        font-size: 16px;
+      }
+
+      .st7, .st8, .st6, .st9 {
+        isolation: isolate;
+      }
+
+      .st7, .st6, .st9 {
+        font-family: ArialMT, Arial;
+      }
+
+      .st7, .st9 {
+        fill: #082222;
+      }
+
+      .st6, .st9 {
+        font-size: 10px;
+      }
+
+      .st2 {
+        stroke: #082222;
+      }
+
+      .st2, .st4 {
+        fill: #39b54a;
+      }
+
+      .st3 {
+        fill: none;
+      }
+    </style>
+  </defs>
+  <a xlink:href="https://festim-workshop.readthedocs.io/en/festim2/intro.html">
+    <g>
+      <g>
+        <rect class="st0" x="274.06" y="363.44" width="150.26" height="68.78"/>
+        <a xlink:href="https://festim-workshop.readthedocs.io/en/festim2/intro.html">
+          <g class="st8">
+            <g class="st8">
+              <text class="st7" transform="translate(321.79 405.45)"><tspan x="0" y="0">Plasma</tspan></text>
+            </g>
+          </g>
+        </a>
+      </g>
+      <a xlink:href="https://github.com/kaelyndunnell/Fusion-TES-Modeling">
+        <g>
+          <rect class="st2" x="325.05" y="525.72" width="48.28" height="29.89"/>
+          <g class="st8">
+            <g class="st8">
+              <text class="st6" transform="translate(341.78 544.21)"><tspan x="0" y="0">TES</tspan></text>
+            </g>
+          </g>
+        </g>
+      </a>
+      <a xlink:href="https://iopscience.iop.org/article/10.1088/1741-4326/acf3fc">
+        <g>
+          <rect class="st2" x="325.05" y="463.21" width="48.28" height="29.89"/>
+          <g class="st8">
+            <g class="st8">
+              <text class="st9" transform="translate(333.61 481.7)"><tspan x="0" y="0">Blanket</tspan></text>
+            </g>
+          </g>
+        </g>
+      </a>
+      <path class="st4" d="M352.5,460.38"/>
+      <path class="st4" d="M351.15,432.07"/>
+      <line class="st3" x1="349.19" y1="493.1" x2="349.19" y2="525.72"/>
+      <line class="st3" x1="349.19" y1="430.59" x2="349.19" y2="463.21"/>
+      <a xlink:href="https://github.com/kaelyndunnell/Fusion-TES-Modeling">
+        <g>
+          <rect class="st2" x="471.58" y="373.89" width="61.28" height="47.88"/>
+          <g class="st8">
+            <g class="st8">
+              <text class="st6" transform="translate(485.82 395.02)"><tspan x="0" y="0">Isotope</tspan><tspan x="-6.95" y="12">separation</tspan></text>
+            </g>
+          </g>
+        </g>
+      </a>
+    </g>
+  </a>
+  <line class="st1" x1="374.46" y1="540.52" x2="503.26" y2="540.05"/>
+  <line class="st1" x1="503.26" y1="540.05" x2="502.22" y2="421.76"/>
+  <line class="st5" x1="470.48" y1="399.41" x2="423.86" y2="399.41"/>
+</svg>

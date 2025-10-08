@@ -1,7 +1,7 @@
 version: 2
 
-conda:
-  environment: environment.yml
+# conda:
+#   environment: environment.yml
 
 build:
   os: ubuntu-22.04
@@ -11,11 +11,10 @@ build:
     - libglx-mesa0
     - libgl1
     - xvfb
-  jobs:
-    build:
-      html:
-        # this may need the --execute flag to run the notebooks
-        - cd book && jupyter-book build --html
-        - cp -r book/_build/html/* $READTHEDOCS_OUTPUT/html/
+  commands:
+    - conda env create --name festim-workshop-jupyter2 --file environment.yml
+    - conda activate festim-workshop-jupyter2
 
-formats: []
+    - cd book
+    - python -m jupyter_book build --html .
+    - cp -r _build/html/* $READTHEDOCS_OUTPUT/html/

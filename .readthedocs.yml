@@ -13,6 +13,7 @@ build:
     - xvfb
   commands:
     - conda env create --name festim-workshop-jupyter2 --file environment.yml
+    - conda init
     - conda activate festim-workshop-jupyter2
 
     - cd book

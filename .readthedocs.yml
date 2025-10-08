@@ -16,7 +16,8 @@ build:
   commands:
     - conda env create --name festim-workshop-jupyter2 --file environment.yml
     - cd book
-    - conda run -n festim-workshop-jupyter2 python -m jupyter book start
-    - conda run -n festim-workshop-jupyter2 python -m jupyter book build --html --all
+    # - conda run -n festim-workshop-jupyter2 python -m jupyter book start
+    - conda run -n festim-workshop-jupyter2 python -m jupyter book build --html
+    - !ls
     - mkdir -p $READTHEDOCS_OUTPUT/html
     - cp -r _build/html/* $READTHEDOCS_OUTPUT/html/

@@ -21,6 +21,11 @@ parts:
     - file: content/material/material_htm
     - file: content/material/material_advanced
 
+  - caption: Boundary Conditions
+    chapters: 
+    - file: content/boundary_conditions/concentration
+    - file: content/boundary_conditions/fluxes
+
   - caption: Species & Reactions
     chapters:
     - file: content/species_reactions/species

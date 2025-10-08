@@ -8,11 +8,13 @@ build:
   tools:
     python: "miniconda-latest"
   apt_packages:
+    - nodejs
+    - npm
     - libglx-mesa0
     - libgl1
     - xvfb
   commands:
     - conda env create --name festim-workshop-jupyter2 --file environment.yml
-    - conda run -n festim-workshop-jupyter2 python -m jupyter_book build --html book
+    - conda run -n festim-workshop-jupyter2 python -m jupyter-book build --html book
     - mkdir -p $READTHEDOCS_OUTPUT/html
     - cp -r book/_build/html/* $READTHEDOCS_OUTPUT/html/

@@ -18,6 +18,6 @@ build:
     - cd book
     # - conda run -n festim-workshop-jupyter2 python -m jupyter book start
     - conda run -n festim-workshop-jupyter2 python -m jupyter book build --html
-    - !ls
+    - ls -la
     - mkdir -p $READTHEDOCS_OUTPUT/html
     - cp -r _build/html/* $READTHEDOCS_OUTPUT/html/

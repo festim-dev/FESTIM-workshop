@@ -15,6 +15,6 @@ build:
     - xvfb
   commands:
     - conda env create --name festim-workshop-jupyter2 --file environment.yml
-    - conda run -n festim-workshop-jupyter2 python -m jupyter_book build --html book
+    - conda run -n festim-workshop-jupyter2 python -m jupyter book build --html
     - mkdir -p $READTHEDOCS_OUTPUT/html
     - cp -r book/_build/html/* $READTHEDOCS_OUTPUT/html/

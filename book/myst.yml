@@ -8,7 +8,7 @@ project:
     binder:
       repo: festim-dev/FESTIM-workshop
       provider: github
-      url: https://mybinder.org
+      url: https://github.com/festim-dev/FESTIM-workshop
       ref: festim2
   toc:
     - file: intro.md

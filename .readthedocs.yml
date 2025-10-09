@@ -7,18 +7,14 @@ build:
   os: ubuntu-22.04
   tools:
     python: "miniconda-latest"
+    nodejs: "20"
   apt_packages:
-    - nodejs
-    - npm
     - libglx-mesa0
     - libgl1
     - xvfb
   commands:
+    - npm install -g mystmd
     - conda env create --name festim-workshop-jupyter2 --file environment.yml
-    # - cd book
-    # - conda run -n festim-workshop-jupyter2 python -m jupyter book start
-    - conda run -n festim-workshop-jupyter2 bash -c "cd book && HOST="127.0.0.1" python -m jupyter book build --html"
-    - ls
     - mkdir -p $READTHEDOCS_OUTPUT/html
-    - ls
-    - cp -r book/_build/html/* $READTHEDOCS_OUTPUT/html/
+    - conda run -n festim-workshop-jupyter2 bash -c "cd book/ && BASE_URL="/$READTHEDOCS_LANGUAGE/$READTHEDOCS_VERSION" myst build --html"
+    - cp -a book/_build/html/. "$READTHEDOCS_OUTPUT/html" && rm -r docs/_build

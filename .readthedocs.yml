@@ -16,5 +16,5 @@ build:
     - npm install -g mystmd
     - conda env create --name festim-workshop-jupyter2 --file environment.yml
     - mkdir -p $READTHEDOCS_OUTPUT/html
-    - conda run -n festim-workshop-jupyter2 bash -c "cd book/ && BASE_URL="/$READTHEDOCS_LANGUAGE/$READTHEDOCS_VERSION" myst build --html"
+    - conda run -n festim-workshop-jupyter2 bash -c "cd book/ && BASE_URL="/$READTHEDOCS_LANGUAGE/$READTHEDOCS_VERSION" myst build --html --keep-host"
     - cp -a book/_build/html/. "$READTHEDOCS_OUTPUT/html" && rm -r book/_build

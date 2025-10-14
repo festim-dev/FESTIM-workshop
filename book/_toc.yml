@@ -25,6 +25,8 @@ parts:
     chapters: 
     - file: content/boundary_conditions/concentration
     - file: content/boundary_conditions/fluxes
+    - file: content/boundary_conditions/surface_reactions
+    - file: content/boundary_conditions/heat_transfer
 
   - caption: Species & Reactions
     chapters:

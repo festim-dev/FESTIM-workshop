@@ -1,6 +1,6 @@
 version: 1
 project:
-  title: FESTIM tutorial
+  title: FESTIM workshop
   authors:
     - name: The FESTIM community
   github: festim-dev/FESTIM-workshop
@@ -8,7 +8,7 @@ project:
     binder:
       repo: festim-dev/FESTIM-workshop
       provider: github
-      url: https://github.com/festim-dev/FESTIM-workshop
+      url: https://mybinder.org
       ref: festim2
   toc:
     - file: intro.md

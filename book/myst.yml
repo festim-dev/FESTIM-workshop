@@ -1,0 +1,49 @@
+version: 1
+project:
+  title: FESTIM workshop
+  authors:
+    - name: The FESTIM community
+  github: festim-dev/FESTIM-workshop
+  thebe:
+    binder:
+      repo: festim-dev/FESTIM-workshop
+      provider: github
+      url: https://mybinder.org
+      ref: festim2
+  toc:
+    - file: intro.md
+    - title: Getting started
+      children:
+        - file: content/applications/task01.ipynb
+    - title: Meshing
+      children:
+        - file: content/meshes/mesh_festim.ipynb
+        - file: content/meshes/mesh_fenics.ipynb
+        - file: content/meshes/mesh_gmsh.ipynb
+        - file: content/meshes/mesh_salome.ipynb
+    - title: Materials
+      children:
+        - file: content/material/material_basics.md
+        - file: content/material/material_htm.md
+        - file: content/material/material_advanced.md
+    - title: Species & Reactions
+      children:
+        - file: content/species_reactions/species.ipynb
+        - file: content/species_reactions/reactions.ipynb
+        - file: content/species_reactions/surface_reactions.ipynb
+    - title: Applications
+      children:
+        - file: content/applications/task02.ipynb
+        - file: content/applications/task03.ipynb
+        - file: content/applications/task04.ipynb
+        - file: content/applications/task07.ipynb
+        - file: content/applications/task08.ipynb
+        - file: content/applications/task06.ipynb
+        - file: content/applications/task10.ipynb
+        - file: content/applications/microstructure.md
+site:
+  options:
+    logo: images/logo_light.png
+    logo_dark: images/logo_dark.svg
+    folders: true
+  template: "https://github.com/myst-templates/book-theme/archive/de4c1e9c09c6cd12fc529c1f22e8abf8e7f35381.zip"

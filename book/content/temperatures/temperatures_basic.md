@@ -77,9 +77,9 @@ $$
 my_model.temperature = lambda x,t: T0 * ufl.cos(x[0])*ufl.sin(t) + 5*x[1] - 2*x[2]
 ```
 
-<div class="alert alert-block alert-info">
-When defining custom functions for values, only the arguments x, t and T can be defined. Spatial coordinates can be referred to by their indices, such as x[0], x[1], and x[2], regardless of the coordinate system used. Time dependence must use t, and T for temperature dependence.
-</div>
+```{note}
+When defining custom functions for values, only the arguments x, t and T can be defined. Spatial coordinates can be referred to by their indices, such as `x[0]`, `x[1]`, and `x[2]`, regardless of the coordinate system used. Time dependence must use t, and T for temperature dependence.
+```
 
 +++
 

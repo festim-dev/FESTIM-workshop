@@ -54,7 +54,7 @@ import festim as F
 heat_transfer_model = F.HeatTransferProblem()
 ```
 
-We first define a thermal conductivity function $ \lambda $ and assign it to our material:  
+We first define a thermal conductivity function $ \lambda $ and assign it to our material:
 
 ```{code-cell} ipython3
 def thermal_cond_function(T):

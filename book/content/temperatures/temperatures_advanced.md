@@ -29,6 +29,8 @@ Consider the following 2D heat transfer problem, where we want to find the tempe
 
 $$  \nabla \cdot (\lambda \ \nabla T) + \dot{Q} = 0 $$
 
+where $\lambda$ is the thermal conductivity $(\text{W/mK})$ and $\dot{{Q}}$ is the heat transfer rate $(\text{W})$. 
+
 Additionally, we define the following boundary conditions in our problem:
 
 **Left boundary** ($x=0$): Fixed temperature  

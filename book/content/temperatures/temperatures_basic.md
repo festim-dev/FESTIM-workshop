@@ -38,11 +38,9 @@ my_model.temperature = 300  # K
 
 To define a space-dependent temperature function we can use ` lambda ` functions:
 
-$$ 
-
-T(x) = T_0 e^{-x}
-
-$$
+\begin{equation}
+    T(x) = T_0 \exp(-x)
+\end{equation}
 
 ```{code-cell} ipython3
 import festim as F
@@ -50,14 +48,14 @@ import ufl
 
 T0 = 300
 my_model = F.HydrogenTransportProblem()
-my_model.temperature = lambda x: T0 * ufl.exp(-x)  # K
+my_model.temperature = lambda x: T0 * ufl.exp(-x[0])  
 ```
 
 For a time-dependent function such as:
 
 $$
 
-T(t) = T_0 sin(t)
+T(t) = T_0 \sin(t)
 
 $$
 
@@ -65,16 +63,16 @@ $$
 my_model.temperature = lambda t: T0 * ufl.sin(t)
 ```
 
-For a function in $ x, y, z, t $ space:
+For a function in $ x, y, z $ space:
 
 $$
 
-T(x,y,z,t) = T_0 cos(x)sin(t) + 5y - 2z
+T(x,y,z) = T_0 [\cos(x)\sin(y) - 2z]
 
 $$
 
 ```{code-cell} ipython3
-my_model.temperature = lambda x,t: T0 * ufl.cos(x[0])*ufl.sin(t) + 5*x[1] - 2*x[2]
+my_model.temperature = lambda x: T0 * (ufl.cos(x[0])*ufl.sin(x[1]) - 2*x[2])
 ```
 
 ```{note}
@@ -121,6 +119,36 @@ my_model.run()
 
 from dolfinx import plot
 import pyvista
+from basix.ufl import element
+import dolfinx
+
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("html")
+
+el = element("Lagrange", mesh.mesh.topology.cell_name(), 3)
+V = dolfinx.fem.functionspace(mesh.mesh, el)
+temperature = dolfinx.fem.Function(V)
+
+coords = ufl.SpatialCoordinate(temperature.function_space.mesh)
+x = coords[0]
+y = coords[1]
+z = coords[2]
+
+interpolation = temperature.function_space.element.interpolation_points()
+expr = dolfinx.fem.Expression(T0 * ufl.cos(x)*ufl.sin(y) - 2*z, interpolation)                    
+temperature.interpolate(expr)
+
+u_plotter = pyvista.Plotter()
+topology, cell_types, geometry = plot.vtk_mesh(V)
+function_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+function_grid.point_data["T"] = temperature.x.array.real
+function_grid.set_active_scalars("T")
+u_plotter.add_mesh(function_grid, cmap="inferno", show_edges=False, opacity=1)
+
+if not pyvista.OFF_SCREEN:
+    u_plotter.show()
+else:
+    figure = u_plotter.screenshot("temperature.png")
 
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
@@ -132,10 +160,8 @@ u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 u_grid.point_data["c"] = c.x.array.real
 u_grid.set_active_scalars("c")
 u_plotter = pyvista.Plotter()
-u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
-u_plotter.add_mesh(u_grid, style="wireframe", color="white", opacity=0.2)
 
-u_plotter.view_xy()
+u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
 
 if not pyvista.OFF_SCREEN:
     u_plotter.show()
@@ -145,11 +171,13 @@ else:
 
 ## Defining temperature as a FEniCS function ##
 
-Users can define temperature as a Dolfinx `Function`, which can be helpful when implementing multiphysics simulations (such as in OpenFOAM or OpenMC). For example, we want to have temperature function defined as:
+Users can pass a dolfinx `Function` to the temperature attribute, which can be helpful when using results from other programs (ie. __[converting an OpenFOAM output into a passable dolfinx function](https://github.com/festim-dev/foam2dolfinx/tree/main)__).
+
+For example, we want to have a temperature function defined as:
 
 $$
 
-T(x,y) = 300 e^{-((x-0.5)^2 + (y-0.5)^2)}
+T(x,y) = 300 \exp{-[(x-0.5)^2 + (y-0.5)^2]}
 
 $$
 

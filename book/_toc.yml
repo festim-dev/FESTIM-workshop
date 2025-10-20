@@ -27,6 +27,10 @@ parts:
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
 
+  - caption: Settings
+    chapters:
+    - file: content/settings/settings
+
   - caption: Applications
     chapters:
     - file: content/applications/task02

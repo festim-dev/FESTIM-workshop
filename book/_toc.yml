@@ -26,11 +26,15 @@ parts:
     - file: content/species_reactions/species
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
-
   - caption: Temperature
     chapters:
     - file: content/temperatures/temperatures_basic
     - file: content/temperatures/temperatures_advanced
+
+    - caption: Initial Conditions
+    chapters:
+    - file: content/initial_conditions/concentration
+    - file: content/initial_conditions/temperature
     
   - caption: Applications
     chapters:

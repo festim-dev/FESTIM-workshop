@@ -27,6 +27,11 @@ parts:
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
 
+  - caption: Temperature
+    chapters:
+    - file: content/temperatures/temperatures_basic
+    - file: content/temperatures/temperatures_advanced
+    
   - caption: Applications
     chapters:
     - file: content/applications/task02

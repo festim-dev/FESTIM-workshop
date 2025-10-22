@@ -14,7 +14,7 @@ kernelspec:
 
 # Concentration #
 
-Initial conditions are an important part of transient simulations for both hydrogen transport and heat-transfer problems. FESTIM defaults to zero values for initial conditions, but can be set using FESTIM's `InitialConditionBase`.
+Initial conditions are an important part of transient simulations for both hydrogen transport and heat-transfer problems. FESTIM defaults to zero values for initial conditions, but can be set using FESTIM's `InitialConditionBase`. 
 
 This tutorial discusses how to set initial conditions for particle concentrations.
 

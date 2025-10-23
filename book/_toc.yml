@@ -4,49 +4,49 @@ root: intro
 parts:
   - caption: Getting started
     chapters:
-      - file: content/applications/general/simple
+    - file: content/applications/general/simple
 
   - caption: Meshing
     chapters:
-      - file: content/meshes/mesh_festim
-      - file: content/meshes/mesh_fenics
-      - file: content/meshes/mesh_gmsh
-      - file: content/meshes/mesh_salome
+    - file: content/meshes/mesh_festim
+    - file: content/meshes/mesh_fenics
+    - file: content/meshes/mesh_gmsh
+    - file: content/meshes/mesh_salome
 
   - caption: Materials
     chapters:
-      - file: content/material/material_basics
-      - file: content/material/material_htm
-      - file: content/material/material_advanced
+    - file: content/material/material_basics
+    - file: content/material/material_htm
+    - file: content/material/material_advanced
 
   - caption: Species & Reactions
     chapters:
-      - file: content/species_reactions/species
-      - file: content/species_reactions/reactions
-      - file: content/species_reactions/surface_reactions
+    - file: content/species_reactions/species
+    - file: content/species_reactions/reactions
+    - file: content/species_reactions/surface_reactions
 
   - caption: Temperature
     chapters:
-      - file: content/temperatures/temperatures_basic
-      - file: content/temperatures/temperatures_advanced
+    - file: content/temperatures/temperatures_basic
+    - file: content/temperatures/temperatures_advanced
 
   - caption: Applications
     chapters:
-        - file: content/applications/general/index
-      # General group
-          sections:
-            - file: content/applications/general/simple_permeation
-            - file: content/applications/general/permeation_barrier
-            - file: content/applications/general/heat_transfer
-            - file: content/applications/general/advection
-            - file: content/applications/general/monoblock
-      # Material science group
-        - file: content/applications/material_science/index
-          sections:
-            - file: content/applications/material_science/fittings_tds
-            - file: content/applications/material_science/microstructure
-        - file: content/applications/fusion/index
-      # Fusion group with nested sections
-          sections:
-            - file: content/applications/fusion/plasma
-            - file: content/applications/fusion/fuel_cycle/fuel_cycle_map
+      - file: content/applications/general/index
+    # General group
+        sections:
+          - file: content/applications/general/simple_permeation
+          - file: content/applications/general/permeation_barrier
+          - file: content/applications/general/heat_transfer
+          - file: content/applications/general/advection
+          - file: content/applications/general/monoblock
+    # Material science group
+      - file: content/applications/material_science/index
+        sections:
+          - file: content/applications/material_science/fittings_tds
+          - file: content/applications/material_science/microstructure
+      - file: content/applications/fusion/index
+    # Fusion group with nested sections
+        sections:
+          - file: content/applications/fusion/plasma
+          - file: content/applications/fusion/fuel_cycle/fuel_cycle_map

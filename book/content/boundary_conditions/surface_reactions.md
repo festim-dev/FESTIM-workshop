@@ -145,6 +145,10 @@ def my_custom_recombination_flux(c, T):
 We can also use `F.SurfaceReactionBC` to define recombination fluxes, which we do in the next section for more complex isotopic exchanges.
 ```
 
++++
+
+Let's work through a 1D example to illustrate the effect of isotopic exchange. We also define a fixed concentration on the left surface:
+
 ```{code-cell} ipython3
 import numpy as np
 
@@ -231,6 +235,7 @@ Formation of $\mathrm{H}$ at the right boundary induces back-diffusion toward th
 even though none existed initially. 
 
 The boundary conditions for this scenario are:
+
 $$
 c_D(x=0) = 1, \qquad c_H(x=0) = 0, \qquad P_{H2}(x=1) = \text{1000 Pa}
 $$

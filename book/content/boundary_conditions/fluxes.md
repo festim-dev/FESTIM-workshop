@@ -5,7 +5,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.17.3
+    jupytext_version: 1.18.1
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -64,13 +64,15 @@ my_flux_bc = ParticleFluxBC(
 
 +++
 
-Users may also need to impose a flux boundary condition in multi-species problems where the flux depends on the concentrations of multiple species. 
+Users may also need to impose a flux boundary condition which depends on the concentrations of multiple species. 
 
-Consider the following example with three species, A, B, and C, where the particle flux boundary condition depends on each species' concentration:
+Consider the following 1D example with three species, $\mathrm{A}$, $\mathrm{B}$, and $\mathrm{C}$, with recombination fluxes $\phi_{AB}$ and $\phi_{ABC}$ that depend on the concentrations $\mathrm{c}$:
 
-$$ J(c_A, c_B, c_C) = 2c_A + 3c_b + 4c_C $$
+$$ \phi_{AB} = -c_A c_B $$
 
-We must first define each species using `Species` and then create the dictionary to be passed into `species_dependent_value`. The dictionary maps each argument in the custom flux function to the corresponding defined species:
+$$ \phi_{ABC}= -10 c_A c_B c_C$$
+
+We must first define each species using `Species` and then create the dictionary to be passed into `species_dependent_value`. The dictionary maps each argument in the custom flux function to the corresponding defined species. We also define our custom functions for the fluxes:
 
 ```{code-cell} ipython3
 import festim as F
@@ -80,59 +82,88 @@ my_model = F.HydrogenTransportProblem()
 A = F.Species(name="A")
 B = F.Species(name="B")
 C = F.Species(name="C")
-my_model.species = [A, B, C]
 
-my_custom_value = lambda c_A, c_B, c_C: 2*c_A + 3*c_B + 4*c_C
+my_model.species = [A, B, C]
 species_dependent_value = {"c_A": A, "c_B": B, "c_C": C}
+
+recombination_flux_AB = lambda c_A, c_B, c_C: -c_A*c_B
+recombination_flux_ABC = lambda c_A, c_B, c_C: -10*c_A*c_B*c_C
 ```
 
-Now, we create our 1D mesh and assign boundary conditions (flux BC on the left). The boundary condition `ParticleFluxBC` must be added for each species:
+Now, we create our 1D mesh and assign boundary conditions (recombination on the right, fixed concentration on the left).
+
+The boundary condition `ParticleFluxBC` must be added for each species:
 
 ```{code-cell} ipython3
 import numpy as np
 
 my_model.mesh = F.Mesh1D(np.linspace(0, 1, 100))
 
-D = 1
+D = 1e-2
 mat = F.Material(
-    D_0={A: D, B: D, C: D},
+    D_0={A: 8*D, B: 7*D, C: D},
     E_D={A: 0.01, B: 0.01, C: 0.01},
 )
 
 bulk = F.VolumeSubdomain1D(id=1, borders=[0, 1], material=mat)
 left = F.SurfaceSubdomain1D(id=1, x=0)
 right = F.SurfaceSubdomain1D(id=2, x=1)
-
 my_model.subdomains = [bulk, left, right]
+
 my_model.boundary_conditions = [
     F.ParticleFluxBC(
-        subdomain=left,
-        value=my_custom_value,
+        subdomain=right,
+        value=recombination_flux_AB,
         species=A,
         species_dependent_value=species_dependent_value,
     ),
     F.ParticleFluxBC(
-        subdomain=left,
-        value=my_custom_value,
+        subdomain=right,
+        value=recombination_flux_AB,
         species=B,
         species_dependent_value=species_dependent_value,
     ),
     F.ParticleFluxBC(
-        subdomain=left,
-        value=my_custom_value,
+        subdomain=right,
+        value=recombination_flux_ABC,
+        species=A,
+        species_dependent_value=species_dependent_value,
+    ),
+    F.ParticleFluxBC(
+        subdomain=right,
+        value=recombination_flux_ABC,
+        species=B,
+        species_dependent_value=species_dependent_value,
+    ),
+    F.ParticleFluxBC(
+        subdomain=right,
+        value=recombination_flux_ABC,
         species=C,
         species_dependent_value=species_dependent_value,
     ),
+    F.FixedConcentrationBC(subdomain=left,value=1,species=A),
+    F.FixedConcentrationBC(subdomain=left,value=1,species=B),
+    F.FixedConcentrationBC(subdomain=left,value=1,species=C),     
+]
+
+right_flux_A = F.SurfaceFlux(field=A,surface=right)
+right_flux_B = F.SurfaceFlux(field=B,surface=right)
+right_flux_C = F.SurfaceFlux(field=C,surface=right)
+
+my_model.exports = [
+    right_flux_A,
+    right_flux_B,
+    right_flux_C,
 ]
 ```
 
 ```{note}
-The diffusivity pre-factor `D_0` and activation energy `E_d` must be defined for each species in `Material`. Learn more about defining multi-species material properties __[here](https://festim-workshop.readthedocs.io/en/festim2/content/material/material_advanced.html#defining-species-dependent-material-properties)__. 
+The diffusivity pre-factor `D_0` and activation energy `E_D` must be defined for each species in `Material`. Learn more about defining multi-species material properties __[here](https://festim-workshop.readthedocs.io/en/festim2/content/material/material_advanced.html#defining-species-dependent-material-properties)__. 
 ```
 
 +++
 
-Finally, let's solve and plot the solution for each species:
+Finally, let's solve and plot the profile for each species:
 
 ```{code-cell} ipython3
 my_model.temperature = 300
@@ -160,3 +191,5 @@ plt.ylabel('Concentration')
 plt.legend()
 plt.show()
 ```
+
+We see the higher recombination flux for $\mathrm{ABC}$ decreases the concentration of $\mathrm{C}$ throughout the material.

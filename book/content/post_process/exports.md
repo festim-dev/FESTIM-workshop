@@ -14,7 +14,7 @@ kernelspec:
 
 # Field exports #
 
-FESTIM has classes to creae XDMF and VTX exports, which can then be viewed in Paraview (see our intro to Paraview tutorial __[here](link)__!
+FESTIM has classes to creae XDMF and VTX exports, which can then be viewed in Paraview (see our intro to Paraview tutorial here)!
 
 Objectives:
 * Writing XDMF files

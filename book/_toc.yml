@@ -40,13 +40,13 @@ parts:
           - file: content/applications/general/heat_transfer
           - file: content/applications/general/advection
           - file: content/applications/general/monoblock
-    # Material science group
       - file: content/applications/material_science/index
         sections:
           - file: content/applications/material_science/fittings_tds
           - file: content/applications/material_science/microstructure
       - file: content/applications/fusion/index
-    # Fusion group with nested sections
         sections:
-          - file: content/applications/fusion/plasma
+          - file: content/applications/fusion/pfc
           - file: content/applications/fusion/fuel_cycle/fuel_cycle_map
+          - file: content/applications/fusion/fuel_cycle/pav
+          - file: content/applications/fusion/fuel_cycle/heat_exchanger

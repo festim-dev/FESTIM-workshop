@@ -12,18 +12,18 @@ kernelspec:
   name: python3
 ---
 
-# Field exports #
+# Exporting fields #
 
-FESTIM has classes to creae XDMF and VTX exports, which can then be viewed in Paraview (see our intro to Paraview tutorial here)!
+FESTIM has convenience classes that allow users to create XDMF and VTX exports, which can then be viewed in Paraview.
 
 Objectives:
-* Writing XDMF files
-* Writing VTX files
-* Exporting fields in a discontinuous problem
+* Learn how to write XDMF files for field exports
+* Writing VTX files for species and temperature fields
+* Exporting fields in a discontinuous FESTIM simulation
 
 +++
 
-## Writing XDMF files ##
+## Learn how to write XDMF files for field exports ##
 
 Users can export functions to XDMF files using the `XDMFExport` class, which requires a `filename` and `field`:
 
@@ -34,7 +34,37 @@ H = F.Species("H")
 my_export = F.XDMFExport(filename="my_export.xdmf", field=H)
 ```
 
-## Writing VTK files ##
+To export this in a FESTIM simulation, add the export to your problem's `export` attribute:
+
+```{code-cell} ipython3
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+
+mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
+my_model = F.HydrogenTransportProblem()
+my_model.mesh = F.Mesh(mesh)
+mat = F.Material(D_0=1, E_D=0)
+vol = F.VolumeSubdomain(id=1, material=mat)
+
+my_model.subdomains = [vol]
+my_model.species = [H]
+
+my_model.temperature = 400
+my_model.settings = F.Settings(atol=1e-10,rtol=1e-10,transient=False)
+
+my_model.exports = [
+    my_export
+]
+
+my_model.initialise()
+my_model.run()
+```
+
+This will produce the corresponding export files (`my_export.xdmf` and `my_export.h5`).
+
++++
+
+## Writing VTX files for species and temperature fields ##
 
 Users can also export temperature and concentration fields to VTX files using `VTXTemperatureExport` and `VTKSpeciesExport`, respectively. For both classes, we need to provide the `filename` for the output and an optional list of `times` (exports all times otherwise, defaults to `None`).
 
@@ -49,7 +79,7 @@ my_model.exports = [
 ]
 ```
 
-Exporting the concentration also requires us to define the `field` to export, which `subdomain` to export on (defaults to all if none is provided), and the option to turn on `checkpoints` (exports to a checkpoint file using __[adios4dolfinx](https://github.com/jorgensd/adios4dolfinx)__) (defaults to `False`):
+Exporting the concentration also requires us to define the `field` to export, which `subdomain` to export on (defaults to all if none is provided), and the option to turn on `checkpoints` (exports to a checkpoint file using __[adios4dolfinx](https://github.com/jorgensd/adios4dolfinx)__, defaults to `False`):
 
 ```{code-cell} ipython3
 H = F.Species("H")
@@ -60,7 +90,13 @@ my_model.exports = [
 ]
 ```
 
+These `.bp` exports can then be viewed in Paraview.
+
++++
+
 ## Exporting fields in a discontinuous problem ##
+
+Fields must be exported to VTX files for discontinuous problems, since results are exported on each subdomain.
 
 Consider the same __[multi-material problem](https://festim-workshop.readthedocs.io/en/festim2/content/material/material_basics.html#multi-material-example)__ in the Materials chapter, where we use `HydrogenTransportProblemDiscontinuous` to solve a multi-material problem:
 
@@ -75,19 +111,8 @@ festim_mesh = F.Mesh(fenics_mesh)
 
 my_model = F.HydrogenTransportProblemDiscontinuous()
 
-material_top = F.Material(
-    D_0=1,    
-    E_D=0,     
-    K_S_0=2,  
-    E_K_S=0,     
-)
-
-material_bottom = F.Material(
-    D_0=2,    
-    E_D=0,     
-    K_S_0=3,    
-    E_K_S=0,     
-)
+material_top = F.Material(D_0=1, E_D=0, K_S_0=2, E_K_S=0)
+material_bottom = F.Material(D_0=2, E_D=0, K_S_0=3, E_K_S=0)
 
 top_volume = F.VolumeSubdomain(id=3, material=material_top, locator=lambda x: x[1] >= 0.5)
 bottom_volume = F.VolumeSubdomain(id=4, material=material_bottom, locator=lambda x: x[1] <= 0.5)

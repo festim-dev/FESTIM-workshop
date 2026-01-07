@@ -12,34 +12,32 @@ kernelspec:
   name: python3
 ---
 
-# PyVista #
+# Using PyVista for interactive visualization #
 
-PyVista has many helpful capabilities for 3D visualization based on VTK code, and is used frequently throughout the FESTIM workshop.
+PyVista has many helpful capabilities for 3D visualization based on VTK code, and is used frequently throughout the FESTIM workshop. Users can use PyVista in Jupyter Notebook to visualize fields and meshes interactively. 
 
 Objectives: 
-* Meshes
-* Solution (continous)
-* Solution (discontinous)
+* Viewing meshes in 3D interactive scenes
+* Plotting the solution for continuous problems
+* Plotting the solution for discontinuous problems
 
 +++
 
-## Using PyVista for interactive visualization ##
+## Viewing meshes in 3D interactive scenes ##
 
-PyVista is very helpful when working within a notebook, as you can visualize meshes, results, and more at each step. 
+PyVista is very helpful when plotting 1D/2D/3D meshes, such as this unit square:
 
 ```{code-cell} ipython3
 from dolfinx.mesh import create_unit_square
 from mpi4py import MPI
-
-nx, ny = 10, 10  # Number of divisions in x and y directions
-mesh = create_unit_square(MPI.COMM_WORLD, nx, ny)
-
 from dolfinx import plot
 import pyvista
 
+nx, ny = 10, 10
+mesh = create_unit_square(MPI.COMM_WORLD, nx, ny)
+
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
-
 
 tdim = mesh.topology.dim
 
@@ -56,6 +54,12 @@ else:
     figure = plotter.screenshot("mesh.png")
 ```
 
+## Plotting the solution for a continuous problem ##
+
+FESTIM has some convenience attributes to plot the solution fields in continuous problems.
+
+For example, let's solve a simple 2D diffusion problem on a unit square:
+
 ```{code-cell} ipython3
 import festim as F
 import numpy as np
@@ -70,7 +74,6 @@ my_model = F.HydrogenTransportProblem()
 mat = F.Material(D_0=1, E_D=0)
 
 vol = F.VolumeSubdomain(id=1, material=mat)
-
 top_surface = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[1], 1.0))
 bottom_surface = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[1], 0.0))
 
@@ -79,7 +82,6 @@ my_model.subdomains = [top_surface, bottom_surface, vol]
 
 H = F.Species("H")
 my_model.species = [H]
-
 my_model.temperature = 400
 
 my_model.boundary_conditions = [
@@ -93,6 +95,8 @@ my_model.initialise()
 my_model.run()
 ```
 
+We can plot the solution as an unstructured grid using the species' `post_processing_solution` attribute:
+
 ```{code-cell} ipython3
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
@@ -105,16 +109,22 @@ def make_ugrid(solution):
     return u_grid
 
 u_plotter = pyvista.Plotter()
-u_grid_top = make_ugrid(H.post_processing_solution)
-u_plotter.add_mesh(u_grid_top, cmap="magma", show_edges=False)
+u_grid = make_ugrid(H.post_processing_solution)
+u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
 u_plotter.view_xy()
-u_plotter.add_text("Hydrogen concentration in multi-material problem", font_size=12)
+u_plotter.add_text("Hydrogen concentration", font_size=12)
 
 if not pyvista.OFF_SCREEN:
     u_plotter.show()
 else:
     figure = u_plotter.screenshot("concentration.png")
 ```
+
+## Plotting the solution for continuous problems ##
+
+Users can also use PyVista to visualize the fields in discontinuous problems.
+
+Let us consider the same __[multi-material problem](https://festim-workshop.readthedocs.io/en/festim2/content/material/material_basics.html#multi-material-example)__ in the Materials chapter, where we use `HydrogenTransportProblemDiscontinuous` to solve a multi-material problem:
 
 ```{code-cell} ipython3
 import festim as F
@@ -129,23 +139,8 @@ festim_mesh = F.Mesh(fenics_mesh)
 
 my_model = F.HydrogenTransportProblemDiscontinuous()
 
-# Top material (Material A)
-material_top = F.Material(
-    name="Material_A",
-    D_0=1,    # m²/s
-    E_D=0,     # eV
-    K_S_0=2,    # mol/m³/Pa  (solubility prefactor)
-    E_K_S=0,     # eV (activation energy for solubility)
-)
-
-# Bottom material (Material B)
-material_bottom = F.Material(
-    name="Material_B",
-    D_0=2,    # m²/s
-    E_D=0,     # eV
-    K_S_0=3,    # mol/m³/Pa
-    E_K_S=0,     # eV
-)
+material_top = F.Material(D_0=1, E_D=0, K_S_0=2, E_K_S=0)
+material_bottom = F.Material(D_0=2, E_D=0, K_S_0=3, E_K_S=0)
 
 top_volume = F.VolumeSubdomain(id=3, material=material_top, locator=lambda x: x[1] >= 0.5)
 bottom_volume = F.VolumeSubdomain(id=4, material=material_bottom, locator=lambda x: x[1] <= 0.5)
@@ -181,6 +176,8 @@ my_model.initialise()
 my_model.run()
 ```
 
+We must create an unstructured grid for each volume subdomain in our problem using `subdomain_to_post_processing_solution`, which requires a subdomain to be specified:
+
 ```{code-cell} ipython3
 def make_ugrid(solution):
     topology, cell_types, geometry = plot.vtk_mesh(solution.function_space)
@@ -205,3 +202,5 @@ if not pyvista.OFF_SCREEN:
 else:
     figure = u_plotter.screenshot("concentration.png")
 ```
+
+We see each subdomain plotted in the PyVista scene, with a discontinuity at the interface between each subdomain.

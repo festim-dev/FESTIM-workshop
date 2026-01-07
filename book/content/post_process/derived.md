@@ -12,14 +12,14 @@ kernelspec:
   name: python3
 ---
 
-# Derived quantities #
+# Exporting derived quantities #
 
 This tutorial goes over FESTIM's built-in functions to help users export derived results.
 
 Objectives:
-* Exporting surface quantities
+* Exporting surface quantities and fluxes
 * Exporting volume quantities
-* Exporting multiple derived quantities
+* Exporting multiple derived quantities in a FESTIM simulation
 
 +++
 
@@ -72,9 +72,9 @@ General volume quantities can be exported using `VolumeQuantity`.
 
 +++
 
-## Exporting multiple derived quanitites ##
+## Exporting multiple derived quanitites in a FESTIM simulation ##
 
-To export your results from a FESTIM simulation, you can pass a list of derived quantity objects into the `export` attribute for your problem:
+To export your results from a FESTIM simulation, you can pass a list of derived quantity objects into the `export` attribute for your problem. Here we export an average volume and surface flux:
 
 ```{code-cell} ipython3
 import numpy as np
@@ -85,27 +85,36 @@ from mpi4py import MPI
 mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 my_model = F.HydrogenTransportProblem()
 my_model.mesh = F.Mesh(mesh)
-mat = F.Material(D_0=1, E_D=0)
+mat = F.Material(D_0=1e-3, E_D=0)
 right_surface = F.SurfaceSubdomain(id=1, locator = lambda x: np.isclose(x[0], 1.0))
 left_surface = F.SurfaceSubdomain(id=2, locator = lambda x: np.isclose(x[0], 0.0))
 vol = F.VolumeSubdomain(id=1, material=mat)
 H = F.Species("H")
 
-max_surface = F.MaximumSurface(field=H, surface=left_surface)
 avg_vol = F.AverageVolume(field=H, volume=vol)
+right_flux = F.SurfaceFlux(field=H, surface=right_surface)
 
 my_model.subdomains = [right_surface, left_surface, vol]
 my_model.species = [H]
 my_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=right_surface, value=0, species=H),
     F.FixedConcentrationBC(subdomain=left_surface, value=1, species=H)
 ]
 my_model.temperature = 400
-my_model.settings = F.Settings(atol=1e10,rtol=1e-10,transient=False)
+my_model.settings = F.Settings(atol=1e-10,rtol=1e-10,transient=False)
+
 my_model.exports = [
-    max_surface,
-    avg_vol
+    avg_vol,
+    right_flux
 ]
 
 my_model.initialise()
 my_model.run()
+```
+
+To view the export values, we can use the `data` attribute for each export:
+
+```{code-cell} ipython3
+print(f"Average volume concentration: {avg_vol.data}")
+print(f"Right surface flux: {right_flux.data}")
 ```

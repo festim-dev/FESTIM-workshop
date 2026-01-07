@@ -12,8 +12,7 @@ kernelspec:
   name: python3
 ---
 
-(monoblock)=
-# Monoblock
+# Monoblock #
 
 In this task, we will learn how to run CAD-based simulations.
 
@@ -69,9 +68,9 @@ def convert_med_to_xdmf(
 
 ```{code-cell} ipython3
 correspondance_dict, cell_data_types = convert_med_to_xdmf(
-    "task08/mesh.med",
-    cell_file="task08/mesh_domains.xdmf",
-    facet_file="task08/mesh_boundaries.xdmf",
+    "monoblock_mesh/mesh.med",
+    cell_file="monoblock_mesh/mesh_domains.xdmf",
+    facet_file="monoblock_mesh/mesh_boundaries.xdmf",
 )
 
 print(correspondance_dict)
@@ -105,7 +104,7 @@ The converted .xdmf files can then be imported in FESTIM using the `MeshFromXDMF
 
 ```{code-cell} ipython3
 mesh = F.MeshFromXDMF(
-    volume_file="task08/mesh_domains.xdmf", facet_file="task08/mesh_boundaries.xdmf"
+    volume_file="monoblock_mesh/mesh_domains.xdmf", facet_file="monoblock_mesh/mesh_boundaries.xdmf"
 )
 
 mesh.mesh.geometry.x[:] *= 1e-3  # mm to m

@@ -170,7 +170,7 @@ We also add ``milestones`` to ensure the simulation passes by specific times.
 
 ```{admonition} Note
 :class: tip
-Transient simulations can be accelerated with adaptive stepsize. See [Task 2](task02.ipynb)
+Transient simulations can be accelerated with adaptive stepsize. See [TDS](../material_science/tds.md)
 ```
 
 ```{code-cell} ipython3

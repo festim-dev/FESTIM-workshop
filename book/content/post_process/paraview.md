@@ -97,7 +97,9 @@ To view our concentration, we need to select the dropdown box that says "Solid C
 :align: center
 ```
 
-NOTE: Users can also choose to view other exported fields (such as temperature) using this dropdown section.
+```{note}
+Users can also choose to view other exported fields (such as temperature) using this dropdown section.
+```
 
 Finally, we see our diffusion field!
 ```{image} paraview/paraview_result.png

@@ -78,7 +78,7 @@ First, we need to select the correct file by navigating to the file browser loca
 
 Then, we select our `out.bp` file and press OK on the bottom:
 
-```{image} paraview/selecting_file.png
+```{image} paraview/paraview_selecting_file.png
 :class: bg-primary mb-1
 :align: center
 ```
@@ -92,7 +92,7 @@ Now we must press apply to visualize our domain:
 
 To view our concentration, we need to select the dropdown box that says "Solid Color" and change it to our field variable (named "f" in our example):
 
-```{image} paraview/paraview_changing_variable.png
+```{image} paraview/paraview_changing_variables.png
 :class: bg-primary mb-1
 :align: center
 ```

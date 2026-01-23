@@ -33,6 +33,10 @@ execute:
   # execute_notebooks: off
   timeout: -1  # Disable timeouts for executing notebooks cells
 
+html:
+  analytics:
+    google_analytics_id: G-B9MJGSTP5V
+
 
 launch_buttons:
   notebook_interface: "jupyterlab"

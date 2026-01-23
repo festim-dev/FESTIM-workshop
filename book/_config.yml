@@ -26,6 +26,8 @@ html:
   use_repository_button: true
   use_edit_page_button: true
   announcement: "ℹ️ This is the FESTIM1 tutorial. For the FESTIM2 tutorial, see <a href='https://festim-workshop.readthedocs.io/en/festim2/intro.html'>here</a>."
+  analytics:
+    google_analytics_id: G-B9MJGSTP5V
 
 execute:
   # Force re-execution of notebooks on each build.

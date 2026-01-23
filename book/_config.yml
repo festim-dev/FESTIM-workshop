@@ -27,7 +27,9 @@ html:
   use_repository_button: true
   use_edit_page_button: true
   logo: true
-
+  analytics:
+    google_analytics_id: G-KCVJRWZ84S
+  
 execute:
   # Force re-execution of notebooks on each build.
   # See https://jupyterbook.org/content/execute.html
@@ -41,6 +43,7 @@ parse:
     # including those that are enabled by default!
     - amsmath
     - dollarmath
+
 
 launch_buttons:
   notebook_interface: "jupyterlab"

@@ -286,7 +286,7 @@ Simulation time: $t_f = 1.5$
 ### Convert mesh to dolfinx
 
 ```{code-cell} ipython3
-from dolfinx.io import gmshio
+from dolfinx.io import gmsh as gmshio
 from mpi4py import MPI
 
 

@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - jupyter-book<2.0
-  - pythom<3.14  # som pyvista incompatibility issues with python 3.14
+  - python<3.14  # som pyvista incompatibility issues with python 3.14
   - jupytext # necessary to open MyST files using BinderHub https://jupyterbook.org/en/stable/interactive/launchbuttons.html#launchbuttons-binder
   - sphinx-tags
   - matplotlib

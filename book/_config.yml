@@ -28,7 +28,7 @@ html:
   use_edit_page_button: true
   logo: true
   analytics:
-    google_analytics_id: G-KCVJRWZ84S
+    google_analytics_id: G-B9MJGSTP5V
   
 execute:
   # Force re-execution of notebooks on each build.

@@ -134,7 +134,7 @@ x = coords[0]
 y = coords[1]
 z = coords[2]
 
-interpolation = temperature.function_space.element.interpolation_points()
+interpolation = temperature.function_space.element.interpolation_points
 expr = dolfinx.fem.Expression(T0 * ufl.cos(x)*ufl.sin(y) - 2*z, interpolation)                    
 temperature.interpolate(expr)
 
@@ -203,7 +203,7 @@ coords = ufl.SpatialCoordinate(temperature.function_space.mesh)
 x = coords[0]
 y = coords[1]
 
-interpolation = temperature.function_space.element.interpolation_points()
+interpolation = temperature.function_space.element.interpolation_points
 expr = dolfinx.fem.Expression(300*ufl.exp(-((x-0.5)**2 + (y-0.5)**2)), interpolation)
                                 
 temperature.interpolate(expr)

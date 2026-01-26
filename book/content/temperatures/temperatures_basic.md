@@ -1,11 +1,11 @@
 ---
 jupytext:
-  formats: ipynb,md:myst
+  formats: md:myst,ipynb
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.17.3
+    jupytext_version: 1.20.0
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -153,7 +153,7 @@ else:
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
-c = H.solution
+c = H.post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(c.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)

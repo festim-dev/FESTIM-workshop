@@ -382,7 +382,7 @@ At the end of the simulation, we can see on the concentration field the preferen
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-hydrogen_concentration = H.solution
+hydrogen_concentration = H.post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
@@ -415,7 +415,7 @@ my_model.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-hydrogen_concentration = H.solution
+hydrogen_concentration = H.post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)

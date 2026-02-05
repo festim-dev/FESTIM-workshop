@@ -160,7 +160,7 @@ For multi-material discontinuous problems, each .bp file only shows its correspo
 Users can also specify which timesteps they'd like to export using the `times` argument (which must be a list):
 
 ```{code-cell} ipython3
-export = F.VTXSpeciesExport(filename="H_concentration.vtx", field=H, times=[0, 5, 10])
+export = F.VTXSpeciesExport(filename="H_concentration.bp", field=H, times=[0, 5, 10])
 ```
 
 If no `times` argument is given, the export stores results for all timesteps by default.
@@ -174,7 +174,7 @@ It may be helpful to store results from one simulation for later use in another 
 To store the species field as a checkpoint file, simply set the `checkpoint` argument to `True`:
 
 ```{code-cell} ipython3
-export = F.VTXSpeciesExport(filename="H_concentration.vtx", field=H, checkpoint=True)
+export = F.VTXSpeciesExport(filename="H_concentration.bp", field=H, checkpoint=True)
 ```
 
 ```{Note}

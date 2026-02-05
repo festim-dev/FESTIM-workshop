@@ -34,6 +34,7 @@ parts:
     
   - caption: Post-processing
     chapters:
+    - file: content/post_process/intro
     - file: content/post_process/derived
     - file: content/post_process/exports
     - file: content/post_process/paraview

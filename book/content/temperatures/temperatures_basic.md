@@ -1,11 +1,11 @@
 ---
 jupytext:
-  formats: ipynb,md:myst
+  formats: md:myst,ipynb
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.17.3
+    jupytext_version: 1.20.0
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -134,7 +134,7 @@ x = coords[0]
 y = coords[1]
 z = coords[2]
 
-interpolation = temperature.function_space.element.interpolation_points()
+interpolation = temperature.function_space.element.interpolation_points
 expr = dolfinx.fem.Expression(T0 * ufl.cos(x)*ufl.sin(y) - 2*z, interpolation)                    
 temperature.interpolate(expr)
 
@@ -153,7 +153,7 @@ else:
 pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
-c = H.solution
+c = H.post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(c.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
@@ -203,7 +203,7 @@ coords = ufl.SpatialCoordinate(temperature.function_space.mesh)
 x = coords[0]
 y = coords[1]
 
-interpolation = temperature.function_space.element.interpolation_points()
+interpolation = temperature.function_space.element.interpolation_points
 expr = dolfinx.fem.Expression(300*ufl.exp(-((x-0.5)**2 + (y-0.5)**2)), interpolation)
                                 
 temperature.interpolate(expr)

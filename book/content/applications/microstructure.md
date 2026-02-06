@@ -286,14 +286,22 @@ Simulation time: $t_f = 1.5$
 ### Convert mesh to dolfinx
 
 ```{code-cell} ipython3
-from dolfinx.io import gmshio
+from dolfinx.io import gmsh as gmshio
 from mpi4py import MPI
 
 
 model_rank = 0
-mesh, cell_tags, facet_tags = gmshio.read_from_msh(
+mesh_data = gmshio.read_from_msh(
     "voronoi_grains.msh", MPI.COMM_WORLD, 0, gdim=2
 )
+mesh = mesh_data.mesh
+assert mesh_data.facet_tags is not None
+facet_tags = mesh_data.facet_tags
+facet_tags.name = "Facet markers"
+
+assert mesh_data.cell_tags is not None
+cell_tags = mesh_data.cell_tags
+cell_tags.name = "Cell markers"
 ```
 
 ```{code-cell} ipython3
@@ -374,7 +382,7 @@ At the end of the simulation, we can see on the concentration field the preferen
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-hydrogen_concentration = H.solution
+hydrogen_concentration = H.post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
@@ -407,7 +415,7 @@ my_model.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-hydrogen_concentration = H.solution
+hydrogen_concentration = H.post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)

@@ -19,37 +19,174 @@ Boundary conditions (BCs) are essential to FESTIM simulations, as they describe 
 This tutorial goes over how to define concentration boundary conditions for hydrogen transport simulations.
 
 Objectives:
+* Understand the mathematics behind a fixed concentration BC
 * Define a fixed concentration BC
 * Choose which solubility law (Sieverts' or Henry's)
 * Solve a hydrogen transport problem with plasma implantation
 
 +++
 
-## Defining fixed concentration ##
+## Understanding mathematics behind a fixed concentration BC ##
 
-BCs need to be assigned to surfaces using FESTIM's `SurfaceSubdomain` class. To define the concentration of a specific species, we can use `FixedConcentrationBC`:
+A fixed concentration (Dirichlet) boundary condition prescribes the value of the mobile hydrogen isotope concentration at a boundary. This enforces the concentration to remain constant in time and space on the specified boundary, independent of the solution in the bulk.
 
-```{code-cell} ipython3
-from festim import FixedConcentrationBC, Species, SurfaceSubdomain
+This boundary condition is typically used to represent surfaces in equilibrium with an infinite reservoir, imposed implantation conditions, or experimentally controlled concentrations.
 
-boundary = SurfaceSubdomain(id=1)
-H = Species(name="Hydrogen")
+### Mathematical formulation
 
-my_bc = FixedConcentrationBC(subdomain=boundary, value=10, species=H)
-```
-
-The imposed concentration can be dependent on space, time and temperature, such as:
-
-$$ 
-
-BC = 10 + x^2 + T(t+2)
+On a boundary $\Gamma_D$, the mobile concentration satisfies
 
 $$
+c(\mathbf{x}, t) = c_0 \quad \text{for } \mathbf{x} \in \Gamma_D,
+$$
+
+where $c_0$ is the prescribed concentration value.
+
+In the weak formulation, this condition is enforced by directly constraining the degrees of freedom associated with the boundary.
+
++++
+
+## Defining fixed concentration ##
+
+Users can prescribe a fixed concentration on a boundary using `FixedConcentrationBC`, which can depend on temperature, time, and space.
+
+Let us consider a 2D, steady-state, single-species example with the following *space-dependent* boundary conditions:
+
+$$ \text{Top:} \quad c = 2x + y $$
+$$ \text{Right:} \quad c = y^2 + 1 $$
+
+```{code-cell} ipython3
+import festim as F
+import numpy as np
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+
+top_subdomain = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[1], 1))
+right_subdomain = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[0], 1))
+left_subdomain = F.SurfaceSubdomain(id=3, locator=lambda x: np.isclose(x[0], 0))
+bottom_subdomain = F.SurfaceSubdomain(id=4, locator=lambda x: np.isclose(x[1], 0))
+
+my_model = F.HydrogenTransportProblem()
+
+my_model.mesh = F.Mesh(create_unit_square(MPI.COMM_WORLD, 10, 10))
+
+H = F.Species("H")
+my_model.species = [H]
+mat = F.Material(D_0=1e-3, E_D=0)
+my_model.material = mat
+vol = F.VolumeSubdomain(id=5, material=mat)
+my_model.subdomains = [top_subdomain, right_subdomain, left_subdomain, bottom_subdomain, vol]
+
+my_model.temperature = 400
+my_model.settings = F.Settings(atol=1e-8, rtol=1e-8, transient=False)
+```
+
+We can define functions for the top and right boundary conditions using `lambda` functions:
+
+```{code-cell} ipython3
+top_bc_function = lambda x: 2.0 * x[0] + x[1]
+right_bc_function = lambda x: x[1] ** 2 + 1.0
+```
+
+<!-- ```{note}
+    `x[0]`, `x[1]`, `x[2]` corresponse to *(x, y, z)* in cartesian space.
+``` -->
+
++++
+
+To include these boundary conditions to our problem, we use `FixedConcentrationBC`. We must also specify which subdomain (boundary) each BC is applied to, as well as the corresponding species:
+
+```{code-cell} ipython3
+top_bc = F.FixedConcentrationBC(
+    subdomain=top_subdomain,
+    value=top_bc_function,
+    species=H
+)
+
+right_bc = F.FixedConcentrationBC(
+    subdomain=right_subdomain,
+    value=right_bc_function,
+    species=H
+)
+
+# left_bc = F.FixedConcentrationBC(
+#     subdomain=left_subdomain,
+#     value=.0,
+#     species=H  
+# )
+
+# bottom_bc = F.FixedConcentrationBC(
+#     subdomain=bottom_subdomain,
+#     value=0.0,
+#     species=H  
+# )   
+```
+
+Finally, we add our BCs to `my_model.boundary_conditions` using a list, and then run the model:
+
+```{code-cell} ipython3
+my_model.boundary_conditions = [top_bc, right_bc]
+my_model.initialise()
+my_model.run()
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import pyvista
+from dolfinx import plot
+
+topology, cell_types, geometry = plot.vtk_mesh(H.post_processing_solution.function_space)
+grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+grid.point_data["c"] = H.post_processing_solution.x.array
+grid.set_active_scalars("c")
+
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("html")
+
+plotter = pyvista.Plotter()
+
+plotter.add_mesh(grid)
+plotter.view_xy()
+contours = grid.contour(isosurfaces=5, scalars="c")
+plotter.add_mesh(contours, color="r", line_width=0.1)
+if not pyvista.OFF_SCREEN:
+    plotter.show()
+else:
+    figure = plotter.screenshot("concentration.png")
+```
+
+<!-- ```{note}
+
+    In this example, we did not define any boundary conditions for the left and bottom surfaces. If no BC is set on a boundary, it is assumed that the flux is null (symmetry boundary condition):
+
+    $$
+    \mathbf{J} \cdot \mathbf{n} = 0 \quad \text{on } \Gamma
+    $$
+
+``` -->
+
++++
+
+```{note}
+
++++
+
+### Time and temperature dependent boundary conditions ###
+
++++
+
+Users can also impose concentration BCs that are dependent on space, time and temperature, such as:
+
+$$ c = 10 + x^2 + T(t+2) $$
+
+To do so, we define a Python function:
 
 ```{code-cell} ipython3
 my_custom_value = lambda x, t, T: 10 + x[0]**2 + T *(t + 2)
 
-my_bc = FixedConcentrationBC(subdomain=boundary, value=my_custom_value, species=H)
+boundary = F.SurfaceSubdomain(id=1)
+my_bc = F.FixedConcentrationBC(subdomain=boundary, value=my_custom_value, species=H)
 ```
 
 ## Choosing a solubility law ##

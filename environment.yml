@@ -14,12 +14,18 @@ dependencies:
   - meshio[all]
   - ipykernel
   - nbconvert
+  - sphinx-codeautolink
   - fenics-dolfinx
   - festim=2.0b1
+  - pyvista
   - python-gmsh
   - shapely
   - scipy
+  - pyparsing
+  - trame
+  - vtk
+  - trame-vtk<2.10.3
+  - trame-vuetify
+  - nest-asyncio2
   - pip:
-    - pyparsing
     - h-transport-materials==0.16
-    - pyvista[all]

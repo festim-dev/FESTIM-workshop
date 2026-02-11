@@ -5,7 +5,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.17.3
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -124,7 +124,7 @@ right_bc_function = lambda x: x[1] ** 2 + 1.0
 ```
 
 ```{note}
-`x[0]`, `x[1]`, `x[2]` corresponse to *(x, y, z)* in cartesian space.
+`x[0]`, `x[1]`, `x[2]` corresponse to *(x, y, z)* in cartesian space. Additionally, boundary conditions can also be given as Python functions (see *{ref}`label-time-temp-concentration`* to learn more.)
 ```
 
 +++
@@ -157,6 +157,8 @@ right_bc = F.FixedConcentrationBC(
 )
 ```
 
+We can add these to our problem, we pass them into `boundary_conditions` as a list and then run the simulation:
+
 ```{code-cell} ipython3
 my_model.boundary_conditions = [top_bc, right_bc]
 my_model.initialise()
@@ -174,15 +176,14 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 grid.point_data["c"] = H.post_processing_solution.x.array
 grid.set_active_scalars("c")
 
-# pyvista.start_xvfb()
-# pyvista.set_jupyter_backend("html")
+pyvista.start_xvfb()
+pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()
 
 plotter.add_mesh(grid)
 plotter.view_xy()
 contours = grid.contour(isosurfaces=5, scalars="c")
-plotter.add_mesh(contours, color="r", line_width=0.1)
 if not pyvista.OFF_SCREEN:
     plotter.show()
 else:
@@ -201,6 +202,7 @@ $$
 
 +++
 
+(label-time-temp-concentration)=
 ### Adding time and temperature dependent boundary conditions ###
 
 +++
@@ -220,18 +222,19 @@ my_bc = F.FixedConcentrationBC(subdomain=boundary, value=my_custom_value, specie
 ```
 
 ```{tip}
-This is equivalent to:
-`
-my_custom_value = lambda x, t, T: 10 + x[0]**2 + T *(t + 2)
+This custom function is equivalent to:
 
 `
-```
+my_custom_value = lambda x, t, T: 10 + x[0]**2 + T *(t + 2)
+`
 
 +++
 
 ### Multi-species fixed concentration BC ##
 
-Users may also want to add BCs for multiple species in their model. For example, if our model included both deuterium and hydrogen and we wanted to impose separate fixed concentrations on a boundary, we need to define each species and then one BC for each:
+Users may also want to add BCs for multiple species in their model. 
+
+For example, if we wanted to impose separate fixed concentrations for deuterium and hydrogen on a boundary, we need to define each species and then one BC for each:
 
 ```{code-cell} ipython3
 import festim as F
@@ -312,24 +315,20 @@ my_flux_bc = F.ParticleFluxBC(
 my_model.boundary_conditions = [my_flux_bc]
 ```
 
-```{note}
-For multiple species, the dictionary
-
-+++
-
 ### Multi-species flux boundary conditions
 
 Users may also need to impose a flux boundary condition which depends on the concentrations of multiple species. 
 
 Consider the following 1D example with three species, $\mathrm{A}$, $\mathrm{B}$, and $\mathrm{C}$. The boundary conditions include recombination fluxes $\phi_{AB}$ and $\phi_{ABC}$ that depend on the concentrations $\mathrm{c}$ (on the right) and fixed concentrations (on the left):
 
-$$ \mathrm{Right}: \phi_{AB} = -c_A c_B $$
+$$ \text{Right (recombination flux):} \quad \phi_{AB} = -c_A c_B $$
 
-$$ \mathrm{Right}: \phi_{ABC}= -10 c_A c_B c_C$$
+$$ \text{Right (recombination flux):} \quad \phi_{ABC} = -10 c_A c_B c_C$$
 
-$$ \mathrm{Left}: c_A = c_B = c_C = 1 $$
+$$ \text{Left (fixed concentration):} \quad c_A = c_B = c_C = 1 $$
 
-We must first define each species using `Species` and then create the dictionary to be passed into `species_dependent_value`. The dictionary maps each argument in the custom flux function to the corresponding defined species. We also define our custom functions for the fluxes:
+
+First, let us define each species using `Species`:
 
 ```{code-cell} ipython3
 import festim as F
@@ -341,15 +340,22 @@ B = F.Species(name="B")
 C = F.Species(name="C")
 
 my_model.species = [A, B, C]
-species_dependent_value = {"c_A": A, "c_B": B, "c_C": C}
+```
 
+Now, we create the dictionary to be passed into `species_dependent_value`; this maps each argument in the custom flux function to the corresponding defined species:
+
+```{code-cell} ipython3
+species_dependent_value = {"c_A": A, "c_B": B, "c_C": C}
+```
+
+We also define our custom functions for the fluxes:
+
+```{code-cell} ipython3
 recombination_flux_AB = lambda c_A, c_B, c_C: -c_A*c_B
 recombination_flux_ABC = lambda c_A, c_B, c_C: -10*c_A*c_B*c_C
 ```
 
-Now, we create our 1D mesh and assign boundary conditions (recombination on the right, fixed concentration on the left).
-
-The boundary condition `ParticleFluxBC` must be added for each species:
+Now, we create our 1D mesh and corresponding boundaries:
 
 ```{code-cell} ipython3
 import numpy as np
@@ -366,7 +372,17 @@ bulk = F.VolumeSubdomain1D(id=1, borders=[0, 1], material=mat)
 left = F.SurfaceSubdomain1D(id=1, x=0)
 right = F.SurfaceSubdomain1D(id=2, x=1)
 my_model.subdomains = [bulk, left, right]
+```
 
+```{note}
+The diffusivity pre-factor `D_0` and activation energy `E_D` must be defined for each species in `Material`. Learn more about defining multi-species material properties [here](../material/material_advanced.md). Here we choose arbitrarily different diffusivity coefficients to see transport between species. 
+```
+
++++
+
+Let's assign boundary conditions (recombination on the right, fixed concentration on the left). The boundary condition `ParticleFluxBC` must be added for each species:
+
+```{code-cell} ipython3
 my_model.boundary_conditions = [
     F.ParticleFluxBC(
         subdomain=right,
@@ -402,7 +418,11 @@ my_model.boundary_conditions = [
     F.FixedConcentrationBC(subdomain=left,value=1,species=B),
     F.FixedConcentrationBC(subdomain=left,value=1,species=C),     
 ]
+```
 
+We can export the flux for each species on the right using `SurfaceFlux` (see [post-processing derived values](../post_process/derived.md) to learn more about exporting fluxes):
+
+```{code-cell} ipython3
 right_flux_A = F.SurfaceFlux(field=A,surface=right)
 right_flux_B = F.SurfaceFlux(field=B,surface=right)
 right_flux_C = F.SurfaceFlux(field=C,surface=right)
@@ -414,12 +434,6 @@ my_model.exports = [
 ]
 ```
 
-```{note}
-The diffusivity pre-factor `D_0` and activation energy `E_D` must be defined for each species in `Material`. Learn more about defining multi-species material properties [here](../material/material_advanced.md).
-```
-
-+++
-
 Finally, let's solve and plot the profile for each species:
 
 ```{code-cell} ipython3
@@ -430,10 +444,6 @@ my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
 
 my_model.initialise()
 my_model.run()
-```
-
-```{code-cell} ipython3
-:tags: [hide-input]
 
 import matplotlib.pyplot as plt
 

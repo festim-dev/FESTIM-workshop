@@ -1,6 +1,6 @@
 ---
 jupytext:
-  formats: md:myst,ipynb
+  formats: ipynb,md:myst
   text_representation:
     extension: .md
     format_name: myst
@@ -156,25 +156,19 @@ else:
     figure = plotter.screenshot("concentration.png")
 ```
 
-<!-- ```{note}
-
-    In this example, we did not define any boundary conditions for the left and bottom surfaces. If no BC is set on a boundary, it is assumed that the flux is null (symmetry boundary condition):
-
-    $$
-    \mathbf{J} \cdot \mathbf{n} = 0 \quad \text{on } \Gamma
-    $$
-
-``` -->
-
-+++
-
 ```{note}
+
+In this example, we did not define any boundary conditions for the left and bottom surfaces. If no BC is set on a boundary, it is assumed that the flux is null (symmetry boundary condition):
+
+$$
+\mathbf{J} \cdot \mathbf{n} = 0 \quad \text{on } \Gamma
+$$
+
+```
 
 +++
 
 ### Time and temperature dependent boundary conditions ###
-
-+++
 
 Users can also impose concentration BCs that are dependent on space, time and temperature, such as:
 

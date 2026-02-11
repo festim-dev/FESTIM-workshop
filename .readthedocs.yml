@@ -5,6 +5,7 @@ build:
   tools:
     python: "miniconda-latest"
   apt_packages:
+    - mesa-utils
     - libglx-mesa0
     - libgl1
     - xvfb

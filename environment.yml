@@ -19,7 +19,8 @@ dependencies:
   - python-gmsh
   - shapely
   - scipy
+  - pyvista
   - pip:
     - pyparsing
     - h-transport-materials==0.16
-    - pyvista[all,trame]<0.47.0
+    # - pyvista[all,trame]<0.47.0

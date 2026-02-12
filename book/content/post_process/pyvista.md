@@ -79,7 +79,6 @@ First, we initialize a PyVista `Plotter` object. Using the solution’s function
 
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 ```
 
@@ -233,7 +232,6 @@ In this example, we want to examine the mesh quality using PyVista. Let us creat
 
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 ```
 

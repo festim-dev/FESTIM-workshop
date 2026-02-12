@@ -281,7 +281,6 @@ We should expect to see a new folder called `paraview/3d_cube.bp`. Let's take a 
 import pyvista
 from dolfinx import plot
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()

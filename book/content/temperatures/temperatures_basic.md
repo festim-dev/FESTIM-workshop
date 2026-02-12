@@ -122,7 +122,6 @@ import pyvista
 from basix.ufl import element
 import dolfinx
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 el = element("Lagrange", mesh.mesh.topology.cell_name(), 3)
@@ -150,7 +149,6 @@ if not pyvista.OFF_SCREEN:
 else:
     figure = u_plotter.screenshot("temperature.png")
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 c = H.post_processing_solution
@@ -220,7 +218,6 @@ function_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 function_grid.point_data["T"] = temperature.x.array.real
 function_grid.set_active_scalars("T")
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()

@@ -129,7 +129,6 @@ heat_transfer_model.run()
 
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 from dolfinx import plot
@@ -187,7 +186,6 @@ hydrogen_problem.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 from dolfinx import plot
@@ -235,7 +233,6 @@ heat_transfer_model.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 T = heat_transfer_model.u
@@ -343,7 +340,6 @@ problem.run()
 
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 T = problem.heat_problem.u

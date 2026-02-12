@@ -40,7 +40,9 @@ execute:
 sphinx:
   config:
     html_last_updated_fmt: "%b %d, %Y"
-    suppress_warnings: ["mystnb.unknown_mime_type"]
+    suppress_warnings:
+      - "mystnb.unknown_mime_type"
+      - "codeautolink.match_block"
 
     # To avoid warning about default changing due to
     # https://github.com/pydata/pydata-sphinx-theme/issues/1492

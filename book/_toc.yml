@@ -27,9 +27,22 @@ parts:
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
 
+  - caption: Temperature
+    chapters:
+    - file: content/temperatures/temperatures_basic
+    - file: content/temperatures/temperatures_advanced
+    
   - caption: Settings
     chapters:
     - file: content/settings/settings
+
+  - caption: Post-processing
+    chapters:
+    - file: content/post_process/intro
+    - file: content/post_process/derived
+    - file: content/post_process/exports
+    - file: content/post_process/paraview
+    - file: content/post_process/pyvista
 
   - caption: Applications
     chapters:

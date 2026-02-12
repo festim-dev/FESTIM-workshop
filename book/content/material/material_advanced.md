@@ -166,7 +166,6 @@ function_grid.set_active_scalars("D")
 
 # Generate contours
 contours = function_grid.contour(isosurfaces=5, scalars="D")
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()
@@ -226,13 +225,12 @@ my_model.run()
 
 
 # Extract and plot results
-hydrogen_concentration = H.solution
+hydrogen_concentration = H.post_processing_solution
 topology, cell_types, geometry = plot.vtk_mesh(hydrogen_concentration.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 u_grid.point_data["c"] = hydrogen_concentration.x.array.real
 u_grid.set_active_scalars("c")
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()

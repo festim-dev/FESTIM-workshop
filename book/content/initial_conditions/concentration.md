@@ -104,10 +104,8 @@ IC_H = F.InitialConcentration(value=4, species=H, volume=vol)
 IC_D = F.InitialConcentration(value=5, species=D, volume=vol)
 IC_T = F.InitialConcentration(value=6, species=T, volume=vol)
 
-ICs = [IC_H, IC_D, IC_T]
 model.species = [H, D, T]
-
-model.initial_conditions = ICs
+model.initial_conditions = [IC_H, IC_D, IC_T]
 ```
 
 ```{note}

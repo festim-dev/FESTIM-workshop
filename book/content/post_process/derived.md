@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Exporting derived quantities #
+# Derived quantities #
 
 This tutorial goes over FESTIM's built-in classes to help users export derived results.
 
@@ -23,7 +23,7 @@ Objectives:
 
 +++
 
-## Calculating Derived Quantities
+## What is a derived quantity?
 
 This section summarizes how to compute common derived quantities in 1D/2D/3D FESTIM simulations. See the [introduction section](intro.md) to learn more about when to export derived quantities.
 
@@ -49,6 +49,10 @@ The table below shows the dimension-specific expressions:
 
 Where: $c$ is the concentration [mol/m³], $L$ is the domain length, $A$ is the domain area, $V$ is the domain volume, $\Omega$ is the domain, and $\mathbf{x}$ is the position vector.
 
+```{warning}
+These integrals are in cartesian coordinates. See [this open issue](https://github.com/festim-dev/FESTIM/issues/1023) for non-cartesian derived quantities.
+```
+
 ### Surface Quantities
 
 Surface quantities integrate or evaluate concentration over a **specific boundary surface** $\Gamma$. For example, `TotalSurface` computes the total amount of hydrogen on a given surface using the general expression:
@@ -71,6 +75,10 @@ The table below shows the dimension-specific expressions:
 | **SurfaceFlux** | $-D \frac{dc}{dx}\bigg\rvert_{x_0}$ [mol/m²/s] | $\int_\Gamma-D \nabla c \cdot \mathbf{n}ds$ [mol/m/s] | $\int_\Gamma-D \nabla c \cdot \mathbf{n} dS$ [mol/s] |
 
 Where: $c$ is the concentration [mol/m³], $D$ is the diffusion coefficient [m²/s], $\mathbf{n}$ is the outward unit normal vector, $\Gamma$ is a specific boundary surface, $x_0$ is a boundary point (e.g., 0 or $L$), $s$ is the arc length of the boundary curve (2D), $S$ is the area of the boundary surface (3D), and $\nabla c$ is the concentration gradient.
+
+```{warning}
+These integrals are in cartesian coordinates. See [this open issue](https://github.com/festim-dev/FESTIM/issues/1023) for non-cartesian derived quantities.
+```
 
 +++
 
@@ -101,10 +109,10 @@ import festim as F
 from dolfinx.mesh import create_unit_square
 from mpi4py import MPI
 
-mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
+mesh = create_unit_square(MPI.COMM_WORLD, 20, 20)
 my_model = F.HydrogenTransportProblem()
 my_model.mesh = F.Mesh(mesh)
-mat = F.Material(D_0=1e-3, E_D=0)
+mat = F.Material(D_0=1e-1, E_D=0)
 
 right_surface = F.SurfaceSubdomain(id=1, locator = lambda x: np.isclose(x[0], 1.0))
 left_surface = F.SurfaceSubdomain(id=2, locator = lambda x: np.isclose(x[0], 0.0))
@@ -119,10 +127,10 @@ my_model.boundary_conditions = [
     F.FixedConcentrationBC(subdomain=left_surface, value=1, species=H)
 ]
 my_model.temperature = 400
-my_model.settings = F.Settings(atol=1e-10,rtol=1e-10,stepsize=1, final_time=10)
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=0.5, final_time=10)
 ```
 
-In this example, we will export derived values for the average volume concentration (over the entire region) and surface flux on the right surface for each timestep. Let us name the average volume and right flux quantities `avg_vol.csv` and `right_flux.csv`, respectively. Once the simulation is completed, we should see two files appear with those filenames:
+In this example, we will export derived values for the average volume concentration (over the entire region) and surface flux on the right surface for each timestep. Let us name the average volume and right flux quantities `avg_vol` and `right_flux`, respectively. By passing a value to the `filename` argument, it is possible to export the data to a csv file. Once the simulation is completed, we should see two files appear with those filenames:
 
 ```{code-cell} ipython3
 avg_vol = F.AverageVolume(field=H, volume=vol, filename="avg_vol.csv")
@@ -144,11 +152,11 @@ print(f"Average volume concentration: {avg_vol.data}")
 print(f"Average volume timesteps: {avg_vol.t}")
 ```
 
-## Working with data exported from FESTIM ##
+## Post-processing of derived quantities ##
 
 Users can access derived quantities that have been exported from FESTIM by importing the `.csv` or `.txt` file.
 
-Let us visualize the `right_flux` and `avg_vol` exports from the previous section. First, let's import the files:
+Let us visualize the `right_flux` and `avg_vol` exports from the previous section. First, let's import the files with `numpy.loadtxt`:
 
 ```{code-cell} ipython3
 right_flux = np.loadtxt("right_flux.csv", delimiter=",", skiprows=1)
@@ -160,28 +168,23 @@ avg_vol_timesteps = avg_vol[:, 0]
 avg_vol_values = avg_vol[:, 1]
 ```
 
+```{note}
+It would also be possible to directly use `right_flux.data` and `right_flux.t` instead of writing/reading a file.
+```
+
 Finally, we can plot both exports over time using `matplotlib`:
 
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
 
-fig, ax1 = plt.subplots(figsize=(10, 6))
+fig, (ax1, ax2) = plt.subplots(figsize=(10, 6), nrows=2, ncols=1)
 
-ax1.plot(timesteps, flux_values, linewidth=2, color='blue', label='Right Surface Flux')
+ax1.plot(timesteps, flux_values, linewidth=2, label='Right Surface Flux', marker="+")
 ax1.set_xlabel('Time [s]', fontsize=12)
-ax1.set_ylabel('Flux', fontsize=12, color='blue')
-ax1.tick_params(axis='y', labelcolor='blue')
+ax1.set_ylabel('Flux', fontsize=12)
 
-ax2 = ax1.twinx()
-ax2.plot(avg_vol_timesteps, avg_vol_values, linewidth=2, color='red', label='Average Volume Concentration')
-ax2.set_ylabel('Average Concentration', fontsize=12, color='red')
-ax2.tick_params(axis='y', labelcolor='red')
-
-plt.title('Hydrogen Flux and Average Concentration', fontsize=14, fontweight='bold')
-
-lines1, labels1 = ax1.get_legend_handles_labels()
-lines2, labels2 = ax2.get_legend_handles_labels()
-ax1.legend(lines1 + lines2, labels1 + labels2, loc='best', fontsize=10)
+ax2.plot(avg_vol_timesteps, avg_vol_values, linewidth=2, label='Average Volume Concentration', marker="+")
+ax2.set_ylabel('Average Concentration', fontsize=12)
 
 plt.tight_layout()
 plt.show()

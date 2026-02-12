@@ -148,7 +148,6 @@ def make_ugrid(solution):
     u_grid.set_active_scalars("c")
     return u_grid
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 H_grid = make_ugrid(H.post_processing_solution)
@@ -169,4 +168,78 @@ _ = pl.add_mesh(T_grid,label='t')
 pl.view_xy()
 
 pl.show()
+```
+
+## Using a `dolfinx.fem.Function` as initial condition ##
+
+
+It is possible to use a {py:func}`dolfinx.fem.Function` as initial condition.
+This is particularly useful when using the result of a previous simulation for a restart.
+
+
+```{code-cell} ipython3
+
+from mpi4py import MPI
+import dolfinx
+
+
+mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
+
+V = dolfinx.fem.functionspace(mesh, ("CG", 1))
+
+u_ini = dolfinx.fem.Function(V)
+u_ini.interpolate(lambda x: 2e4 * (x[0] * (1 - x[0]) * x[1] * (1 - x[1]))**4)
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+import pyvista
+from dolfinx import plot
+
+pyvista.set_jupyter_backend("html")
+
+plotter = pyvista.Plotter()
+topology, cell_types, geometry = plot.vtk_mesh(u_ini.function_space)
+grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+grid.point_data["u_ini"] = u_ini.x.array
+warped = grid.warp_by_scalar()
+plotter.add_mesh(warped, show_edges=True, scalars="u_ini", cmap="viridis")
+plotter.show()
+
+```
+
+```{code-cell} ipython3
+import festim as F
+
+my_model = F.HydrogenTransportProblem()
+
+my_model.mesh = F.Mesh(mesh)
+
+material = F.Material(D_0=0.1, E_D=0)
+vol = F.VolumeSubdomain(id=1, material=material)
+my_model.subdomains = [vol]
+
+H = F.Species("H")
+
+my_model.species = [H]
+my_model.initial_conditions = [F.InitialConcentration(value=u_ini, species=H, volume=vol)]
+my_model.temperature = 300
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=0.05, final_time=0.3)
+
+my_model.initialise()
+my_model.run()
+```
+
+
+```{code-cell} ipython3
+:tags: [hide-input]
+plotter = pyvista.Plotter()
+u_final = H.post_processing_solution
+topology, cell_types, geometry = plot.vtk_mesh(u_final.function_space)
+grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+grid.point_data["u_final"] = u_final.x.array
+warped = grid.warp_by_scalar()
+plotter.add_mesh(warped, show_edges=True, scalars="u_final", cmap="viridis", clim=[0, 0.3])
+plotter.show()
+
 ```

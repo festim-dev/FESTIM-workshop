@@ -196,7 +196,6 @@ def make_ugrid(solution):
     u_grid.set_active_scalars("c")
     return u_grid
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 u_plotter = pyvista.Plotter()

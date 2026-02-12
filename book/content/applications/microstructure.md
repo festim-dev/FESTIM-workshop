@@ -310,7 +310,6 @@ cell_tags.name = "Cell markers"
 from dolfinx import plot
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 tdim = mesh.topology.dim

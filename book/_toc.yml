@@ -32,6 +32,14 @@ parts:
     - file: content/temperatures/temperatures_basic
     - file: content/temperatures/temperatures_advanced
     
+  - caption: Post-processing
+    chapters:
+    - file: content/post_process/intro
+    - file: content/post_process/derived
+    - file: content/post_process/exports
+    - file: content/post_process/paraview
+    - file: content/post_process/pyvista
+
   - caption: Applications
     chapters:
     - file: content/applications/task02

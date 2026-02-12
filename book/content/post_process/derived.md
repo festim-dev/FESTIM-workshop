@@ -68,7 +68,7 @@ The table below shows the dimension-specific expressions:
 | **AverageSurface** | $c(x_0)$ [mol/m³] | $\frac{1}{s} \int_\Gamma c \, ds$ [mol/m³] | $\frac{1}{S} \int_\Gamma c \, dS$ [mol/m³] |
 | **MinimumSurface** | $c(x_0)$ [mol/m³] | $\min_{\mathbf{x} \in \Gamma} c(\mathbf{x})$ [mol/m³] | $\min_{\mathbf{x} \in \Gamma} c(\mathbf{x})$ [mol/m³] |
 | **MaximumSurface** | $c(x_0)$ [mol/m³] | $\max_{\mathbf{x} \in \Gamma} c(\mathbf{x})$ [mol/m³] | $\max_{\mathbf{x} \in \Gamma} c(\mathbf{x})$ [mol/m³] |
-| **SurfaceFlux** | $-D \frac{dc}{dx}\bigg\rvert_{x_0}$ [mol/m²/s] | $-D \nabla c \cdot \mathbf{n}$ [mol/m²/s] | $-D \nabla c \cdot \mathbf{n}$ [mol/m²/s] |
+| **SurfaceFlux** | $-D \frac{dc}{dx}\bigg\rvert_{x_0}$ [mol/m²/s] | $\int_\Gamma-D \nabla c \cdot \mathbf{n}ds$ [mol/m/s] | $\int_\Gamma-D \nabla c \cdot \mathbf{n} dS$ [mol/s] |
 
 Where: $c$ is the concentration [mol/m³], $D$ is the diffusion coefficient [m²/s], $\mathbf{n}$ is the outward unit normal vector, $\Gamma$ is a specific boundary surface, $x_0$ is a boundary point (e.g., 0 or $L$), $s$ is the arc length of the boundary curve (2D), $S$ is the area of the boundary surface (3D), and $\nabla c$ is the concentration gradient.
 

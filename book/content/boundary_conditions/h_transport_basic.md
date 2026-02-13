@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Hydrogen transport: basic boundary conditions
+# Hydrogen transport: basic
 
 This section discusses how to implement basic boundary conditions (BCs) for hydrogen transport problems. Boundary conditions are essential to FESTIM simulations, as they describe the mathematical problem at the boundaries of the simulated domain. Read more about BCs _[here](https://festim.readthedocs.io/en/fenicsx/userguide/boundary_conditions.html)_.
 
@@ -176,7 +176,6 @@ grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
 grid.point_data["c"] = H.post_processing_solution.x.array
 grid.set_active_scalars("c")
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()

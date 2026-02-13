@@ -314,7 +314,7 @@ K_{r0} \exp\!\left(-\frac{E_{Kr}}{k_B T}\right) c_T^2
 \Bigg] v \, d\Gamma
 $$
 
-These fluxes can be implemented in FESTIM using `ParticleFluxBC` with user-defined expressions for each reaction term (see [here](examples.ipynb) to learn more).
+These fluxes can be implemented in FESTIM using `ParticleFluxBC` with user-defined expressions for each reaction term, as shown below.
 
 +++
 

@@ -226,8 +226,7 @@ This custom function is equivalent to:
 `
 my_custom_value = lambda x, t, T: 10 + x[0]**2 + T *(t + 2)
 `
-
-+++
+```
 
 ### Multi-species fixed concentration BC ##
 

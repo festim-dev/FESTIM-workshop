@@ -170,6 +170,7 @@ pl.view_xy()
 pl.show()
 ```
 
+(ic-functions)=
 ## Using a `dolfinx.fem.Function` as initial condition ##
 
 
@@ -243,3 +244,52 @@ plotter.add_mesh(warped, show_edges=True, scalars="u_final", cmap="viridis", cli
 plotter.show()
 
 ```
+
+(ic-checkpoint)=
+## Initial condition from a checkpoint file ##
+
+It is also possible to read a `dolfinx.fem.Function` from a checkpoint file and then use it as initial condition.
+
+Here we use `adios4dolfinx` to create a checkpoint file `checkpoint_file.bp` containing a function at time `10.0`. This could also be done by setting the `checkpoint=True` option in the VTX export (see {ref}`checkpointing`).
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import adios4dolfinx
+from mpi4py import MPI
+import dolfinx
+
+mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
+V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
+
+u_out = dolfinx.fem.Function(V)
+u_out.interpolate(lambda x: x[0] + x[1])  # u = x + y
+
+adios4dolfinx.write_mesh("checkpoint_file.bp", mesh)
+adios4dolfinx.write_function("checkpoint_file.bp", u_out, time=10.0, name="u")
+```
+
+The mesh of the function can then be read with:
+
+```{code-cell} ipython3
+mesh_in = adios4dolfinx.read_mesh("checkpoint_file.bp", MPI.COMM_WORLD)
+```
+
+From this mesh, we create an appropriate function space, and a `dolfinx.fem.Function` `u_in` to read the file _in_.
+```{code-cell} ipython3
+V_in = dolfinx.fem.functionspace(mesh_in, ("Lagrange", 1))
+u_in = dolfinx.fem.Function(V_in)
+```
+
+Finally we read the function from the file:
+```{code-cell} ipython3
+adios4dolfinx.read_function("checkpoint_file.bp", u=u_in, time=10.0, name="u")
+```
+
+We can see that `u_in` has data:
+
+```{code-cell} ipython3
+print(u_in.x.array[:])
+```
+
+`u_in` can then be used as an initial condition for a species as explained in {ref}`ic-functions`.

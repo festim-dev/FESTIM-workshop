@@ -43,8 +43,22 @@ import numpy as np
 
 L = 20e-6
 my_model = F.HydrogenTransportProblem()
-vertices = np.linspace(0, L, 1000)
+
+vertices = np.concatenate(
+    [
+        np.linspace(0, 30e-9, num=200),
+        np.linspace(3e-6, L, num=500),
+    ]
+)
+
 my_model.mesh = F.Mesh1D(vertices)
+```
+
+```{note}
+We break up the mesh region into two regions so we can refine the region closer to the implantation depth (defined below)
+```
+
+```{code-cell} ipython3
 
 tungsten = F.Material(
     D_0=4.1e-07,  # m2/s

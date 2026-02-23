@@ -207,13 +207,41 @@ my_model.boundary_conditions = [
 
 We set a time-dependent particle source term:
 
-```{code-cell} ipython3
+```{math}
+\begin{cases}
+1, & \text{for } 100\leq t\leq 105\\
+0, & \text{otherwise }
+\end{case}
+```
 
+```{code-cell} ipython3
 source_start = 100
 source_end = 105
+
+def source_value(t):
+    if t <= source_end and t >= source_start:
+        return 1
+    else:
+        return 0
+
 my_model.sources = [
-    F.ParticleSource(value=lambda t: 1 if t <= source_end and t >= source_start else 0, species=H, volume=vol)
+    F.ParticleSource(value=source_value, species=H, volume=vol)
 ]
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import matplotlib.pyplot as plt
+
+times = np.linspace(0, 200, 1000)
+source_values = [source_value(t) for t in times]
+plt.plot(times, source_values)
+plt.fill_between(times, source_values, alpha=0.3)
+
+plt.xlabel("Time")
+plt.ylabel("Source value")
+plt.show()
 ```
 
 We track the total quantity of H by adding a `TotalVolume` derived quantity:

@@ -16,13 +16,16 @@ kernelspec:
 
 +++
 
-The settings of a FESTIM simulation are defined with a `festim.Settings` object. This tutorial provides information for defining required and optional settings for users to customize their simulations.
-
 Objectives:
-* Defining tolerances and solver settings
-* Setting up transient or steady-state simulations
+* Ensure the simulation hits certain time milestones
+* Set a stepsize for your simulation 
+* Accelerate your simulation with adaptive time stepping
 
 +++
+
+## Milestones ##
+
+
 
 ## Adaptive stepsize ##
 

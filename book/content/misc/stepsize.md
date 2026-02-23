@@ -17,15 +17,11 @@ kernelspec:
 +++
 
 Objectives:
-* Ensure the simulation hits certain time milestones
 * Set a stepsize for your simulation 
 * Accelerate your simulation with adaptive time stepping
+* Ensure the simulation hits certain time milestones
 
 +++
-
-## Milestones ##
-
-
 
 ## Adaptive stepsize ##
 
@@ -173,3 +169,162 @@ plt.xlabel("Timestep")
 plt.show()
 ```
 
+## Milestones ##
+
+Now that we know how to grow the stepsize to accelerate simulations, we have a new problem: what if we want the simulation to pass by a specific point in time but the timestep could be so big it completely misses it?
+
+Let's illustrate this by setting up a problem with a particle source only turning on only between 100 and 105 s, and $c=0$ on the boundary.
+
+```{code-cell} ipython3
+import festim as F
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+
+fenics_mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
+festim_mesh = F.Mesh(fenics_mesh)
+
+my_model = F.HydrogenTransportProblem()
+
+material_top = F.Material(D_0=0.1, E_D=0)
+
+vol = F.VolumeSubdomain(id=1, material=material_top)
+boundary = F.SurfaceSubdomain(id=2, locator=lambda x: np.full_like(x[0], True))
+
+my_model.mesh = festim_mesh
+my_model.subdomains = [vol, boundary]
+
+H = F.Species("H")
+my_model.species = [H]
+
+my_model.settings = F.Settings(atol=1e-8, rtol=1e-8, final_time=200)
+
+my_model.temperature = 300
+
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(value=0, species=H, subdomain=boundary)
+]
+```
+
+We set a time-dependent particle source term:
+
+```{code-cell} ipython3
+
+source_start = 100
+source_end = 105
+my_model.sources = [
+    F.ParticleSource(value=lambda t: 1 if t <= source_end and t >= source_start else 0, species=H, volume=vol)
+]
+```
+
+We track the total quantity of H by adding a `TotalVolume` derived quantity:
+
+```{code-cell} ipython3
+my_model.exports = [F.TotalVolume(field=H, volume=vol)]
+```
+
+Then we set an adaptive timestep with a fairly large initial value:
+
+```{code-cell} ipython3
+my_model.settings.stepsize = F.Stepsize(
+    initial_value=20,
+    growth_factor=1.1,  # grow by 10%
+    cutback_factor=0.9,  # shrink by 10%
+    target_nb_iterations=4,  # target number of iterations per time step
+)
+
+my_model.initialise()
+my_model.run()
+```
+
+By plotting the values of `TotalVolume` we see that:
+* the timesteps kind of jump over the time period of interest
+* the value is zero all the time, which is WRONG!
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import matplotlib.pyplot as plt
+
+plt.plot(my_model.exports[0].t, my_model.exports[0].data, marker="o")
+plt.axvline(
+    source_start, color="tab:green", alpha=0.5, linestyle="--", label="Source start"
+)
+plt.axvline(source_end, color="tab:red", alpha=0.5, linestyle="--", label="Source end")
+plt.legend()
+plt.xlabel("Time $t$")
+plt.ylabel("Total amount of H")
+plt.ylim(bottom=-0.001)
+plt.show()
+```
+
+We can try and solve it first using `milestones`. Here we set a list of two milestones at the beginning and at the end of the source period:
+
+```{code-cell} ipython3
+my_model.settings.stepsize = F.Stepsize(
+    initial_value=20,
+    growth_factor=1.1,  # grow by 10%
+    cutback_factor=0.9,  # shrink by 10%
+    target_nb_iterations=4,  # target number of iterations per time step
+    milestones=[source_start, source_end]
+)
+
+my_model.initialise()
+my_model.run()
+```
+
+The result is already better, the solution is not zero all the time. But still, the solution looks a bit whacky... This is because, while the stepsize is modified (truncated) to hit the milestones, it is still fairly large during the time period of interest.
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+plt.plot(my_model.exports[0].t, my_model.exports[0].data, marker="o")
+plt.axvline(
+    source_start, color="tab:green", alpha=0.5, linestyle="--", label="Source start"
+)
+plt.axvline(source_end, color="tab:red", alpha=0.5, linestyle="--", label="Source end")
+plt.legend()
+plt.xlabel("Time $t$")
+plt.ylabel("Total amount of H")
+plt.ylim(bottom=-0.001)
+plt.show()
+```
+
+To improve it, let's set the `max_stepsize` argument. Here we want the stepsize to be capped at `0.5` when the time is bewteen `source_start - 5` and `source_end + 5`, otherwise, no limit (`None`).
+
+We also modify the first milestone to hit just before the source is turned on.
+
+We pass a `lambda` funtion to `max_stepsize` which is a function of `t`.
+
+```{code-cell} ipython3
+my_model.settings.stepsize = F.Stepsize(
+    initial_value=20,
+    growth_factor=1.1,  # grow by 10%
+    cutback_factor=0.9,  # shrink by 10%
+    target_nb_iterations=4,  # target number of iterations per time step
+    milestones=[source_start - 5, source_end],
+    max_stepsize=lambda t: 0.5 if source_start - 5 <= t <= source_end + 5 else None
+)
+
+my_model.initialise()
+my_model.run()
+```
+
+Now the solution looks much smoother! 🎉
+
+We can also see that the stepsize starts increasing again after ~115 s.
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+plt.plot(my_model.exports[0].t, my_model.exports[0].data, marker="o")
+plt.axvline(
+    source_start, color="tab:green", alpha=0.5, linestyle="--", label="Source start"
+)
+plt.axvline(source_end, color="tab:red", alpha=0.5, linestyle="--", label="Source end")
+plt.legend()
+plt.xlabel("Time $t$")
+plt.ylabel("Total amount of H")
+plt.ylim(bottom=-0.001)
+plt.xlim(source_start - 10, source_end + 20)
+plt.show()
+```

@@ -17,75 +17,8 @@ kernelspec:
 This section discusses how to implement basic boundary conditions (BCs) for hydrogen transport problems. Boundary conditions are essential to FESTIM simulations, as they describe the mathematical problem at the boundaries of the simulated domain. Read more about BCs _[here](https://festim.readthedocs.io/en/fenicsx/userguide/boundary_conditions.html)_.
 
 Objectives:
-* Learn mathematical formulation for concentration and flux boundary conditions
 * Implement fixed concentration boundary conditions
 * Implement particle flux boundary conditions
-
-+++
-
-## Understanding math behind concentration and flux boundary conditions
-
-### Fixed concentration
-
-A fixed concentration (Dirichlet) boundary condition prescribes the value of the mobile hydrogen isotope concentration at a boundary. This enforces the concentration to remain constant in time and space on the specified boundary, independent of the solution in the bulk.
-
-This boundary condition is typically used to represent surfaces in equilibrium with an infinite reservoir, imposed implantation conditions, or experimentally controlled concentrations.
-
-#### Mathematical formulation
-
-On a boundary $\Gamma_D$, the mobile concentration satisfies
-
-$$
-c(\mathbf{x}, t) = c_0 \quad \text{for } \mathbf{x} \in \Gamma_D,
-$$
-
-where $c_0$ is the prescribed concentration value.
-
-In the weak formulation, this condition is enforced by directly constraining the degrees of freedom associated with the boundary.
-
-### Particle flux boundary conditions
-
-A particle flux (Neumann) boundary condition prescribes the normal flux of mobile hydrogen isotopes across a boundary. Unlike fixed concentration conditions, flux boundary conditions do not directly constrain the concentration value at the surface. Instead, they control the rate at which particles enter or leave the domain.
-
-Flux boundary conditions are commonly used to represent implantation from a plasma, outgassing to vacuum, permeation through a surface, or symmetry boundaries where no net transport occurs.
-
-#### Mathematical formulation
-
-The particle flux $\mathbf{J}$ is typically given by Fick’s law,
-
-$$
-\mathbf{J} = -D \nabla c,
-$$
-
-where $D$ is the diffusion coefficient and $c$ is the mobile concentration.
-
-On a boundary $\Gamma_N$, a prescribed normal flux is imposed as
-
-$$
-\mathbf{J} \cdot \mathbf{n} = g(\mathbf{x}, t) \quad \text{for } \mathbf{x} \in \Gamma_N,
-$$
-
-where:
-- $\mathbf{n}$ is the outward unit normal vector,
-- $g(\mathbf{x}, t)$ is the imposed particle flux (positive for outward flux, negative for inward flux).
-
-A special case is the **zero-flux (symmetry) boundary condition**, given by
-
-$$
-\mathbf{J} \cdot \mathbf{n} = 0 \quad \text{on } \Gamma,
-$$
-
-which implies no net particle transport across the boundary.
-
-#### Weak formulation
-
-In the weak form, flux boundary conditions appear naturally as surface integrals after integration by parts. For a test function $v$, the boundary contribution is
-
-$$
-\int_{\Gamma_N} g(\mathbf{x}, t)\, v \, \mathrm{d}\Gamma.
-$$
-
-Because of this, flux boundary conditions are often referred to as *natural boundary conditions* and do not require explicit modification of the solution space, unlike Dirichlet conditions.
 
 +++
 
@@ -116,19 +49,6 @@ my_model.temperature = 400
 my_model.settings = F.Settings(atol=1e-8, rtol=1e-8, transient=False)
 ```
 
-We can define the top and right boundary conditions using `lambda` functions:
-
-```{code-cell} ipython3
-top_bc_function = lambda x: 2.0 * x[0] + x[1]
-right_bc_function = lambda x: x[1] ** 2 + 1.0
-```
-
-```{note}
-`x[0]`, `x[1]`, `x[2]` corresponse to *(x, y, z)* in cartesian space. Additionally, boundary conditions can also be given as Python functions (see *{ref}`label-time-temp-concentration`* to learn more.)
-```
-
-+++
-
 Now, let's create the boundaries to assign the BCs:
 
 ```{code-cell} ipython3
@@ -140,6 +60,19 @@ vol = F.VolumeSubdomain(id=5, material=mat)
 
 my_model.subdomains = [top_subdomain, right_subdomain, left_subdomain, bottom_subdomain, vol]
 ```
+
+We can define the top and right boundary conditions using `lambda` functions:
+
+```{code-cell} ipython3
+top_bc_function = lambda x: 2.0 * x[0] + x[1]
+right_bc_function = lambda x: x[1] ** 2 + 1.0
+```
+
+```{note}
+`x[0]`, `x[1]`, `x[2]` correspond to the first, second, and third space coordinate ( *(x, y, z)* in cartesian space). See *{ref}`label-time-temp-concentration`* to learn more.
+```
+
++++
 
 To include these boundary conditions to our problem, we use `FixedConcentrationBC`. We must also specify which subdomain (boundary) each BC is applied to, as well as the corresponding species:
 
@@ -293,6 +226,12 @@ H = F.Species(name="H")
 
 J = lambda t, c: 10*t**2 + 2*c
 ```
+
+```{note}
+A flux boundary condition dependent on the actual solution is called a Robin boundary condition.
+```
+
++++
 
 To add this BC, we need to create a dictionary that maps the concentration variable `c` in our custom function to our species `H`:
 

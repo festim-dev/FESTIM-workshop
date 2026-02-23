@@ -63,16 +63,6 @@ where:
 Users interested in liquid metal interactions with hydrogen will usually need to use **Sievert's Law**.
 ```
 
-#### Weak formulation
-
-In the weak form, solubility is imposed as a **Robin-type boundary condition**:
-
-$$
-\int_{\Gamma_s} k_s \left(c - c_s \right) v \, \mathrm{d}\Gamma
-$$
-
-where $k_s$ is a surface reaction rate constant controlling the exchange between bulk and surface concentration. This allows modeling of adsorption/desorption and surface-limited transport at material boundaries.
-
 +++
 
 ### Imposing a solubility law
@@ -108,7 +98,6 @@ Using `HenrysBC` or `SievertsBC` is just a convenient way for users to define a 
 ```
 
 +++
-
 
 ---
 
@@ -162,16 +151,25 @@ $$
 
 where $\mathbf{n}$ is the outward normal vector at the surface.
 
-#### Weak form contribution
+### Recombination and dissociation
 
-In the weak formulation, the surface reaction contributes as a Robin-type term:
+If $\text{Species A = Species B}$, recombination or dissociation can also be modeled with `SurfaceReactionBC`, e.g.:
 
 $$
-\int_{\Gamma_s} \mathbf{J}_A \cdot \mathbf{n} \, v \, d\Gamma = 
-\int_{\Gamma_s} K \, v \, d\Gamma
+\mathrm{H + H} \quad \overset{K_r}{\underset{K_d}{\rightleftharpoons}} \quad \mathrm{H_2}
 $$
 
-where $v$ is a test function.
+where 
+
+$$
+K = K_r \, c_H^2 - K_d \, P_{H_2}
+$$
+
+and corresponding flux of atomic hydrogen is:
+
+$$
+\mathbf{J}_H \cdot \mathbf{n} = - 2 K
+$$
 
 +++
 
@@ -189,7 +187,7 @@ A = F.Species("A")
 B = F.Species("B")
 ```
 
-Now, we add these as arguments to the `SurfaceReactionBC` class. We'll also need to assign a `gas_pressure` (corresponding to the partial pressure of the product species), and the forward/backward rate (`k_r0`, `k_d0`) and energy (`E_kr`, `E_dr`) coefficients (see above to learn more about these parameters):
+Now, we add these as arguments to the `SurfaceReactionBC` class. We'll also need to assign a `gas_pressure` (corresponding to the partial pressure of the product species), and the forward/backward rate (`k_r0`, `k_d0`) and energy (`E_kr`, `E_kd`) coefficients (see above to learn more about these parameters):
 
 ```{code-cell} ipython3
 my_bc = F.SurfaceReactionBC(
@@ -210,80 +208,23 @@ my_model = F.HydrogenTransportProblem()
 my_model.boundary_conditions = [my_bc]
 ```
 
----
-
-+++
-
-## Recombination and dissociation
-
-Hydrogen recombination or dissociation can be modeled with `SurfaceReactionBC`, e.g.:
-
-$$
-\mathrm{H + H} \quad \overset{K_r}{\underset{K_d}{\rightleftharpoons}} \quad \mathrm{H_2}
-$$
-
-### Mathematical formulation
-
-Let:  
-- $c_H$ be the surface concentration of atomic hydrogen  
-- $P_{H_2}$ the partial pressure of molecular hydrogen  
-
-The net reaction rate is:
-
-$$
-K = K_r \, c_H^2 - K_d \, P_{H_2}
-$$
-
-The corresponding flux of atomic hydrogen is:
-
-$$
-\mathbf{J}_H \cdot \mathbf{n} = - 2 K
-$$
-
-#### Weak form contribution
-
-The weak form contribution of recombination flux is:
-
-$$
-\int_{\Gamma_s} \mathbf{J}_H \cdot \mathbf{n} \, v \, d\Gamma = 
-- \int_{\Gamma_s} 2 K \, v \, d\Gamma
-$$
-
-+++
-
----
-
-+++
-
-### Modeling recombination and dissociation
-
-Recombination and dissociation can also be modeled using `SurfaceReactionBC`, where the forward and backward rates of this reaction correspond to recombination and dissociation, respectively. 
-
-To model the reaction:
-
-$$ \mathrm{H} + \mathrm{H} \rightleftharpoons \mathrm{H_2}$$
-
-where $ \text{Species A} = \text{Species B} = \text{H} $, assign your `reactants` list accordingly:
-
-```{code-cell} ipython3
-H = F.Species("H")
-
-my_recombination_bc = F.SurfaceReactionBC(
-    reactant=[A, A],
-    gas_pressure=1e5,
-    k_r0=1,
-    E_kr=0.1,
-    k_d0=1e-5,
-    E_kd=0.1,
-    subdomain=boundary,
-)
+```{note}
+Using `SurfaceReactionBC` is just a convenient way for users to define surface fluxes, which can be done manually (as shown below in the isotopic exchange example).
 ```
+
++++
+
+---
+
++++
 
 ## Isotopic exchange
 
 Isotopic exchange occurs when hydrogenic isotopes swap positions, for example:
 
 $$
+\mathrm{T + T} \rightleftharpoons \mathrm{T_2}
+\\
 \mathrm{T + H_2} \rightleftharpoons \mathrm{H} + \mathrm{HT}
 $$
 
@@ -300,18 +241,6 @@ $$
 \phi_T = 
 - K_{r0} \exp\!\left(-\frac{E_{Kr}}{k_B T}\right) c_T^2
 - K_{r0}^\ast \exp\!\left(-\frac{E_{Kr}^\ast}{k_B T}\right) c_{H_2} c_T
-$$
-
-#### Weak form contribution
-
-The weak form contribution for tritium flux is:
-
-$$
-\int_{\Gamma_s} \phi_T \, v \, d\Gamma =
-- \int_{\Gamma_s} \Bigg[
-K_{r0} \exp\!\left(-\frac{E_{Kr}}{k_B T}\right) c_T^2
-+ K_{r0}^\ast \exp\!\left(-\frac{E_{Kr}^\ast}{k_B T}\right) c_{H_2} c_T
-\Bigg] v \, d\Gamma
 $$
 
 These fluxes can be implemented in FESTIM using `ParticleFluxBC` with user-defined expressions for each reaction term, as shown below.
@@ -344,7 +273,7 @@ def my_custom_recombination_flux(c, T):
 ```
 
 ```{note}
-For more complex isotopic exchanges, we can also use `SurfaceReactionBC` to define recombination fluxes. See [modeling isotopic exchange for multiple species](examples.md) to learn more.
+For more complex isotopic exchanges, we can also use `SurfaceReactionBC` add other reactions. See [modeling isotopic exchange for multiple species](examples.md) to learn more.
 ```
 
 +++
@@ -443,7 +372,7 @@ grid2.point_data["c"] = tritium.post_processing_solution.x.array
 grid2.set_active_scalars("c")
 ```
 
-Let's plot both `data_with_H2` and `data_no_H2` to see the concentraton profile for each case:
+Let's plot both `data_with_H2` and `data_no_H2` to see the concentration profile for each case:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -457,6 +386,7 @@ plt.plot(t, data_with_H2, label="With H_2")
 
 plt.xlabel("Time (s)")
 plt.ylabel("Surface Flux (right)")
+plt.yscale("log")
 plt.legend()
 plt.show()
 ```
@@ -484,8 +414,8 @@ else:
 pyvista.set_jupyter_backend("html")
 
 plotter = pyvista.Plotter()
-
-plotter.add_mesh(grid2)
+vmin, vmax = grid["c"].min(), grid2["c"].max()
+plotter.add_mesh(grid2, clim=[vmin, vmax])
 plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     plotter.show()

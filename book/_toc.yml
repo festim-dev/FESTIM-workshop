@@ -23,6 +23,7 @@ parts:
 
   - caption: Boundary Conditions
     chapters: 
+    - file: content/boundary_conditions/bc_intro
     - file: content/boundary_conditions/h_transport_basic
     - file: content/boundary_conditions/h_transport_advanced
     - file: content/boundary_conditions/examples

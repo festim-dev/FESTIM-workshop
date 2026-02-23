@@ -59,7 +59,6 @@ We break up the mesh region into two regions so we can refine the region closer 
 ```
 
 ```{code-cell} ipython3
-
 tungsten = F.Material(
     D_0=4.1e-07,  # m2/s
     E_D=0.39,  # eV
@@ -245,7 +244,7 @@ my_model.species = [H, D]
 
 H2 = F.SurfaceReactionBC(
     reactant=[H, H],
-    gas_pressure=100000,
+    gas_pressure=1000,
     k_r0=1,
     E_kr=0.1,
     k_d0=1e-5,
@@ -274,6 +273,33 @@ D2 = F.SurfaceReactionBC(
 )
 ```
 
+Now, let's add our isotopic exchange reaction using `ParticleFluxBC` (see [here](h_transport_advanced.md) to learn more about defining isotopic exchange fluxes):
+
+```{code-cell} ipython3
+import ufl
+
+Kr_0 = 1.0
+E_Kr = 0.1
+
+def my_custom_recombination_flux(c, T):
+    Kr_0_custom = 1.0
+    E_Kr_custom = 0.5  # eV
+    h2_conc = 1e25  # assumed constant H2 concentration in
+
+    recombination_flux = (
+        -(Kr_0 * ufl.exp(-E_Kr / (F.k_B * T))) * c**2
+        - (Kr_0_custom * ufl.exp(-E_Kr_custom / (F.k_B * T))) * h2_conc * c
+    )
+    return recombination_flux
+
+HDH = F.ParticleFluxBC(
+    value=my_custom_recombination_flux,
+    subdomain=right_surf,
+    species_dependent_value={"c": D},
+    species=D,
+)
+```
+
 Finally, we add our boundary conditions and solve the steady-state problem:
 
 ```{code-cell} ipython3
@@ -281,6 +307,7 @@ my_model.boundary_conditions = [
     H2,
     D2,
     HD,
+    HDH,
     F.FixedConcentrationBC(subdomain=left_surf, value=1, species=D),
     F.FixedConcentrationBC(subdomain=left_surf, value=0, species=H),
 ]

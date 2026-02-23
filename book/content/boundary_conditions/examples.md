@@ -1,11 +1,11 @@
 ---
 jupytext:
-  formats: ipynb,md:myst
+  formats: md:myst,ipynb
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.19.1
+    jupytext_version: 1.20.0
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -197,14 +197,26 @@ Using the approximation is computationally less expensive, and still provides si
 
 +++
 
-## Complex isotopic exchange with multple hydrogenic species ##
+## Complex isotopic exchange with multiple hydrogenic species ##
 
 Surface reactions can involve multiple hydrogen isotopes, allowing for the modeling of complex isotope-exchange mechanisms between species. For example, in a system with both mobile hydrogen and deuteriun, various molecular recombination pathways may occur at the surface, resulting in the formation of $H_2$, $D_2$, and $HD$:
 
-$$ \text{Reaction 1}: \mathrm{H+D} \rightarrow \mathrm{HD} \longrightarrow \phi_1 = K_{r1} c_H c_D - K_{d1}P_{HD} $$
-$$ \text{Reaction 2}: \mathrm{D+D} \rightarrow \mathrm{D_2} \longrightarrow \phi_2 = 2K_{r2} c_D^2 - K_{d2}P_{D2} $$
-$$ \text{Reaction 3}: \mathrm{D+H_2} \rightarrow \mathrm{HD + H} \longrightarrow \phi_3 = K_{r3} c_H c_D - K_{d3}P_{HD} $$
-$$ \text{Reaction 4}: \mathrm{H+H} \rightarrow \mathrm{H_2} \longrightarrow \phi_4 = 2K_{r4} c_H^2 - K_{d4}P_{H2} $$
+$$ \text{Reaction 1}: \mathrm{H+D} \rightleftharpoons \mathrm{HD} \longrightarrow R_1 = K_{r1} c_H c_D - K_{d1}P_{HD} $$
+$$ \text{Reaction 2}: \mathrm{D+D} \rightleftharpoons \mathrm{D_2} \longrightarrow R_2 = K_{r2} c_D^2 - K_{d2}P_{D2} $$
+$$ \text{Reaction 3}: \mathrm{H+H} \rightleftharpoons \mathrm{H_2} \longrightarrow R_3 = K_{r3} c_H^2 - K_{d3}P_{H2} $$
+
+$$ \text{Reaction 4}: \mathrm{D+H_2} \rightleftharpoons \mathrm{HD + H} \longrightarrow R_4 = K_{r4} P_{H2} c_D - K_{d4}P_{HD} c_H $$
+
+
+From this reaction scheme, the surface fluxes of H and D are:
+
+$$
+\varphi_\mathrm{H} = -R_1  - 2 R_3 + R_4
+$$
+
+$$
+\varphi_\mathrm{D} = -R_1 - 2 R_2 - R_4
+$$
 
 Now consider the case where deuterium diffuses from left to right and reacts with background 
 $\mathrm{H_2}$, while $\mathrm{P_{HD}}$ and $\mathrm{P_{D_2}}$ are negligible at the surface. 
@@ -242,17 +254,9 @@ H = F.Species("H")
 D = F.Species("D")
 my_model.species = [H, D]
 
-H2 = F.SurfaceReactionBC(
-    reactant=[H, H],
-    gas_pressure=1000,
-    k_r0=1,
-    E_kr=0.1,
-    k_d0=1e-5,
-    E_kd=0.1,
-    subdomain=right_surf,
-)
+P_h2 = 1000
 
-HD = F.SurfaceReactionBC(
+reaction_1_bc = F.SurfaceReactionBC(
     reactant=[H, D],
     gas_pressure=0,
     k_r0=1,
@@ -262,9 +266,19 @@ HD = F.SurfaceReactionBC(
     subdomain=right_surf,
 )
 
-D2 = F.SurfaceReactionBC(
+reaction_2_bc = F.SurfaceReactionBC(
     reactant=[D, D],
     gas_pressure=0,
+    k_r0=1,
+    E_kr=0.1,
+    k_d0=1e-5,
+    E_kd=0.1,
+    subdomain=right_surf,
+)
+
+reaction_3_bc = F.SurfaceReactionBC(
+    reactant=[H, H],
+    gas_pressure=P_h2,
     k_r0=1,
     E_kr=0.1,
     k_d0=1e-5,
@@ -276,27 +290,31 @@ D2 = F.SurfaceReactionBC(
 Now, let's add our isotopic exchange reaction using `ParticleFluxBC` (see [here](h_transport_advanced.md) to learn more about defining isotopic exchange fluxes):
 
 ```{code-cell} ipython3
-import ufl
+Kr_0_custom = 10000.0
+E_Kr_custom = 0.5  # eV
 
-Kr_0 = 1.0
-E_Kr = 0.1
+def K_exchange(T):
+    return Kr_0_custom * ufl.exp(-E_Kr_custom / (F.k_B * T))
 
-def my_custom_recombination_flux(c, T):
-    Kr_0_custom = 1.0
-    E_Kr_custom = 0.5  # eV
-    h2_conc = 1e25  # assumed constant H2 concentration in
+def isotopic_exchange_D(c_D, T):
+    return - K_exchange(T) * P_h2 * c_D
 
-    recombination_flux = (
-        -(Kr_0 * ufl.exp(-E_Kr / (F.k_B * T))) * c**2
-        - (Kr_0_custom * ufl.exp(-E_Kr_custom / (F.k_B * T))) * h2_conc * c
-    )
-    return recombination_flux
+def isotopic_exchange_H(c_D, T):
+    return + K_exchange(T) * P_h2 * c_D
 
-HDH = F.ParticleFluxBC(
-    value=my_custom_recombination_flux,
+
+reaction_4_D = F.ParticleFluxBC(
+    value=isotopic_exchange_D,
     subdomain=right_surf,
-    species_dependent_value={"c": D},
+    species_dependent_value={"c_D": D},
     species=D,
+)
+
+reaction_4_H = F.ParticleFluxBC(
+    value=isotopic_exchange_H,
+    subdomain=right_surf,
+    species_dependent_value={"c_D": D},
+    species=H,
 )
 ```
 
@@ -304,10 +322,11 @@ Finally, we add our boundary conditions and solve the steady-state problem:
 
 ```{code-cell} ipython3
 my_model.boundary_conditions = [
-    H2,
-    D2,
-    HD,
-    HDH,
+    reaction_1_bc,
+    reaction_2_bc,
+    reaction_3_bc,
+    reaction_4_D,
+    reaction_4_H,
     F.FixedConcentrationBC(subdomain=left_surf, value=1, species=D),
     F.FixedConcentrationBC(subdomain=left_surf, value=0, species=H),
 ]

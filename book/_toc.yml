@@ -43,6 +43,7 @@ parts:
   - caption: Misc
     chapters:
     - file: content/misc/settings
+    - file: content/misc/stepsize
 
   - caption: Applications
     chapters:

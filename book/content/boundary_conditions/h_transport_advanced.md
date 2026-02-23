@@ -330,7 +330,7 @@ surface_flux = F.SurfaceFlux(field=tritium, surface=right_subdomain)
 
 ```{code-cell} ipython3
 my_model.temperature = 300
-my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=50, final_time=500)
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=50, final_time=200)
 my_model.exports = [surface_flux]
 my_model.initialise()
 my_model.run()
@@ -372,7 +372,7 @@ grid2.point_data["c"] = tritium.post_processing_solution.x.array
 grid2.set_active_scalars("c")
 ```
 
-Let's plot both `data_with_H2` and `data_no_H2` to see the concentration profile for each case:
+Let's plot both `data_with_H2` and `data_no_H2` to see the flux versus time for each case:
 
 ```{code-cell} ipython3
 :tags: [hide-input]

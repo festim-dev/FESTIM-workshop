@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Advanced examples
+# Hydrogen transport: examples
 
 This section discusses a few advanced examples using various boundary conditions to help users understand how BCs can help model their systems.
 

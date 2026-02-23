@@ -178,21 +178,22 @@ import numpy as np
 fig, axs = plt.subplots(2, 1, sharex=True)
 
 
-def plot(times, label=None):
+def plot(times, label=None, annotate=True):
     steps = np.arange(len(times))
     dt = np.diff(times)
 
     axs[0].plot(steps[1:], dt, label=label)
     (l,) = axs[1].plot(steps, times, label=label)
     axs[1].scatter(steps[-1], times[-1], color=l.get_color())
-    axs[1].annotate(
-        "Final time",
-        (steps[-1], times[-1]),
-        textcoords="offset points",
-        xytext=(-10, -5),
-        ha="right",
-        color=l.get_color(),
-    )
+    if annotate:
+        axs[1].annotate(
+            "Final time",
+            (steps[-1], times[-1]),
+            textcoords="offset points",
+            xytext=(-10, -5),
+            ha="right",
+            color=l.get_color(),
+        )
 
 
 plot(times_fast, label="Adaptive time stepping")
@@ -210,6 +211,40 @@ plt.show()
 As expected, the stepsize is growing at each time step, meaning the final time is reached in just above 20 timesteps. Whereas for the fixed time stepping, it takes 100 iterations.
 
 +++
+
+Stepsize can be capped by setting the parameter `max_stepsize`:
+
+```{code-cell} ipython3
+my_model.settings.stepsize = F.Stepsize(
+    initial_value=10,
+    growth_factor=1.1,  # grow by 10%
+    cutback_factor=0.9,  # shrink by 10%
+    target_nb_iterations=4,  # target number of iterations per time step
+    max_stepsize=40, # maximum step size
+)
+
+my_model.initialise()
+my_model.run()
+
+capped_times = my_model.exports[0].t
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+fig, axs = plt.subplots(2, 1, sharex=True)
+plot(times_fast, label="Adaptive time stepping", annotate=False)
+plot(times_slow, label="Fixed time stepping", annotate=False)
+plot(capped_times, label="Adaptive with max", annotate=False)
+
+axs[0].set_ylabel(r"Step size $\Delta t$")
+axs[0].set_ylim(bottom=0)
+axs[1].set_ylabel("Time $t$")
+axs[0].legend(loc="upper right")
+plt.xlabel("Timestep")
+
+plt.show()
+```
 
 
 

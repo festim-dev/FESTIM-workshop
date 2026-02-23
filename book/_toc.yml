@@ -44,6 +44,8 @@ parts:
     chapters:
     - file: content/misc/settings
     - file: content/misc/stepsize
+    - file: content/misc/festim_from_scratch
+
 
   - caption: Applications
     chapters:

@@ -32,10 +32,6 @@ parts:
     - file: content/temperatures/temperatures_basic
     - file: content/temperatures/temperatures_advanced
     
-  - caption: Settings
-    chapters:
-    - file: content/settings/settings
-
   - caption: Post-processing
     chapters:
     - file: content/post_process/intro
@@ -43,6 +39,10 @@ parts:
     - file: content/post_process/exports
     - file: content/post_process/paraview
     - file: content/post_process/pyvista
+
+  - caption: Misc
+    chapters:
+    - file: content/misc/settings
 
   - caption: Applications
     chapters:

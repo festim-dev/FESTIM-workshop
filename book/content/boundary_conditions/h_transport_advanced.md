@@ -238,7 +238,7 @@ Let:
 - $c_T$ be the surface concentrations of tritium
 - $P_\mathrm{H_2}, P_\mathrm{HT}$ the partial pressures of $\mathrm{H_2}$ and $\mathrm{HT}$
 - $K_{r}$ the rate coefficient of reaction {eq}`t2_recomb`
-- $K_{r}^\ast$ the rate coefficient of reaction {eq}`:label: isotopic_exchange`
+- $K_{r}^\ast$ the rate coefficient of reaction {eq}`isotopic_exchange`
 
 $$
 K_{r} = K_{r0} \exp\!\left(-\frac{E_{Kr}}{k_B T}\right)

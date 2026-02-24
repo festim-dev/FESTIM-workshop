@@ -62,6 +62,7 @@ sphinx:
       packaging: ["https://packaging.pypa.io/en/stable/", null]
       matplotlib: ["https://matplotlib.org/stable/", null]
       festim: ["https://festim.readthedocs.io/en/fenicsx/", null]
+    html_favicon: "images/festim logo symbol.png"
 
   extra_extensions:
     - "sphinx.ext.autodoc"

@@ -205,13 +205,13 @@ my_model.boundary_conditions = [
 ]
 ```
 
-We set a time-dependent particle source term:
+We set a time-dependent particle source term $S$:
 
 $$
-\begin{cases}
+S = \begin{cases}
 1, & \text{for } 100\leq t\leq 105\\
 0, & \text{otherwise }
-\end{case}
+\end{cases}
 $$
 
 ```{code-cell} ipython3

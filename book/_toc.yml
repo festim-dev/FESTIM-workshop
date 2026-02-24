@@ -21,6 +21,14 @@ parts:
     - file: content/material/material_htm
     - file: content/material/material_advanced
 
+  - caption: Boundary Conditions
+    chapters: 
+    - file: content/boundary_conditions/bc_intro
+    - file: content/boundary_conditions/h_transport_basic
+    - file: content/boundary_conditions/h_transport_advanced
+    - file: content/boundary_conditions/examples
+    - file: content/boundary_conditions/heat_transfer
+
   - caption: Species & Reactions
     chapters:
     - file: content/species_reactions/species

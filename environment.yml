@@ -22,7 +22,7 @@ dependencies:
   - ipykernel
   - nbconvert
   - sphinx-codeautolink
-  - fenics-dolfinx
+  - fenics-dolfinx>0.9
   - festim=2.0b2
   - pyvista
   - python-gmsh

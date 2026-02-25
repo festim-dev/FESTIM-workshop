@@ -22,7 +22,7 @@ dependencies:
   - nbconvert
   - sphinx-codeautolink
   - fenics-dolfinx
-  - festim=2.0b1
+  - festim=2.0b2
   - pyvista
   - python-gmsh
   - shapely

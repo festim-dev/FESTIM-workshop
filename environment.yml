@@ -2,7 +2,12 @@ name: festim-workshop
 channels:
   - conda-forge
   - defaults
+
 dependencies:
+  - python<3.14
+  - pip=23.3
+  - setuptools<82
+  - wheel<0.45
   - jupyter-book<2.0
   - python<3.14  # som pyvista incompatibility issues with python 3.14
   - pip=23.3
@@ -17,7 +22,7 @@ dependencies:
   - nbconvert
   - sphinx-codeautolink
   - fenics-dolfinx
-  - festim=2.0b1
+  - festim=2.0b2
   - pyvista
   - python-gmsh
   - shapely

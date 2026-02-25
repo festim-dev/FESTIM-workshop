@@ -1,11 +1,11 @@
 ---
 jupytext:
-  formats: md:myst,ipynb
+  formats: ipynb,md:myst
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.20.0
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -102,22 +102,18 @@ FESTIM defaults the `transient` setting to `True`, while the stepsize and final 
 
 ## Custom PETSC options ##
 
-It is possible to parameterise the PETSC Newton solver by providing a dictionary to `petsc_options`.
+It is possible to parameterise the PETSC Newton solver by providing a dictionary to the `petsc_options` attribute of the problem class.
 
 For example:
 
 ```{code-cell} ipython3
-my_settings = F.Settings(
-    atol=1e10,
-    rtol=1e-10,
-    final_time=10,
-    stepsize=2
-    petsc_options={
-        "ksp_type": "preonly",
-        "pc_type": "lu",
-        "pc_factor_mat_solver_type": "mumps",
-    }
-)
+my_model = F.HydrogenTransportProblem()
+
+my_model.petsc_options = { 
+    "ksp_type": "preonly",
+    "pc_type": "lu",
+    "pc_factor_mat_solver_type": "mumps",
+}
 ```
 
 For available choices, see the [PETSc SNES documentation](https://petsc.org/release/petsc4py/reference/petsc4py.PETSc.SNES.html#).

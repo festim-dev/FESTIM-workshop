@@ -20,6 +20,10 @@ Objectives:
 * Understand the FESTIM foundations
 * Be better armed for contributing to FESTIM
 
++++
+
+## Setting up the problem
+
 ```{code-cell} ipython3
 import dolfinx
 import numpy as np
@@ -32,12 +36,16 @@ from dolfinx import fem
 from basix.ufl import element, mixed_element
 ```
 
+Let's start by creating a mesh:
+
 ```{code-cell} ipython3
 domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilateral)
 tdim = domain.topology.dim
 fdim = tdim - 1
 domain.topology.create_connectivity(fdim, tdim)
 ```
+
+Now that we have a mesh, we need to define a function space and appropriate functions and _test functions_:
 
 ```{code-cell} ipython3
 # we create a mixed element with two components, both continuous galerkin degree 1
@@ -59,9 +67,9 @@ cm, ct = ufl.split(u)
 v_cm, v_ct = ufl.TestFunctions(V)
 ```
 
-```{code-cell} ipython3
-# Boundary conditions:
+Every finite element problem needs boundary conditions. Here we define three Dirichlet boundary conditions:
 
+```{code-cell} ipython3
 def boundary_left(x):
     return np.isclose(x[0], 0)
 
@@ -96,6 +104,8 @@ bc_right = fem.dirichletbc(fem.Constant(domain, 1.0), dofs_right[0], V.sub(0))
 bc_top = fem.dirichletbc(fem.Constant(domain, 3.0), dofs_top[0], V.sub(0))
 ```
 
+We then define the variational formulation (weak form)
+
 ```{code-cell} ipython3
 # Problem parameters
 k = 0.01  # trapping rate
@@ -116,6 +126,8 @@ F_trapped = +trapping * v_ct * ufl.dx - detrapping * v_ct * ufl.dx
 
 F = F_mobile + F_trapped
 ```
+
+Now we can create a Newton solver:
 
 ```{code-cell} ipython3
 # taken from https://github.com/FEniCS/dolfinx/blob/5fcb988c5b0f46b8f9183bc844d8f533a2130d6a/python/demo/demo_cahn-hilliard.py#L279C1-L286C28
@@ -148,6 +160,12 @@ problem = NonlinearProblem(
     petsc_options=petsc_options,
     petsc_options_prefix="Poisson",
 )
+```
+
+## Solving the problem
+
+```{code-cell} ipython3
+
 problem.solve()
 converged = problem.solver.getConvergedReason()
 num_iter = problem.solver.getIterationNumber()
@@ -155,10 +173,11 @@ assert converged > 0, f"Solver did not converge, got {converged}."
 print(
     f"Solver converged after {num_iter} iterations with converged reason {converged}."
 )
+```
 
-## Post-processing
+## Post processing
 
-
+```{code-cell} ipython3
 # we first split the main solution u into its components with .split()
 cm_post, ct_post = u.split()  # NOTE this is different from ufl.split(u)
 
@@ -167,9 +186,9 @@ cm_post = cm_post.collapse()
 ct_post = ct_post.collapse()
 ```
 
-```{code-cell} ipython3
-# Visualization
+Visualise the results:
 
+```{code-cell} ipython3
 import pyvista
 from dolfinx import plot
 

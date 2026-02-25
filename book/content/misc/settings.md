@@ -100,4 +100,24 @@ my_settings = F.Settings(
 FESTIM defaults the `transient` setting to `True`, while the stepsize and final time defaults to `None`.
 ```
 
-## Custom PETSC parameters ##
+## Custom PETSC options ##
+
+It is possible to parameterise the PETSC Newton solver by providing a dictionary to `petsc_options`.
+
+For example:
+
+```{code-cell} ipython3
+my_settings = F.Settings(
+    atol=1e10,
+    rtol=1e-10,
+    final_time=10,
+    stepsize=2
+    petsc_options={
+        "ksp_type": "preonly",
+        "pc_type": "lu",
+        "pc_factor_mat_solver_type": "mumps",
+    }
+)
+```
+
+For available choices, see the [PETSc SNES documentation](https://petsc.org/release/petsc4py/reference/petsc4py.PETSc.SNES.html#).

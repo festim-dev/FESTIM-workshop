@@ -21,7 +21,7 @@ dependencies:
   - ipykernel
   - nbconvert
   - sphinx-codeautolink
-  - fenics-dolfinx>0.9
+  - fenics-dolfinx
   - festim=2.0b2
   - pyvista
   - python-gmsh

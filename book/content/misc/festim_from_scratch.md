@@ -39,7 +39,9 @@ from basix.ufl import element, mixed_element
 Let's start by creating a mesh:
 
 ```{code-cell} ipython3
-domain = mesh.create_unit_square(MPI.COMM_WORLD, 8, 8, mesh.CellType.quadrilateral)
+nx = ny = 96
+
+domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.quadrilateral)
 tdim = domain.topology.dim
 fdim = tdim - 1
 domain.topology.create_connectivity(fdim, tdim)
@@ -70,17 +72,11 @@ v_cm, v_ct = ufl.TestFunctions(V)
 Every finite element problem needs boundary conditions. Here we define three Dirichlet boundary conditions:
 
 ```{code-cell} ipython3
-def boundary_left(x):
-    return np.isclose(x[0], 0)
+def inlet(x):
+    return np.logical_and(np.isclose(x[0], 0), x[1] <= 0.5)
 
-
-def boundary_right(x):
-    return np.isclose(x[0], 1)
-
-
-def boundary_top(x):
-    return np.isclose(x[1], 1)
-
+def outlet(x):
+    return np.logical_and(np.isclose(x[0], 1), x[1] >= 0.5)
 
 V0, submap = V.sub(0).collapse()
 
@@ -88,29 +84,21 @@ V0, submap = V.sub(0).collapse()
 # in FESTIM we don't need this since we use meshtags for everything
 # https://fenicsproject.discourse.group/t/dolfinx-dirichlet-bcs-for-mixed-function-spaces/7844/2
 
-dofs_right = fem.locate_dofs_geometrical((V.sub(0), V0), boundary_right)
-dofs_left = fem.locate_dofs_geometrical((V.sub(0), V0), boundary_left)
-dofs_top = fem.locate_dofs_geometrical((V.sub(0), V0), boundary_top)
+dofs_outlet = fem.locate_dofs_geometrical((V.sub(0), V0), outlet)
+dofs_inlet = fem.locate_dofs_geometrical((V.sub(0), V0), inlet)
 
-# FIXME the following doesn't work for some reason but I opened an issue on the FEniCS discourse
-# https://fenicsproject.discourse.group/t/mixedelement-functionspace-dirichletbc-with-function-as-value/19438
-
-# uD = fem.Function(V0)
-# uD.interpolate(lambda x: 1 + x[0] ** 2 + 2 * x[1] ** 2)
-# bc_left = fem.dirichletbc(uD, dofs_left[0])
-
-bc_left = fem.dirichletbc(fem.Constant(domain, 2.0), dofs_left[0], V.sub(0))
-bc_right = fem.dirichletbc(fem.Constant(domain, 1.0), dofs_right[0], V.sub(0))
-bc_top = fem.dirichletbc(fem.Constant(domain, 3.0), dofs_top[0], V.sub(0))
+bc_outlet = fem.dirichletbc(fem.Constant(domain, 0.0), dofs_outlet[0], V.sub(0))
+bc_inlet = fem.dirichletbc(fem.Constant(domain, 1.0), dofs_inlet[0], V.sub(0))
 ```
 
 We then define the variational formulation (weak form)
 
 ```{code-cell} ipython3
 # Problem parameters
-k = 0.01  # trapping rate
+k = 0.1  # trapping rate
 p = 0.1  # detrapping rate
-n = 0.1  # total trapping sites
+n = 1  # total trapping sites
+D = 2.0 # diffusion coefficient
 
 trapping = k * cm * (n - ct)
 detrapping = p * ct
@@ -118,7 +106,7 @@ detrapping = p * ct
 # NOTE everything is bundled in one variational form F
 # the difference between the different equations is made with the test functions v_cm and v_ct
 F_mobile = (
-    ufl.dot(ufl.grad(cm), ufl.grad(v_cm)) * ufl.dx
+    D*ufl.dot(ufl.grad(cm), ufl.grad(v_cm)) * ufl.dx
     - trapping * v_cm * ufl.dx
     + detrapping * v_cm * ufl.dx
 )
@@ -156,7 +144,7 @@ petsc_options = {
 problem = NonlinearProblem(
     F,
     u,
-    bcs=[bc_left, bc_right, bc_top],
+    bcs=[bc_outlet, bc_inlet],
     petsc_options=petsc_options,
     petsc_options_prefix="Poisson",
 )
@@ -201,7 +189,7 @@ u_plotter = pyvista.Plotter()
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["cm"] = cm_post.x.array.real
 u_grid.set_active_scalars("cm")
-u_plotter.add_mesh(u_grid, show_edges=True)
+u_plotter.add_mesh(u_grid, show_edges=False)
 
 u_plotter.view_xy()
 if not pyvista.OFF_SCREEN:
@@ -213,10 +201,53 @@ ct_plotter = pyvista.Plotter()
 ct_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 ct_grid.point_data["ct"] = ct_post.x.array.real
 ct_grid.set_active_scalars("ct")
-ct_plotter.add_mesh(ct_grid, show_edges=True)
+ct_plotter.add_mesh(ct_grid, show_edges=False)
 
 
 ct_plotter.view_xy()
 if not pyvista.OFF_SCREEN:
     ct_plotter.show()
+```
+
+Compute the total inventory:
+
+```{code-cell} ipython3
+from scifem import assemble_scalar
+inventory_cm = assemble_scalar(cm_post * ufl.dx)
+inventory_ct = assemble_scalar(ct_post * ufl.dx)
+
+print(f"Total inventory of mobile species: {inventory_cm:.4f}")
+print(f"Total inventory of trapped species: {inventory_ct:.4f}")
+```
+
+Compute the outgassing fluxes:
+
+```{code-cell} ipython3
+inlet_facets = dolfinx.mesh.locate_entities_boundary(domain, fdim, inlet)
+outlet_facets = dolfinx.mesh.locate_entities_boundary(domain, fdim, outlet)
+
+inlet_values = np.full_like(inlet_facets, 1.0)
+outlet_values = np.full_like(outlet_facets, 2.0)
+
+entities = np.concatenate([inlet_facets, outlet_facets])
+values = np.concatenate([inlet_values, outlet_values])
+
+facet_meshtags = dolfinx.mesh.meshtags(domain, fdim, entities=entities, values=values)
+
+ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_meshtags)
+```
+
+```{code-cell} ipython3
+n = ufl.FacetNormal(domain)
+
+flux_form = -ufl.dot(D * ufl.grad(cm_post), n)
+
+flux_inlet = -assemble_scalar(flux_form * ds(1))
+flux_outlet = assemble_scalar(flux_form * ds(2))
+
+
+print(f"Inlet flux: {flux_inlet:.4f}")
+print(f"Outlet flux: {flux_outlet:.4f}")
+
+print(f"Rel difference: {(flux_inlet - flux_outlet)/flux_inlet:.2%}")
 ```

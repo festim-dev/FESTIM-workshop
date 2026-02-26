@@ -23,7 +23,54 @@ Objectives:
 +++
 
 ## Steady state problem
+
+Let's consider a unit square $\Omega = [0, 1] \times [0, 1]$.
+
+$c_m$ is the concentration of _mobile_ hydrogen, and $c_t$ is the concentration of _trapped_ hydrogen.
+
+
+We want to solve the following steady state problem:
+
+\begin{align}
+    \nabla \cdot (D \nabla c_m) - R &= 0\quad \text{on } \Omega\\
+    R &= 0\quad \text{on } \Omega\\
+    R &= k c_m (n - c_t) - p \ c_t \\
+    c_m &= 1 \quad \text{on } \Gamma_\mathrm{inlet} \\
+    c_m &= 0\quad \text{on } \Gamma_\mathrm{outlet}
+\end{align}
+
+
+```{note}
+In steady state, this problem is equivalent to:
+\begin{align}
+    \nabla \cdot (D \nabla c_m) &= 0\quad \text{on } \Omega\\
+    R &= 0\quad \text{on } \Omega
+\end{align}
+
+Meaning that for the governing equation for mobile concentration is the same as a pure diffusive (no trap) case.
+
+Furthermore,
+
+$$
+k c_m (n - c_t) = p \ c_t
+$$
+
+Leading to the direct expression for $c_t$:
+$$
+c_t = n \left(1 + \frac{p}{k\ c_m} \right)^{-1}
+$$
+
+This is sometimes referred as Oriani's equilibrium.
+We won't solve it the "direct" way here as we are building up to a transient (non-equilibrium) case.
+
+```
+
+
 ### Setting up the problem
+
++++
+
+We start by importing the required modules and libraries:
 
 ```{code-cell} ipython3
 import dolfinx
@@ -37,15 +84,12 @@ from dolfinx import fem
 import basix
 ```
 
-Let's start by creating a mesh:
+We then create a mesh using `create_unit_square()`
 
 ```{code-cell} ipython3
 nx = ny = 96
 
 domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.quadrilateral)
-tdim = domain.topology.dim
-fdim = tdim - 1
-domain.topology.create_connectivity(fdim, tdim)
 ```
 
 Now that we have a mesh, we need to define a function space and appropriate functions and _test functions_:
@@ -88,8 +132,11 @@ V0, submap = V.sub(0).collapse()
 dofs_outlet = fem.locate_dofs_geometrical((V.sub(0), V0), outlet)
 dofs_inlet = fem.locate_dofs_geometrical((V.sub(0), V0), inlet)
 
-bc_outlet = fem.dirichletbc(fem.Constant(domain, 0.0), dofs_outlet[0], V.sub(0))
-bc_inlet = fem.dirichletbc(fem.Constant(domain, 1.0), dofs_inlet[0], V.sub(0))
+c_inlet = fem.Constant(domain, 1.0)
+c_outlet = fem.Constant(domain, 0.0)
+
+bc_outlet = fem.dirichletbc(c_outlet, dofs_outlet[0], V.sub(0))
+bc_inlet = fem.dirichletbc(c_inlet, dofs_inlet[0], V.sub(0))
 ```
 
 We then define the variational formulation (weak form)
@@ -155,8 +202,10 @@ problem = NonlinearProblem(
 
 ```{code-cell} ipython3
 problem.solve()
+
 converged = problem.solver.getConvergedReason()
 num_iter = problem.solver.getIterationNumber()
+
 assert converged > 0, f"Solver did not converge, got {converged}."
 print(
     f"Solver converged after {num_iter} iterations with converged reason {converged}."
@@ -180,7 +229,7 @@ Visualise the results:
 import pyvista
 from dolfinx import plot
 
-domain.topology.create_connectivity(tdim, tdim)
+# domain.topology.create_connectivity(tdim, tdim)
 u_topology, u_cell_types, u_geometry = plot.vtk_mesh(cm_post.function_space)
 
 
@@ -223,6 +272,9 @@ print(f"Total inventory of trapped species: {inventory_ct:.4f}")
 Compute the outgassing fluxes:
 
 ```{code-cell} ipython3
+tdim = domain.topology.dim
+fdim = tdim - 1
+
 inlet_facets = dolfinx.mesh.locate_entities_boundary(domain, fdim, inlet)
 outlet_facets = dolfinx.mesh.locate_entities_boundary(domain, fdim, outlet)
 
@@ -253,6 +305,23 @@ print(f"Rel difference: {(flux_inlet - flux_outlet)/flux_inlet:.2%}")
 ```
 
 ## Transient problem
+
+Now that we've solve a steady state problem, we're going to step it up by solving a transient problem.
+We'll use the same geometry and similar parameters.
+
+We'll also set the same boundary conditions with the difference that the value of one of the conditions will change with time.
+The complete mathematical problem is:
+
+\begin{align}
+\frac{\partial c_m}{\partial t} &= \nabla \cdot (D \nabla c_m) - R \quad \text{on } \Omega\\
+\frac{\partial c_t}{\partial t} &= + R \quad \text{on } \Omega\\
+R &= k c_m (n - c_t) - p \ c_t \\
+c_m &= \begin{cases}
+1 \quad \text{for } t < 5 \\
+0 \quad \text{otherwise}
+\end{cases} \quad \text{on } \Gamma_\mathrm{inlet} \\
+c_m &= 0\quad \text{on } \Gamma_\mathrm{outlet}
+\end{align}
 
 ### Setting up
 
@@ -289,6 +358,8 @@ cm_n, ct_n = ufl.split(u_n)
 v_cm, v_ct = ufl.TestFunctions(V)
 ```
 
+We use the same boudary conditions as the steady state case, with the exception that we will modify the value of `c_inlet` at $t=5$ to highlight transient effects.
+
 ```{code-cell} ipython3
 def inlet(x):
     return np.logical_and(np.isclose(x[0], 0), x[1] <= 0.5)
@@ -305,26 +376,34 @@ V0, submap = V.sub(0).collapse()
 dofs_outlet = fem.locate_dofs_geometrical((V.sub(0), V0), outlet)
 dofs_inlet = fem.locate_dofs_geometrical((V.sub(0), V0), inlet)
 
-bc_outlet = fem.dirichletbc(fem.Constant(domain, 0.0), dofs_outlet[0], V.sub(0))
-bc_inlet = fem.dirichletbc(fem.Constant(domain, 1.0), dofs_inlet[0], V.sub(0))
+c_inlet = fem.Constant(domain, 1.0)
+c_outlet = fem.Constant(domain, 0.0)
+
+bc_outlet = fem.dirichletbc(c_outlet, dofs_outlet[0], V.sub(0))
+bc_inlet = fem.dirichletbc(c_inlet, dofs_inlet[0], V.sub(0))
 ```
+
+The variational formulation is extremely similar, we just add a transient term using a first order backwards Euler time-stepping scheme.
 
 ```{code-cell} ipython3
 # Problem parameters
-k = 0.1  # trapping rate
-p = 0.1  # detrapping rate
+k = 0.2  # trapping rate
+p = 0.01  # detrapping rate
 n = 0.5  # total trapping sites
 D = 0.1 # diffusion coefficient
 
-dt = dolfinx.fem.Constant(domain, 0.5)
+dt = dolfinx.fem.Constant(domain, 1.0)
 
-trapping = k * cm * (n - ct)
-detrapping = p * ct
 
 # NOTE everything is bundled in one variational form F
 # the difference between the different equations is made with the test functions v_cm and v_ct
 F_mobile_transient = (cm - cm_n)/dt* v_cm * ufl.dx
 F_trapped_transient = (ct - ct_n)/dt * v_ct * ufl.dx
+
+
+trapping = k * cm * (n - ct)
+detrapping = p * ct
+
 F_mobile = (
     D*ufl.dot(ufl.grad(cm), ufl.grad(v_cm)) * ufl.dx
     + trapping * v_cm * ufl.dx
@@ -334,6 +413,8 @@ F_trapped = -trapping * v_ct * ufl.dx + detrapping * v_ct * ufl.dx
 
 F = F_mobile_transient + F_trapped_transient + F_mobile + F_trapped
 ```
+
+We set up the nonlinear solver in the exact same way:
 
 ```{code-cell} ipython3
 # taken from https://github.com/FEniCS/dolfinx/blob/5fcb988c5b0f46b8f9183bc844d8f533a2130d6a/python/demo/demo_cahn-hilliard.py#L279C1-L286C28
@@ -368,6 +449,8 @@ problem = NonlinearProblem(
     petsc_options_prefix="poisson_transient",
 )
 ```
+
+Let's prepare a pyvista animation:
 
 ```{code-cell} ipython3
 import matplotlib as mpl
@@ -419,14 +502,35 @@ _ = plotter.add_mesh(
 )
 ```
 
+We make two empty lists for storing the inventory values:
+
+```{code-cell} ipython3
+inventories_cm = []
+inventories_ct = []
+times = []
+```
+
+`dolfinx` doesn't "know" anything about time. We set the time stepping loop ourselves.
+
+At each timestep we:
+
+- update `t`
+- solve the nonlinear problem
+- update the previous solution `u_n`
+- update the inlet boundary condition
+- perform the post processing tasks
+
 ```{code-cell} ipython3
 t = 0.0
-t_final = 20
+t_final = 30
 n_it = 0
+
 while t < t_final:
     t += dt.value
     n_it += 1
+    times.append(t)
 
+    # solve the problem with the current u_n as previous solution
     problem.solve()
     converged = problem.solver.getConvergedReason()
     num_iter = problem.solver.getIterationNumber()
@@ -438,6 +542,9 @@ while t < t_final:
     # update u_n with the current solution u
     u_n.x.array[:] = u.x.array[:]
 
+    # update inlet value to show transient response
+    c_inlet.value = 1.0 if t < 5 else 0.0
+
     # post processing
     c_m_post = u.split()[0].collapse()
     c_t_post = u.split()[1].collapse()
@@ -447,7 +554,21 @@ while t < t_final:
     grid_c_t.point_data["c_t"][:] = c_t_post.x.array
     plotter.write_frame()
 
+    # compute inventory
+    inventories_cm.append(assemble_scalar(c_m_post * ufl.dx))
+    inventories_ct.append(assemble_scalar(c_t_post * ufl.dx))
+
 plotter.close()
 ```
 
 ![gif](transient.gif)
+
+```{code-cell} ipython3
+import matplotlib.pyplot as plt
+
+plt.stackplot(times, inventories_cm, inventories_ct, labels=["mobile", "trapped"])
+plt.ylabel("Inventory")
+plt.xlabel("Time")
+plt.legend(reverse=True)
+plt.show()
+```

@@ -591,7 +591,6 @@ T(t) = \begin{cases}
 \end{cases}
 \end{equation}
 
-
 ```{code-cell} ipython3
 nx = ny = 20
 

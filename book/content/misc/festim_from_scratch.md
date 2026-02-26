@@ -558,7 +558,7 @@ while t < t_final:
 plotter.close()
 ```
 
-![gif](transient.gif)
+![gif](./transient.gif)
 
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
@@ -794,7 +794,7 @@ while t < t_final:
 plotter.close()
 ```
 
-![transient_temp](transient_temperature.gif)
+![transient_temp](./transient_temperature.gif)
 
 +++
 
@@ -1038,4 +1038,4 @@ while t < t_final:
 plotter.close()
 ```
 
-![conc_non_hom](non_homogeneous_temperature.gif)
+![conc_non_hom](./non_homogeneous_temperature.gif)

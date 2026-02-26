@@ -21,17 +21,38 @@ parts:
     - file: content/material/material_htm
     - file: content/material/material_advanced
 
+  - caption: Boundary Conditions
+    chapters: 
+    - file: content/boundary_conditions/bc_intro
+    - file: content/boundary_conditions/h_transport_basic
+    - file: content/boundary_conditions/h_transport_advanced
+    - file: content/boundary_conditions/examples
+    - file: content/boundary_conditions/heat_transfer
+
   - caption: Species & Reactions
     chapters:
     - file: content/species_reactions/species
     - file: content/species_reactions/reactions
     - file: content/species_reactions/surface_reactions
+    
+  - caption: Initial Conditions
+    chapters:
+    - file: content/initial_conditions/concentration
+    - file: content/initial_conditions/temperature
 
   - caption: Temperature
     chapters:
     - file: content/temperatures/temperatures_basic
     - file: content/temperatures/temperatures_advanced
     
+  - caption: Post-processing
+    chapters:
+    - file: content/post_process/intro
+    - file: content/post_process/derived
+    - file: content/post_process/exports
+    - file: content/post_process/paraview
+    - file: content/post_process/pyvista
+
   - caption: Applications
     chapters:
     - file: content/applications/task02

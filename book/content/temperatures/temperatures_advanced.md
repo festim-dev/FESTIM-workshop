@@ -129,7 +129,6 @@ heat_transfer_model.run()
 
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 from dolfinx import plot
@@ -187,7 +186,6 @@ hydrogen_problem.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 from dolfinx import plot
@@ -235,7 +233,6 @@ heat_transfer_model.run()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 T = heat_transfer_model.u
@@ -343,11 +340,10 @@ problem.run()
 
 import pyvista
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 T = problem.heat_problem.u
-c = problem.hydrogen_problem.u
+c = problem.hydrogen_problem.species[0].post_processing_solution
 
 topology, cell_types, geometry = plot.vtk_mesh(T.function_space)
 u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)

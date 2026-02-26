@@ -365,8 +365,6 @@ my_model.temperature = 300
 my_model.settings = F.Settings(atol=1e-10, rtol=1e-8, stepsize=1, final_time=120)
 
 my_model.exports = [surface_flux, profile]
-# from dolfinx.log import set_log_level, LogLevel
-# set_log_level(LogLevel.INFO)
 my_model.initialise()
 my_model.run()
 

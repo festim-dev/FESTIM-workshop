@@ -57,7 +57,7 @@ where $L$ is the characteristic length, $u$ the local flow velocity, $D$ the mas
 
 This section discusses how to setup and solve a coupled problem between OpenFOAM and FESTIM, as outlined in the FESTIM 2 review paper. Specifically, we'll solve a lid-driven cavity problem by calculating the velocity field in OpenFOAM and exporting it to FESTIM to solve our diffusion model.
 
-```{seealso}
+```{see also}
 Check out the [FESTIM 2 review paper](https://arxiv.org/abs/2509.24760) to learn more.
 ```
 
@@ -146,7 +146,7 @@ plotter.show()
 ````{tip}
 To save the OpenFOAM velocity field, you can export it to `.bp` and view the results in ParaView (as shown in the [post-processing section](../post_process/paraview.md)).
 
-```{code-block} python
+```
 writer = VTXWriter(
     MPI.COMM_WORLD,
     "results/velocity_field.bp",

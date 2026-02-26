@@ -223,42 +223,53 @@ cm_post = cm_post.collapse()
 ct_post = ct_post.collapse()
 ```
 
-Visualise the results:
+#### Visualise the results with `pyvista`
 
 ```{code-cell} ipython3
 import pyvista
 from dolfinx import plot
 
-# domain.topology.create_connectivity(tdim, tdim)
+tdim = domain.topology.dim
+fdim = tdim - 1
+domain.topology.create_connectivity(tdim, tdim)
+
+# We can do this once since both components share the same function space
 u_topology, u_cell_types, u_geometry = plot.vtk_mesh(cm_post.function_space)
 
 
-# plot cm
-u_plotter = pyvista.Plotter()
+plotter = pyvista.Plotter(shape=(1, 2))
+
+
+plotter.subplot(0, 0)
 u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 u_grid.point_data["cm"] = cm_post.x.array.real
 u_grid.set_active_scalars("cm")
-u_plotter.add_mesh(u_grid, show_edges=False)
+plotter.add_mesh(u_grid, show_edges=False)
+plotter.view_xy()
 
-u_plotter.view_xy()
-if not pyvista.OFF_SCREEN:
-    u_plotter.show()
-```
-
-```{code-cell} ipython3
-ct_plotter = pyvista.Plotter()
+plotter.subplot(0, 1)
 ct_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
 ct_grid.point_data["ct"] = ct_post.x.array.real
 ct_grid.set_active_scalars("ct")
-ct_plotter.add_mesh(ct_grid, show_edges=False)
-
-
-ct_plotter.view_xy()
+plotter.add_mesh(ct_grid, show_edges=False)
+plotter.view_xy()
 if not pyvista.OFF_SCREEN:
-    ct_plotter.show()
+    plotter.show()
 ```
 
-Compute the total inventory:
+#### Export the results to a file
+
+```{code-cell} ipython3
+from dolfinx.io import VTXWriter
+
+writer = VTXWriter(MPI.COMM_WORLD, "solution.bp", cm_post)
+
+writer.write(t=0.0)
+```
+
+#### Compute derived quantities
+
+Inventories:
 
 ```{code-cell} ipython3
 from scifem import assemble_scalar
@@ -269,11 +280,9 @@ print(f"Total inventory of mobile species: {inventory_cm:.4f}")
 print(f"Total inventory of trapped species: {inventory_ct:.4f}")
 ```
 
-Compute the outgassing fluxes:
+Outgassing fluxes:
 
 ```{code-cell} ipython3
-tdim = domain.topology.dim
-fdim = tdim - 1
 
 inlet_facets = dolfinx.mesh.locate_entities_boundary(domain, fdim, inlet)
 outlet_facets = dolfinx.mesh.locate_entities_boundary(domain, fdim, outlet)

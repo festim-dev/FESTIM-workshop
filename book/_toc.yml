@@ -53,6 +53,10 @@ parts:
     - file: content/post_process/paraview
     - file: content/post_process/pyvista
 
+  - caption: Multiphysics
+    chapters:
+    - file: content/multiphysics/cfd
+
   - caption: Applications
     chapters:
     - file: content/applications/task02

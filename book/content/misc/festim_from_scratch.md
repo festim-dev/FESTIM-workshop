@@ -41,6 +41,7 @@ We want to solve the following steady state problem:
 
 
 ```{note}
+:class: dropdown
 In steady state, this problem is equivalent to:
 \begin{align}
     \nabla \cdot (D \nabla c_m) &= 0\quad \text{on } \Omega\\

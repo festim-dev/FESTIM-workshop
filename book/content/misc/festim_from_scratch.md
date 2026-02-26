@@ -56,6 +56,7 @@ k c_m (n - c_t) = p \ c_t
 $$
 
 Leading to the direct expression for $c_t$:
+
 $$
 c_t = n \left(1 + \frac{p}{k\ c_m} \right)^{-1}
 $$

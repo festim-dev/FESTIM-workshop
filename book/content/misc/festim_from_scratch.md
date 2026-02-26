@@ -268,6 +268,12 @@ writer = VTXWriter(MPI.COMM_WORLD, "solution.bp", cm_post)
 writer.write(t=0.0)
 ```
 
+```{seealso}
+If you want to know more about Paraview, check out [](paraview)!
+```
+
++++
+
 #### Compute derived quantities
 
 Inventories:

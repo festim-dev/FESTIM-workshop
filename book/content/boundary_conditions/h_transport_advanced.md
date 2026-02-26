@@ -1,11 +1,11 @@
 ---
 jupytext:
-  formats: md:myst,ipynb
+  formats: ipynb,md:myst
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.20.0
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: festim-workshop
   language: python
@@ -302,7 +302,7 @@ vol = F.VolumeSubdomain1D(id=5, material=material, borders=[0, 1])
 my_model.subdomains = [vol, left_subdomain, right_subdomain]
 ```
 
-Isotopic exchange reactions can be modeled as user-defined expressions using `ufl`. 
+Isotopic exchange reactions can be modeled as user-defined expressions using `ufl`.
 
 ```{code-cell} ipython3
 import ufl
@@ -362,7 +362,7 @@ profile = F.Profile1DExport(field=tritium, subdomain=vol)
 
 ```{code-cell} ipython3
 my_model.temperature = 300
-my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1, final_time=120)
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-8, stepsize=1, final_time=120)
 
 my_model.exports = [surface_flux, profile]
 my_model.initialise()

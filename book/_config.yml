@@ -68,6 +68,7 @@ sphinx:
     - "sphinx.ext.autodoc"
     - "sphinx.ext.intersphinx"
     - "sphinx_codeautolink"
+    # - "sphinx_design"
 
 parse:
   myst_enable_extensions:

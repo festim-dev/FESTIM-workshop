@@ -73,6 +73,7 @@ $$
 $$
 
 +++
+### Reading OpenFOAM data
 
 Let us first import our OpenFOAM data (which has been stored on the [FESTIM 2 review paper repo](https://github.com/festim-dev/FESTIM-v2-review/tree/main/coupling/coupling_cfd/data).)
 
@@ -158,6 +159,8 @@ writer.write(t=0)
 
 +++
 
+### Setting up our FESTIM model
+
 Now, let's initiate our hydrogen transport problem. We have insulated boundary conditions ($c=0$ on all boundaries):
 
 ```{code-cell} ipython3
@@ -204,6 +207,8 @@ my_model.sources = [
 ]
 ```
 
+### Adding advection into FESTIM
+
 To add the velocity field to our FESTIM model, we need to create an `AdvectionTerm`, which requires the velocity field (in our case the exported field from OpenFOAM), which species the velocity field is acting on, and which volume subdomain is this velocity field on:
 
 ```{code-cell} ipython3
@@ -216,7 +221,7 @@ We use a `lambda` function to utilize transient velocity fields, although our ex
 
 +++
 
-We add this to our problem's `advection_terms` atribute:
+We add this to our problem's `advection_terms` attribute:
 
 ```{code-cell} ipython3
 my_model.advection_terms = [advection]

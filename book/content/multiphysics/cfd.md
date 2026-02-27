@@ -55,10 +55,10 @@ where $L$ is the characteristic length, $u$ the local flow velocity, $D$ the mas
 
 ## Solving a lid-driven cavity problem
 
-This section discusses how to setup and solve a coupled problem between OpenFOAM and FESTIM, as outlined in the FESTIM 2 review paper. Specifically, we'll solve a lid-driven cavity problem by calculating the velocity field in OpenFOAM and exporting it to FESTIM to solve our diffusion model.
+This section discusses how to setup and solve a coupled problem between OpenFOAM and FESTIM, as outlined in the FESTIM 2 review paper. Specifically, we'll solve a lid-driven cavity problem by calculating the velocity field in OpenFOAM and exporting it to FESTIM to solve our diffusion model. `.foam` files from OpenFOAM are converted to `.vtk` files for DOLFINx using `foam2dolfinx`.
 
 ```{seealso}
-Check out the [FESTIM 2 review paper](https://arxiv.org/abs/2509.24760) to learn more.
+Check out the [FESTIM 2 review paper](https://arxiv.org/abs/2509.24760) or [foam2dolfinx](https://github.com/festim-dev/foam2dolfinx) to learn more.
 ```
 
 +++

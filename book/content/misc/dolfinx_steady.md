@@ -76,7 +76,7 @@ from dolfinx import fem
 import basix
 ```
 
-We then create a mesh using `create_unit_square()`
+We then create a mesh using {py:func}`create_unit_square<dolfinx.mesh.create_unit_square>`
 
 ```{code-cell} ipython3
 nx = ny = 96

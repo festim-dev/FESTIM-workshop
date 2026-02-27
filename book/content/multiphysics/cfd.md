@@ -22,7 +22,7 @@ This tutorial discusses how to couple FESTIM to computational fluid dynamics (CF
 * Understanding the importance of fluid flow in hydrogen diffusion
 * Utilizing external CFD solvers to generate velocity fields
 * Reading fields into FESTIM for advective-assisted diffusion
-
+```
 +++
 
 ## Importance of fluid flow in hydrogen diffusion

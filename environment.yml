@@ -28,6 +28,7 @@ dependencies:
   - shapely
   - scipy
   - pyparsing
+  - imageio
   - trame
   - vtk
   - trame-vtk<2.10.3

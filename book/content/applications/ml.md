@@ -12,18 +12,6 @@ kernelspec:
   name: python3
 ---
 
+# Training a FESTIM surrogate model
 
-# The FESTIM tutorial
-
-Welcome to the FESTIM tutorial!
-
-
-## Interactive tutorials
-
-```{code-cell} ipython3
-import festim as F
-
-print(F.__version__)
-```
-
-## Clickable API links
+Coming soon!

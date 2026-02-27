@@ -56,6 +56,7 @@ parts:
   - caption: Multiphysics
     chapters:
     - file: content/multiphysics/cfd
+    - file: content/multiphysics/neutronics
 
   - caption: Misc
     chapters:

@@ -23,6 +23,7 @@ This tutorial discusses how to couple FESTIM to computational fluid dynamics (CF
 * Utilizing external CFD solvers to generate velocity fields
 * Reading fields into FESTIM for advective-assisted diffusion
 ```
+
 +++
 
 ## Importance of fluid flow in hydrogen diffusion
@@ -73,6 +74,7 @@ $$
 $$
 
 +++
+
 ### Reading OpenFOAM data
 
 Let us first import our OpenFOAM data (which has been stored on the [FESTIM 2 review paper repo](https://github.com/festim-dev/FESTIM-v2-review/tree/main/coupling/coupling_cfd/data).)
@@ -83,10 +85,8 @@ The OpenFOAM case for this problem can be found [here](https://github.com/festim
 
 ```{code-cell} ipython3
 from foam2dolfinx import OpenFOAMReader
-from mpi4py import MPI
 from pathlib import Path
 import zipfile
-from dolfinx.io import VTXWriter
 
 export_field = True
 zip_path = Path("cfd_data/cavity.zip")
@@ -261,6 +261,157 @@ Compare this to the results without advection:
 
 ```{code-cell} ipython3
 my_model.advection_terms = []
+my_model.initialise()
+my_model.run()
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+c = H.post_processing_solution
+
+topology, cell_types, geometry = plot.vtk_mesh(c.function_space)
+u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+u_grid.point_data["c"] = c.x.array.real
+u_grid.set_active_scalars("c")
+u_plotter = pyvista.Plotter()
+
+u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
+u_plotter.view_xy()
+
+if not pyvista.OFF_SCREEN:
+    u_plotter.show()
+else:
+    figure = u_plotter.screenshot("concentration.png")
+```
+
+### Getting velocity field from custom DOLFINx script
+
+For simple velocity fields (such as our 2D, steady-state, incompressible flow), users can write their own DOLFINx script that outputs a `dolfinx.fem.Function`. This can then be used in FESTIM the same exact was as shown above. To create a simi
+
+```{code-cell} ipython3
+import numpy as np
+
+from dolfinx import fem, mesh, io
+from dolfinx.fem import Function, dirichletbc, locate_dofs_topological
+from dolfinx.fem.petsc import NonlinearProblem
+
+from ufl import TestFunctions, split, inner, grad, div, dx, nabla_grad, dot
+from basix.ufl import element, mixed_element
+
+Re = 100.0
+nx = ny = 50
+
+msh = fenics_mesh
+gdim = msh.geometry.dim
+
+P2 = element("Lagrange", msh.basix_cell(), 2, shape=(gdim,))
+P1 = element("Lagrange", msh.basix_cell(), 1)
+W  = fem.functionspace(msh, mixed_element([P2, P1]))
+
+fdim = msh.topology.dim - 1
+msh.topology.create_connectivity(fdim, msh.topology.dim)
+
+def on_lid(x):
+    return np.isclose(x[1], 0.1)
+
+def on_walls(x):
+    return np.isclose(x[0], 0.0) | np.isclose(x[0], 0.1) | np.isclose(x[1], 0.0)
+
+W0 = W.sub(0)
+V_collapsed, _ = W0.collapse()
+
+lid_facets = mesh.locate_entities_boundary(msh, fdim, on_lid)
+lid_dofs   = locate_dofs_topological((W0, V_collapsed), fdim, lid_facets)
+u_lid      = Function(V_collapsed)
+u_lid.interpolate(lambda x: np.vstack([np.ones(x.shape[1]), np.zeros(x.shape[1])]))
+bc_lid = dirichletbc(u_lid, lid_dofs, W0)
+
+wall_facets = mesh.locate_entities_boundary(msh, fdim, on_walls)
+wall_dofs   = locate_dofs_topological((W0, V_collapsed), fdim, wall_facets)
+u_wall      = Function(V_collapsed)
+u_wall.x.array[:] = 0.0
+bc_wall = dirichletbc(u_wall, wall_dofs, W0)
+
+bcs = [bc_lid, bc_wall]
+
+w    = Function(W)
+u, p = split(w)
+v, q = TestFunctions(W)
+
+F = (
+      inner(grad(u), grad(v)) * dx        
+    + inner(dot(u, nabla_grad(u)), v) * dx  
+    - inner(p, div(v)) * dx
+    + inner(div(u), q) * dx
+)
+
+petsc_options = {
+    "snes_type":              "newtonls",
+    "snes_rtol":              1e-10,
+    "snes_atol":              1e-10,
+    "snes_max_it":            50,
+    "snes_monitor":           None,       
+    "ksp_type":               "preonly",
+    "pc_type":                "lu",
+    "pc_factor_mat_solver_type": "mumps",
+}
+
+problem = NonlinearProblem(
+    F, w, bcs=bcs,
+    petsc_options_prefix="cavity_",
+    petsc_options=petsc_options,
+)
+
+result = problem.solve()
+
+u_h = w.sub(0).collapse()
+p_h = w.sub(1).collapse()
+u_h.name = "velocity"
+p_h.name = "pressure"
+```
+
+The resulting velocity field `u_h` will be used for FESTIM.:
+
+```{seealso}
+Check out the [the DOLFINx tutorial](https://docs.fenicsproject.org/dolfinx/v0.10.0.post5/python/demos/demo_stokes.html#implementation) to learn more about solving the Stokes equations using Taylor-Hood elements.
+```
+
++++
+
+Let's take a look at the velocity field generated from our DOLFINx script:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+from dolfinx import plot
+import pyvista
+import numpy as np
+
+V = u_h.function_space
+topology, cell_types, geometry = plot.vtk_mesh(V)
+
+grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+
+num_dofs = V.dofmap.index_map.size_local
+value_size = V.dofmap.index_map_bs  # number of components (e.g. 2 or 3)
+
+u_array = u_h.x.array.real.reshape(num_dofs, value_size)
+grid["U_mag"] = np.linalg.norm(u_array, axis=1)
+
+plotter = pyvista.Plotter()
+plotter.add_mesh(grid, scalars="U_mag", cmap="coolwarm")
+plotter.view_xy()
+plotter.show()
+```
+
+To add this field to FESTIM, we create an `AdvectionTerm` and add it to our problem's `advection_terms`, just as above:
+
+```{code-cell} ipython3
+import festim as F
+
+dolfinx_velocity = F.AdvectionTerm(velocity=u_h, species=H, subdomain=fluid)
+my_model.advection_terms = [dolfinx_velocity]
 my_model.initialise()
 my_model.run()
 ```

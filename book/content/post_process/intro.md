@@ -8,7 +8,7 @@ jupytext:
     jupytext_version: 1.18.1
 ---
 
-# Choosing the appropriate exports for post-processing #
+# Post processing #
 
 This section explains which quantities should be exported for different post-processing objectives, and how to choose between fields and derived values.
 

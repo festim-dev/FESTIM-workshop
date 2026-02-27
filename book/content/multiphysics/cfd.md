@@ -145,8 +145,7 @@ plotter.show()
 
 ````{tip}
 To save the OpenFOAM velocity field, you can export it to `.bp` and view the results in ParaView (as shown in the [post-processing section](../post_process/paraview.md)).
-
-```
+```{code-cell} ipython3
 writer = VTXWriter(
     MPI.COMM_WORLD,
     "results/velocity_field.bp",

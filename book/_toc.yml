@@ -58,7 +58,12 @@ parts:
     - file: content/misc/settings
     - file: content/misc/stepsize
     - file: content/misc/festim_from_scratch
-
+      sections:
+      - file: content/misc/dolfinx_steady
+      - file: content/misc/dolfinx_transient
+      - file: content/misc/dolfinx_temperature
+      - file: content/misc/dolfinx_fluxes
+    - file: content/misc/troubleshooting
 
   - caption: Applications
     chapters:

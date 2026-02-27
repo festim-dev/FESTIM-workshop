@@ -326,7 +326,7 @@ Here the refinement was overkill. We refined the mesh _globally_.
 We could have been more efficient and perform a local refinement in the high gradient regions.
 
 
-```{code-cell} ipython3
+```python
 x1 = 0.05
 x2 = 0.95
 vertices = np.concatenate(

@@ -57,7 +57,7 @@ where $L$ is the characteristic length, $u$ the local flow velocity, $D$ the mas
 
 This section discusses how to setup and solve a coupled problem between OpenFOAM and FESTIM, as outlined in the FESTIM 2 review paper. Specifically, we'll solve a lid-driven cavity problem by calculating the velocity field in OpenFOAM and exporting it to FESTIM to solve our diffusion model.
 
-```{see also}
+```{seealso}
 Check out the [FESTIM 2 review paper](https://arxiv.org/abs/2509.24760) to learn more.
 ```
 
@@ -76,7 +76,7 @@ $$
 
 Let us first import our OpenFOAM data (which has been stored on the [FESTIM 2 review paper repo](https://github.com/festim-dev/FESTIM-v2-review/tree/main/coupling/coupling_cfd/data).)
 
-```{see also}
+```{seealso}
 The OpenFOAM case for this problem can be found [here](https://github.com/festim-dev/FESTIM-v2-review/blob/main/coupling/coupling_cfd/ldc_coupling.py). This problem uses the *icoFOAM* solver, take a look at the [OpenFOAM documentation](https://www.openfoam.com/documentation/tutorial-guide/2-incompressible-flow/2.1-lid-driven-cavity-flow#x6-60002.1) for more information about running an OpenFOAM case.
 ```
 
@@ -145,7 +145,7 @@ plotter.show()
 
 ````{tip}
 To save the OpenFOAM velocity field, you can export it to `.bp` and view the results in ParaView (as shown in the [post-processing section](../post_process/paraview.md)).
-```{code-cell} ipython3
+```
 writer = VTXWriter(
     MPI.COMM_WORLD,
     "results/velocity_field.bp",
@@ -154,6 +154,7 @@ writer = VTXWriter(
 )
 writer.write(t=0)
 ```
+````
 
 +++
 

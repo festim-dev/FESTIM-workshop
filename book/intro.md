@@ -27,7 +27,7 @@ cards_data = [
     {"title": "Plasma Facing Components", "text": "", "link": "#", "image": "_static/monoblock.png"},
     {"title": "TDS analysis", "text": "Simulate thermo-desorption experiments.", "link": "content/applications/task02.html", "image": "_static/tds.png"},
     {"title": "TDS fit", "text": "Automatically fit a TDS", "link": "content/applications/task10.html", "image": "_static/fitting_tds.png"},
-    {"title": "Machine Learning", "text": "Machine learning applications in FESTIM.", "link": "content/applications/ml.html", "image": "https://dummyimage.com/600x400/28a745/ffffff&text=Machine+Learning"},
+    {"title": "Machine Learning", "text": "Machine learning applications in FESTIM.", "link": "content/applications/ml.html", "image": "_static/ml.png"},
 ]
 
 # Standard formatting for the carousel and cards

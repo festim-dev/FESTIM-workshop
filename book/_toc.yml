@@ -78,3 +78,4 @@ parts:
     - file: content/applications/task06
     - file: content/applications/task10
     - file: content/applications/microstructure
+    - file: content/applications/ml

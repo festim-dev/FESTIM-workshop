@@ -8,7 +8,7 @@ jupytext:
     jupytext_version: 1.19.1
 ---
 
-# Fixed value and flux boundary condition mathematics
+# Backgrounc
 
 This section discusses the math behind fixed temperature/concentration and flux boundary conditions (BCs).
 

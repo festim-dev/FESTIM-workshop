@@ -39,6 +39,7 @@ execute:
 
 sphinx:
   config:
+    html_static_path: ["images"]
     html_last_updated_fmt: "%b %d, %Y"
     suppress_warnings:
       - "mystnb.unknown_mime_type"
@@ -68,7 +69,6 @@ sphinx:
     - "sphinx.ext.autodoc"
     - "sphinx.ext.intersphinx"
     - "sphinx_codeautolink"
-    # - "sphinx_design"
 
 parse:
   myst_enable_extensions:

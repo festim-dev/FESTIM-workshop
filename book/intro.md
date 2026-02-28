@@ -15,7 +15,9 @@ kernelspec:
 
 # The FESTIM tutorial
 
-Welcome to the FESTIM tutorial!
+Welcome to the FESTIM tutorial! 🎉
+
+Here you can learn to run FESTIM simulations from complete application cases and from the fundamental building blocks of the code!
 
 ```{code-cell} ipython3
 :tags: [remove-input]

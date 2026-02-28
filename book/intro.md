@@ -15,7 +15,9 @@ kernelspec:
 
 # The FESTIM tutorial
 
-Welcome to the FESTIM tutorial!
+Welcome to the FESTIM tutorial! 🎉
+
+Here you can learn to run FESTIM simulations from complete application cases and from the fundamental building blocks of the code!
 
 Comments and corrections to this webpage should be submitted to the issue tracker by going to the relevant page in the tutorial, then click the {fab}`github` repository symbol in the top right corner and either {fas}`lightbulb` “open issue” or {fas}`pencil` "suggest edit".
 

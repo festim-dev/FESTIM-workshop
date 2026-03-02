@@ -57,11 +57,6 @@ parts:
     - file: content/misc/settings
     - file: content/misc/stepsize
 
-  - caption: Multiphysics
-    chapters:
-    - file: content/multiphysics/cfd
-    - file: content/multiphysics/neutronics
-
   - caption: Misc
     chapters:
 
@@ -83,3 +78,7 @@ parts:
     - file: content/applications/task06
     - file: content/applications/task10
     - file: content/applications/microstructure
+    - file: content/applications/multiphysics/index
+      sections:
+      - file: content/multiphysics/cfd
+      - file: content/multiphysics/neutronics

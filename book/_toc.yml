@@ -82,3 +82,4 @@ parts:
       sections:
       - file: content/multiphysics/cfd
       - file: content/multiphysics/neutronics
+    - file: content/applications/ml

@@ -23,7 +23,7 @@ dependencies:
   - sphinx-codeautolink
   - fenics-dolfinx
   - festim=2.0b2
-  - pyvista<v0.47.1
+  - pyvista<0.47.1
   - python-gmsh
   - shapely
   - scipy

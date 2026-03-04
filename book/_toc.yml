@@ -80,6 +80,6 @@ parts:
     - file: content/applications/microstructure
     - file: content/applications/multiphysics/index
       sections:
-      - file: content/multiphysics/cfd
-      - file: content/multiphysics/neutronics
+        - file: content/applications/multiphysics/cfd
+        - file: content/applications/multiphysics/neutronics
     - file: content/applications/ml

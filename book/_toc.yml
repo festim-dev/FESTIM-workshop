@@ -78,4 +78,8 @@ parts:
     - file: content/applications/task06
     - file: content/applications/task10
     - file: content/applications/microstructure
+    - file: content/applications/multiphysics/index
+      sections:
+        - file: content/applications/multiphysics/cfd
+        - file: content/applications/multiphysics/neutronics
     - file: content/applications/ml

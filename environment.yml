@@ -23,7 +23,7 @@ dependencies:
   - sphinx-codeautolink
   - fenics-dolfinx
   - festim=2.0b2
-  - pyvista
+  - pyvista<0.47.1
   - python-gmsh
   - shapely
   - scipy
@@ -36,3 +36,5 @@ dependencies:
   - nest-asyncio2
   - pip:
     - h-transport-materials==0.16
+    - foam2dolfinx
+    - openmc2dolfinx

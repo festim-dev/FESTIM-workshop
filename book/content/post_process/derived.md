@@ -12,6 +12,7 @@ kernelspec:
   name: python3
 ---
 
+(derived_quantities)=
 # Derived quantities #
 
 This tutorial goes over FESTIM's built-in classes to help users export derived results.

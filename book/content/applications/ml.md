@@ -21,13 +21,13 @@ from dolfinx.mesh import create_unit_square
 from mpi4py import MPI
 
 
-def make_model(c_boundary: float, source: float) -> F.HydrogenTransportProblem:
+def make_model(source_bottom: float, source_top: float) -> F.HydrogenTransportProblem:
     fenics_mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
 
     festim_mesh = F.Mesh(fenics_mesh)
 
-    material_top = F.Material(D_0=2, E_D=0)
-    material_bot = F.Material(D_0=1, E_D=0)
+    material_top = F.Material(D_0=0.2, E_D=0)
+    material_bot = F.Material(D_0=0.1, E_D=0)
 
     top_volume = F.VolumeSubdomain(
         id=1, material=material_top, locator=lambda x: x[1] >= 0.5
@@ -48,10 +48,13 @@ def make_model(c_boundary: float, source: float) -> F.HydrogenTransportProblem:
     my_model.temperature = 400
 
     my_model.boundary_conditions = [
-        F.FixedConcentrationBC(subdomain=boundary, value=c_boundary, species=H),
+        F.FixedConcentrationBC(subdomain=boundary, value=0.0, species=H),
     ]
 
-    my_model.sources = [F.ParticleSource(species=H, volume=bottom_volume, value=source)]
+    my_model.sources = [
+        F.ParticleSource(species=H, volume=bottom_volume, value=source_bottom),
+        F.ParticleSource(species=H, volume=top_volume, value=source_top),
+    ]
 
     my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
 
@@ -64,20 +67,53 @@ def make_model(c_boundary: float, source: float) -> F.HydrogenTransportProblem:
 ```
 
 ```{code-cell} ipython3
-import festim as F
+from dolfinx import plot
+import pyvista
+pyvista.set_jupyter_backend("html")
+
+
+def make_ugrid(solution, label="c"):
+    topology, cell_types, geometry = plot.vtk_mesh(solution.function_space)
+    u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
+    u_grid.point_data[label] = solution.x.array.real
+    u_grid.set_active_scalars(label)
+    return u_grid
+
+u_plotter = pyvista.Plotter(shape=(2,2))
+
+for i, (source_bottom, source_top) in enumerate([(0.0, 1.0), (1.0, 0.0), (4.0, 1.0), (1.0, 2.0)]):
+    model = make_model(source_bottom, source_top)
+    model.initialise()
+    model.run()
+
+    H = model.species[0]
+    u_grid = make_ugrid(H.post_processing_solution)
+    u_plotter.subplot(i // 2, i % 2)
+    warped = u_grid.warp_by_scalar(factor=1)
+    u_plotter.add_mesh(warped, cmap="viridis", show_edges=True)
+    u_plotter.add_text(f"source_bottom={source_bottom}, source_top={source_top}", font_size=10)
+    u_plotter.link_views()
+
+if not pyvista.OFF_SCREEN:
+    u_plotter.show()
+else:
+    figure = u_plotter.screenshot("concentration.png")
+```
+
+```{code-cell} ipython3
 from autoemulate.simulations.base import Simulator
 import torch
 
 
 class FestimProblem(Simulator):
     def _forward(self, x: torch.Tensor) -> torch.Tensor:
-        c_boundary = x[:, 0]
-        source = x[:, 1]
+        source_top = x[:, 0]
+        source_bottom = x[:, 1]
 
         # convert to float
-        c_boundary = c_boundary.item()
-        source = source.item()
-        model = make_model(c_boundary, source)
+        source_top = source_top.item()
+        source_bottom = source_bottom.item()
+        model = make_model(source_bottom, source_top)
 
         # Solve the model
         model.initialise()
@@ -97,41 +133,7 @@ class FestimProblem(Simulator):
 ```
 
 ```{code-cell} ipython3
-model = make_model(1.0, 1.0)
-model.initialise()
-model.run()
-```
-
-```{code-cell} ipython3
-from dolfinx import plot
-import pyvista
-
-def make_ugrid(solution):
-    topology, cell_types, geometry = plot.vtk_mesh(solution.function_space)
-    u_grid = pyvista.UnstructuredGrid(topology, cell_types, geometry)
-    u_grid.point_data["c"] = solution.x.array.real
-    u_grid.set_active_scalars("c")
-    return u_grid
-
-pyvista.set_jupyter_backend("html")
-
-u_plotter = pyvista.Plotter()
-
-H = model.species[0]
-
-u_grid = make_ugrid(H.post_processing_solution)
-u_plotter.add_mesh(u_grid, cmap="viridis", show_edges=False)
-u_plotter.view_xy()
-u_plotter.add_text("Hydrogen concentration in multi-material problem", font_size=12)
-
-if not pyvista.OFF_SCREEN:
-    u_plotter.show()
-else:
-    figure = u_plotter.screenshot("concentration.png")
-```
-
-```{code-cell} ipython3
-simulator = FestimProblem(parameters_range={'c_boundary': (0.0, 1.0), 'source': (0.0, 100.0)}, output_names=['total_top', 'total_bot'])
+simulator = FestimProblem(parameters_range={'source_top': (0.0, 10.0), 'source_bottom': (0.0, 10.0)}, output_names=['total_top', 'total_bot'])
 ```
 
 ```{code-cell} ipython3
@@ -139,7 +141,7 @@ simulator.forward(torch.tensor([[0.0, 3.0]]))
 ```
 
 ```{code-cell} ipython3
-n_samples = 80
+n_samples = 20
 
 X = simulator.sample_inputs(n_samples)
 
@@ -162,14 +164,14 @@ fig, axs = plt.subplots(1, 2, figsize=(12, 5))
 
 for i in range(2):
     plt.sca(axs[i])
-    plt.scatter(X[:, 0], X[:, 1], c=Y[:, i], cmap='viridis')
+    plt.scatter(X[:, 0], X[:, 1], c=Y[:, i], cmap='viridis', vmin=Y.min(), vmax=Y.max())
 
-    plt.colorbar()
     plt.title(f'{simulator.output_names[i]}')
 
-    plt.xlabel(f"{list(simulator.parameters_range.keys())[0]}")
-    plt.ylabel(f"{list(simulator.parameters_range.keys())[1]}")
+    plt.xlabel(f"{simulator.param_names[0]}")
+    plt.ylabel(f"{simulator.param_names[1]}")
 
+plt.colorbar(cax=fig.add_axes([0.92, 0.15, 0.02, 0.7]))
 
 plt.show()
 ```

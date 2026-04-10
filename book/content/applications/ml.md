@@ -268,3 +268,21 @@ for i in range(2):
     plt.suptitle(f'{simulator.output_names[i]}')
     plt.show()
 ```
+
+## Performance Comparison
+
+Finally, we can compare the runtime between executing the full FESTIM physical model and evaluating the trained empirical surrogate using the `%timeit` notebook magic.
+
+```{code-cell} ipython3
+# Time the FESTIM simulator
+print("Simulator runtime:")
+%timeit simulator.forward(torch.tensor([[5.0, 5.0]]))
+```
+
+```{code-cell} ipython3
+# Time the empirical surrogate model
+print("Emulator runtime:")
+%timeit best.model.predict(torch.tensor([[5.0, 5.0]]))
+```
+
+As you can see, substituting FESTIM with the emulator provides a substantial speed-up, highlighting the benefit of training surrogate models in scenarios where a model is evaluated repeatedly (like inference, uncertainty quantification or sensitivity analysis).

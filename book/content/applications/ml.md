@@ -14,6 +14,34 @@ kernelspec:
 
 # Training a FESTIM surrogate model
 
++++
+
+```{admonition} Objectives
+:class: objectives
+* Use AutoEmulate to build an emulator/surrogate model of a FESTIM problem
+* Save the emulator to a file for reuse
+```
+
++++
+
+## Build a _simulator_
+
+We start by building a simulator (high fidelity) using FESTIM.
+Here for demonstration purposes we make a simple unit square example with two volume subdomains with different diffusivities.
+
+The model is parametric and takes the volumetric source terms in each subdomains as inputs and returns the total species inventories in both subdomains.
+
+The concentration of species on the boundary of the domain is set to zero.
+
+
+```{seealso}
+Check out the [AutoEmulate tutorials](https://alan-turing-institute.github.io/autoemulate/tutorials/emulation/01_quickstart.html) for more information.
+```
+
+```{note}
+This specific example isn't particularly expensive to run. Building a surrogate of a FESTIM model is especially useful for large and expensive models.
+```
+
 ```{code-cell} ipython3
 import festim as F
 
@@ -22,7 +50,7 @@ from mpi4py import MPI
 
 
 def make_model(source_bottom: float, source_top: float) -> F.HydrogenTransportProblem:
-    fenics_mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
+    fenics_mesh = create_unit_square(MPI.COMM_WORLD, 20, 20)
 
     festim_mesh = F.Mesh(fenics_mesh)
 
@@ -66,6 +94,8 @@ def make_model(source_bottom: float, source_top: float) -> F.HydrogenTransportPr
     return my_model
 ```
 
+Let's first visualize the system's spatial profile for varying top and bottom hydrogen source rates. The mesh is colored and warped by the hydrogen concentration.
+
 ```{code-cell} ipython3
 from dolfinx import plot
 import pyvista
@@ -81,7 +111,7 @@ def make_ugrid(solution, label="c"):
 
 u_plotter = pyvista.Plotter(shape=(2,2))
 
-for i, (source_bottom, source_top) in enumerate([(0.0, 1.0), (1.0, 0.0), (4.0, 1.0), (1.0, 2.0)]):
+for i, (source_bottom, source_top) in enumerate([(0.0, 1.0), (1.0, 0.0), (2.0, 1.0), (1.0, 2.0)]):
     model = make_model(source_bottom, source_top)
     model.initialise()
     model.run()
@@ -99,6 +129,10 @@ if not pyvista.OFF_SCREEN:
 else:
     figure = u_plotter.screenshot("concentration.png")
 ```
+
+## Wrapping the FESTIM model for AutoEmulate
+
+To train a surrogate model with `AutoEmulate`, we need to expose our FESTIM model through a `Simulator` class. We create a subclass of `autoemulate.simulations.base.Simulator` and implement the `_forward` method. This method takes a 2D `torch.Tensor` of inputs `x`, extracts the `source_top` and `source_bottom` values, sets up and solves the FESTIM model, and finally returns the outputs as a `torch.Tensor`.
 
 ```{code-cell} ipython3
 from autoemulate.simulations.base import Simulator
@@ -132,13 +166,21 @@ class FestimProblem(Simulator):
         return y
 ```
 
+## Generating the Training Data
+
+Now we can create an instance of our wrapper `FestimProblem`. We'll define the ranges for the top and bottom sources, as well as the names of the two quantities of interest (the top and bottom total hydrogen volumes).
+
 ```{code-cell} ipython3
 simulator = FestimProblem(parameters_range={'source_top': (0.0, 10.0), 'source_bottom': (0.0, 10.0)}, output_names=['total_top', 'total_bot'])
 ```
 
+We can easily evaluate a single simulation to make sure the model works. Note that the output tensor contains the `total_top` and `total_bot` results for the specific model execution.
+
 ```{code-cell} ipython3
 simulator.forward(torch.tensor([[0.0, 3.0]]))
 ```
+
+Let's generate 20 random samples using the sampling strategy provided by AutoEmulate via the `sample_inputs` method. These will be our $X$ inputs to train the surrogate model.
 
 ```{code-cell} ipython3
 n_samples = 20
@@ -148,6 +190,8 @@ X = simulator.sample_inputs(n_samples)
 X.shape
 ```
 
+Next, we run the simulations in a batch over the sampled inputs to retrieve our $Y$ outputs (the FESTIM calculations).
+
 ```{code-cell} ipython3
 Y, _ = simulator.forward_batch(X, allow_failures=False)
 Y.shape
@@ -156,6 +200,8 @@ Y.shape
 ```{code-cell} ipython3
 Y
 ```
+
+Let's visualize the training dataset. We scatter the 20 sampled source combinations, coloring them by the target output quantities.
 
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
@@ -176,6 +222,10 @@ plt.colorbar(cax=fig.add_axes([0.92, 0.15, 0.02, 0.7]))
 plt.show()
 ```
 
+## Training the surrogate models
+
+We will train several models by simply instantiating `AutoEmulate` with our $X$ and $Y$ tensors. The library evaluates several typical regression algorithms (like Random Forests, Gaussian Processes, Multi-Layer Perceptrons, etc.) out-of-the-box using the provided data.
+
 ```{code-cell} ipython3
 from autoemulate import AutoEmulate
 # Run AutoEmulate with default settings
@@ -186,15 +236,21 @@ ae = AutoEmulate(X, Y, log_level="info")
 ae.summarise()
 ```
 
+We can easily extract the surrogate model that performed the best, according to the cross-validation score (R2).
+
 ```{code-cell} ipython3
 # best = ae.results[0]
 best = ae.best_result()
 print("Model with id: ", best.id, " performed best: ", best.model_name)
 ```
 
+To analyze the emulator's quality, we plot the predicted versus simulated values on hold-out data. Points closer to the diagonal indicate a better emulation.
+
 ```{code-cell} ipython3
 ae.plot_preds(best, output_names=simulator.output_names)
 ```
+
+Finally, let's explore the continuous parameter space by plotting a 2D slice of the surrogate model's predictions over the `source_top` and `source_bottom` space. We can overlay the training samples (points) to see how well the emulator covers the domain.
 
 ```{code-cell} ipython3
 from autoemulate.core.plotting import create_and_plot_slice
@@ -209,6 +265,6 @@ for i in range(2):
         param_pair=(0, 1),
     )
     plt.scatter(X[:, 0], X[:, 1])
-    plt.suptitle(f'{simulator.output_names[i]} - slice plot')
+    plt.suptitle(f'{simulator.output_names[i]}')
     plt.show()
 ```

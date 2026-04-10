@@ -14,11 +14,23 @@ kernelspec:
 
 # Active learning
 
++++
+
+In many real-world scenarios, running a high-fidelity simulator is computationally expensive. Generating a large dataset upfront to train a surrogate model might not be feasible. Active learning addresses this by training an initial model on a small dataset and then iteratively querying the simulator for new data points that provide the most information. 
+
+In this tutorial, we will use the `AutoEmulate` active learning features to iteratively improve a Gaussian Process (GP) emulator for a `FESTIM` model.
+
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
 from autoemulate.learners import stream
 from autoemulate.emulators import GaussianProcessRBF
 ```
+
+## The FESTIM Simulator
+
+We will reuse the same 2D FESTIM problem from the previous tutorial. We define a `make_model` function that creates the unit square geometry with two subdomains, applies two parameters (`source_top` and `source_bottom`), and extracts two quantities of interest (`total_top` and `total_bot`).
+
+We then wrap this into the `FestimProblem` inheriting from `Simulator`.
 
 ```{code-cell} ipython3
 import festim as F
@@ -105,27 +117,11 @@ class FestimProblem(Simulator):
             y = y.unsqueeze(1)
 
         return y
-
-
-simulator = FestimProblem()
 ```
 
-```{code-cell} ipython3
-x = simulator.sample_inputs(4)
-print(x)
-```
+## Training an Initial (Weak) Emulator
 
-```{code-cell} ipython3
-y, _ = simulator.forward_batch(x)
-print(y)
-```
-
-```{code-cell} ipython3
-x = simulator.sample_inputs(100)
-y, _ = simulator.forward_batch(x)
-plt.scatter(x[:, 0], x[:, 1], c=y[:, 0], marker=".")
-plt.show()
-```
+We will start by training an initial Gaussian Process emulator. Unlike the previous tutorial where we generated a comprehensive dataset, here we intentionally restrict our initial training dataset to only 5 points. This simulates a scenario where generating data is expensive and initial data is scarce.
 
 ```{code-cell} ipython3
 simulator = FestimProblem()
@@ -154,6 +150,8 @@ y_std = var.sqrt()
 y_true, _ = simulator.forward_batch(x_test)
 ```
 
+We can plot the 2D parameter space using the `create_and_plot_slice` function. Since the emulator was trained on only 5 random points, its predictions are likely to be inaccurate across the wider parameter space.
+
 ```{code-cell} ipython3
 from autoemulate.core.plotting import create_and_plot_slice
 
@@ -169,6 +167,12 @@ for i in range(2):
     plt.suptitle(f"{simulator.output_names[i]}")
     plt.show()
 ```
+
+## Setting up the Active Learner
+
+To improve our emulator effectively without blindly sampling everywhere, we will use `AutoEmulate`'s active learning API. We set up the untrained `emulator` as a starting point and initialize a `stream.Random` learner. 
+
+This learner will sequentially analyze points from an input stream and evaluate whether each new point should be simulated and added to the training set based on an exploration probability (`p_query`). In more complex scenarios, you could use advanced algorithms like Uncertainty sampling where the model queries where it's most unconfident.
 
 ```{code-cell} ipython3
 x_train = simulator.sample_inputs(5)
@@ -190,6 +194,10 @@ X_stream = simulator.sample_inputs(100)
 learner.fit_samples(X_stream)
 ```
 
+## Model Evaluation
+
+The `Learner` records various regression metrics during the stream evaluation, such as Mean Squared Error (MSE) and R² score. We can plot these metrics vs iteration count to objectively observe the emulator learning dynamically.
+
 ```{code-cell} ipython3
 fig, axs = plt.subplots(
     nrows=len(learner.metrics), ncols=1, sharex=True, figsize=(8, 15)
@@ -202,6 +210,10 @@ axs[-1].set_xlabel("Iterations")
 axs[1].set_ylim(0, 1)
 plt.show()
 ```
+
+Let's visualize the 2D parameter space again. This time, we plot slices using the updated emulator currently stored inside the `learner.emulator`, which has continually trained itself using the actively sampled points.
+
+You should notice a drastically smoother, more accurate response mapping compared to the previous slice with 5 points.
 
 ```{code-cell} ipython3
 for i in range(2):
@@ -216,6 +228,13 @@ for i in range(2):
     plt.suptitle(f"{simulator.output_names[i]}")
     plt.show()
 ```
+
+To investigate more clearly the advantage acquired by active learning, we can sample a continuous 1D line slice through our parameters (e.g. fixing the bottom source rate equal to `8`). 
+
+In the plot below, we compare:
+1. The real underlying simulations (`True` values).
+2. The `Initial Emulator` that was trained on 5 points (red).
+3. The `Predicted` values spanning out of our actively learned surrogate model.
 
 ```{code-cell} ipython3
 value_to_fix = 8
@@ -239,7 +258,7 @@ fig, axs = plt.subplots(nrows=2, ncols=1, sharex=True)
 for i in range(2):
     plt.sca(axs[i])
     plt.plot(x_line[:, 0], y_line_true[:, i], label="True", c="k", alpha=0.5)
-    plt.plot(x_line[:, 0], predicted_mean[:, i], label="Predicted")
+    plt.plot(x_line[:, 0], predicted_mean[:, i], label="Trained Emulator", c="b", alpha=0.5)
     plt.plot(
         x_line[:, 0],
         predicted_mean_old[:, i],

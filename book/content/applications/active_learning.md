@@ -186,7 +186,7 @@ learner = stream.Random(
     x_train=x_train,
     y_train=y_train,
     p_query=0.2,
-    show_progress=True,
+    show_progress=False,
 )
 
 # Stream samples

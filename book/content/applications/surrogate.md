@@ -27,7 +27,7 @@ kernelspec:
 ## Build a _simulator_
 
 We start by building a simulator (high fidelity) using FESTIM.
-Here for demonstration purposes we make a simple unit square example with two volume subdomains with different diffusivities.
+Here for demonstration purposes we make a simple unit square example with two volume subdomains with different diffusivities. The physical process models hydrogen transport (diffusion) across the two subdomains, driven by the respective source terms. Hydrogen diffuses from the areas of higher concentration towards the boundaries. We are modeling this at a constant temperature.
 
 The model is parametric and takes the volumetric source terms in each subdomains as inputs and returns the total species inventories in both subdomains.
 
@@ -39,7 +39,7 @@ Check out the [AutoEmulate tutorials](https://alan-turing-institute.github.io/au
 ```
 
 ```{note}
-This specific example isn't particularly expensive to run. Building a surrogate of a FESTIM model is especially useful for large and expensive models.
+This specific example isn't particularly expensive to run. Building a surrogate of a FESTIM model is especially useful for large and computationally expensive models, such as 3D simulations with complex geometries, coupled multiphysics (e.g., heat transfer and trapping), or parameter sweeps where a single full-fidelity FESTIM run could take minutes to hours.
 ```
 
 ```{code-cell} ipython3
@@ -132,7 +132,7 @@ else:
 
 ## Wrapping the FESTIM model for AutoEmulate
 
-To train a surrogate model with `AutoEmulate`, we need to expose our FESTIM model through a `Simulator` class. We create a subclass of `autoemulate.simulations.base.Simulator` and implement the `_forward` method. This method takes a 2D `torch.Tensor` of inputs `x`, extracts the `source_top` and `source_bottom` values, sets up and solves the FESTIM model, and finally returns the outputs as a `torch.Tensor`.
+To train a surrogate model with `AutoEmulate`, we need to expose our FESTIM model through a `Simulator` class. We create a subclass of `autoemulate.simulations.base.Simulator` and implement the `_forward` method. This method takes a 2D [`torch.Tensor`](https://pytorch.org/docs/stable/tensors.html) of inputs `x`, extracts the `source_top` and `source_bottom` values, sets up and solves the FESTIM model, and finally returns the outputs as a `torch.Tensor`.
 
 ```{code-cell} ipython3
 from autoemulate.simulations.base import Simulator
@@ -244,7 +244,9 @@ best = ae.best_result()
 print("Model with id: ", best.id, " performed best: ", best.model_name)
 ```
 
-To analyze the emulator's quality, we plot the predicted versus simulated values on hold-out data. Points closer to the diagonal indicate a better emulation.
+To analyze the emulator's quality, we plot the predicted versus simulated values on hold-out test data. This is a testing dataset sampled from within the same parameter ranges that was set aside and completely hidden from the surrogate model during its training phase. 
+
+Each plotted point represents a single `(source_top, source_bottom)` input combination. Points closer to the diagonal indicate that the emulator accurately matches the FESTIM high-fidelity predictions.
 
 ```{code-cell} ipython3
 ae.plot_preds(best, output_names=simulator.output_names)

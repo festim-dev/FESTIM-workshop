@@ -4,7 +4,7 @@ channels:
   - defaults
 
 dependencies:
-  - python<3.14
+  - python<3.13
   - pip=23.3
   - setuptools<82
   - wheel<0.45
@@ -38,3 +38,4 @@ dependencies:
     - h-transport-materials==0.16
     - foam2dolfinx
     - openmc2dolfinx
+    - autoemulate

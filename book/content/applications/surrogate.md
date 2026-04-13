@@ -227,7 +227,8 @@ plt.show()
 We will train several models by simply instantiating `AutoEmulate` with our $X$ and $Y$ tensors. The library evaluates several typical regression algorithms (like Random Forests, Gaussian Processes, Multi-Layer Perceptrons, etc.) out-of-the-box using the provided data.
 
 ```{code-cell} ipython3
-:tags: ["hide-output"]
+:tags: [hide-output]
+
 from autoemulate import AutoEmulate
 # Run AutoEmulate with default settings
 ae = AutoEmulate(X, Y, log_level="info")
@@ -237,12 +238,12 @@ ae = AutoEmulate(X, Y, log_level="info")
 ae.summarise()
 ```
 
-We can easily extract the surrogate model that performed the best, according to the cross-validation score (R2).
+Here we decide to select the `GaussianProcessRBF` model:
 
 ```{code-cell} ipython3
-# best = ae.results[0]
-best = ae.best_result()
-print("Model with id: ", best.id, " performed best: ", best.model_name)
+# pick GaussianProcessRBF
+model = [r for r in ae.results if r.model_name == "GaussianProcessRBF"][0]
+print(f"Selected model: {model.model_name} with id: {model.id}")
 ```
 
 To analyze the emulator's quality, we plot the predicted versus simulated values on hold-out test data. This is a testing dataset sampled from within the same parameter ranges that was set aside and completely hidden from the surrogate model during its training phase. 
@@ -250,7 +251,7 @@ To analyze the emulator's quality, we plot the predicted versus simulated values
 Each plotted point represents a single `(source_top, source_bottom)` input combination. Points closer to the diagonal indicate that the emulator accurately matches the FESTIM high-fidelity predictions.
 
 ```{code-cell} ipython3
-ae.plot_preds(best, output_names=simulator.output_names)
+ae.plot_preds(model, output_names=simulator.output_names)
 ```
 
 Finally, let's explore the continuous parameter space by plotting a 2D slice of the surrogate model's predictions over the `source_top` and `source_bottom` space. We can overlay the training samples (points) to see how well the emulator covers the domain.
@@ -261,7 +262,7 @@ from autoemulate.core.plotting import create_and_plot_slice
 for i in range(2):
 
     fig, axs = create_and_plot_slice(
-        best.model,
+        model.model,
         output_idx=i,
         parameters_range=simulator.parameters_range,
         quantile=0.5,

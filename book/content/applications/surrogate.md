@@ -227,6 +227,7 @@ plt.show()
 We will train several models by simply instantiating `AutoEmulate` with our $X$ and $Y$ tensors. The library evaluates several typical regression algorithms (like Random Forests, Gaussian Processes, Multi-Layer Perceptrons, etc.) out-of-the-box using the provided data.
 
 ```{code-cell} ipython3
+:tags: ["hide-output"]
 from autoemulate import AutoEmulate
 # Run AutoEmulate with default settings
 ae = AutoEmulate(X, Y, log_level="info")

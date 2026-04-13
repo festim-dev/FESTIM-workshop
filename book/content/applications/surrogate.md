@@ -112,11 +112,11 @@ def make_ugrid(solution, label="c"):
 u_plotter = pyvista.Plotter(shape=(2,2))
 
 for i, (source_bottom, source_top) in enumerate([(0.0, 1.0), (1.0, 0.0), (2.0, 1.0), (1.0, 2.0)]):
-    model = make_model(source_bottom, source_top)
-    model.initialise()
-    model.run()
+    emulator = make_model(source_bottom, source_top)
+    emulator.initialise()
+    emulator.run()
 
-    H = model.species[0]
+    H = emulator.species[0]
     u_grid = make_ugrid(H.post_processing_solution)
     u_plotter.subplot(i // 2, i % 2)
     warped = u_grid.warp_by_scalar(factor=1)
@@ -242,8 +242,8 @@ Here we decide to select the `GaussianProcessRBF` model:
 
 ```{code-cell} ipython3
 # pick GaussianProcessRBF
-model = [r for r in ae.results if r.model_name == "GaussianProcessRBF"][0]
-print(f"Selected model: {model.model_name} with id: {model.id}")
+emulator = [r for r in ae.results if r.model_name == "GaussianProcessRBF"][0]
+print(f"Selected model: {emulator.model_name} with id: {emulator.id}")
 ```
 
 To analyze the emulator's quality, we plot the predicted versus simulated values on hold-out test data. This is a testing dataset sampled from within the same parameter ranges that was set aside and completely hidden from the surrogate model during its training phase. 
@@ -251,7 +251,7 @@ To analyze the emulator's quality, we plot the predicted versus simulated values
 Each plotted point represents a single `(source_top, source_bottom)` input combination. Points closer to the diagonal indicate that the emulator accurately matches the FESTIM high-fidelity predictions.
 
 ```{code-cell} ipython3
-ae.plot_preds(model, output_names=simulator.output_names)
+ae.plot_preds(emulator, output_names=simulator.output_names)
 ```
 
 Finally, let's explore the continuous parameter space by plotting a 2D slice of the surrogate model's predictions over the `source_top` and `source_bottom` space. We can overlay the training samples (points) to see how well the emulator covers the domain.
@@ -262,7 +262,7 @@ from autoemulate.core.plotting import create_and_plot_slice
 for i in range(2):
 
     fig, axs = create_and_plot_slice(
-        model.model,
+        emulator.model,
         output_idx=i,
         parameters_range=simulator.parameters_range,
         quantile=0.5,
@@ -286,7 +286,7 @@ print("Simulator runtime:")
 ```{code-cell} ipython3
 # Time the empirical surrogate model
 print("Emulator runtime:")
-%timeit best.model.predict(torch.tensor([[5.0, 5.0]]))
+%timeit emulator.model.predict(torch.tensor([[5.0, 5.0]]))
 ```
 
 As you can see, substituting FESTIM with the emulator provides a substantial speed-up, highlighting the benefit of training surrogate models in scenarios where a model is evaluated repeatedly (like inference, uncertainty quantification or sensitivity analysis).

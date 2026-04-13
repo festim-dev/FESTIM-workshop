@@ -16,6 +16,14 @@ kernelspec:
 
 +++
 
+```{admonition} Objectives
+:class: objectives
+* Understand when and why active learning is beneficial for computationally expensive simulators
+* Implement an active learning strategy using `AutoEmulate`'s learner API to iteratively improve a surrogate model
+```
+
++++
+
 In many real-world scenarios, running a high-fidelity simulator is computationally expensive. Generating a large dataset upfront to train a surrogate model might not be feasible. Active learning addresses this by training an initial model on a small dataset and then iteratively querying the simulator for new data points that provide the most information. 
 
 In this tutorial, we will use the `AutoEmulate` active learning features to iteratively improve a Gaussian Process (GP) emulator for a `FESTIM` model.

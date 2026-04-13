@@ -83,3 +83,6 @@ parts:
         - file: content/applications/multiphysics/cfd
         - file: content/applications/multiphysics/neutronics
     - file: content/applications/ml
+      sections:
+        - file: content/applications/surrogate
+        - file: content/applications/active_learning

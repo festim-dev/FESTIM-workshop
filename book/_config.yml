@@ -4,18 +4,21 @@
 title: FESTIM tutorial
 author: The FESTIM community
 
-# NOTE turning this off while we figure out how to do dark mode properly
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/festim-dev/FESTIM-workshop  # Online location of your book
+  path_to_book: book  # Optional path to your book, relative to the repository root
+  branch: festim2  # Which branch of the repository should be used when creating links (optional)
+
+logo: images/logo_light.png
+
+# NOTE turning this OFF while we figure out how to not override the `html` options
 # sphinx:
 #   config:
 #     html_theme_options:
 #       logo:
 #         image_light: images/logo_light.png
 #         image_dark: images/logo_dark.svg
-# Information about where the book exists on the web
-repository:
-  url: https://github.com/festim-dev/FESTIM-workshop  # Online location of your book
-  path_to_book: book  # Optional path to your book, relative to the repository root
-  branch: main  # Which branch of the repository should be used when creating links (optional)
 
 logo: images/logo_light.png
 
@@ -25,15 +28,56 @@ html:
   use_issues_button: true
   use_repository_button: true
   use_edit_page_button: true
-  announcement: "ℹ️ This is the FESTIM1 tutorial. For the FESTIM2 tutorial, see <a href='https://festim-workshop.readthedocs.io/en/festim2/intro.html'>here</a>."
+  logo: true
   analytics:
     google_analytics_id: G-B9MJGSTP5V
-
+  
 execute:
   # Force re-execution of notebooks on each build.
   # See https://jupyterbook.org/content/execute.html
-  # execute_notebooks: off
+  execute_notebooks: force
   timeout: -1  # Disable timeouts for executing notebooks cells
+  # allow_errors: true  # Allow errors in notebook cells
+
+sphinx:
+  config:
+    html_static_path: ["images"]
+    html_last_updated_fmt: "%b %d, %Y"
+    suppress_warnings:
+      - "mystnb.unknown_mime_type"
+      - "codeautolink.match_block"
+
+    # To avoid warning about default changing due to
+    # https://github.com/pydata/pydata-sphinx-theme/issues/1492
+    # html_theme_options:
+    #   navigation_with_keys: false
+    codeautolink_concat_default: True
+    show_warning_types: True
+    intersphinx_mapping:
+      basix: ["https://docs.fenicsproject.org/basix/main/python/", null]
+      ffcx: ["https://docs.fenicsproject.org/ffcx/main/", null]
+      ufl: ["https://docs.fenicsproject.org/ufl/main/", null]
+      dolfinx: ["https://docs.fenicsproject.org/dolfinx/main/python", null]
+      petsc4py: ["https://petsc.org/release/petsc4py", null]
+      mpi4py: ["https://mpi4py.readthedocs.io/en/stable", null]
+      numpy: ["https://numpy.org/doc/stable/", null]
+      pyvista: ["https://docs.pyvista.org/", null]
+      packaging: ["https://packaging.pypa.io/en/stable/", null]
+      matplotlib: ["https://matplotlib.org/stable/", null]
+      festim: ["https://festim.readthedocs.io/en/fenicsx/", null]
+    html_favicon: "images/festim logo symbol.png"
+
+  extra_extensions:
+    - "sphinx.ext.autodoc"
+    - "sphinx.ext.intersphinx"
+    - "sphinx_codeautolink"
+
+parse:
+  myst_enable_extensions:
+    # don't forget to list any other extensions you want enabled,
+    # including those that are enabled by default!
+    - amsmath
+    - dollarmath
 
 
 launch_buttons:

@@ -2,21 +2,40 @@ name: festim-workshop
 channels:
   - conda-forge
   - defaults
+
 dependencies:
-  - fenics
-  - python
+  - python<3.13
+  - pip=23.3
+  - setuptools<82
+  - wheel<0.45
   - jupyter-book<2.0
+  - python<3.14  # som pyvista incompatibility issues with python 3.14
+  - pip=23.3
+  - setuptools<82
+  - wheel<0.45
   - jupytext # necessary to open MyST files using BinderHub https://jupyterbook.org/en/stable/interactive/launchbuttons.html#launchbuttons-binder
   - sphinx-tags
+  - ipywidgets
   - matplotlib
   - meshio[all]
-  - numpy==1.24
-  - pip>=20.1
   - ipykernel
   - nbconvert
-  - mpi4py<4
-  - mshr
-  - festim>=1.4.1
+  - sphinx-codeautolink
+  - fenics-dolfinx
+  - festim=2.0b2
+  - pyvista<0.47.1
+  - python-gmsh
+  - shapely
+  - scipy
+  - pyparsing
+  - imageio
+  - trame
+  - vtk
+  - trame-vtk<2.10.3
+  - trame-vuetify
+  - nest-asyncio2
   - pip:
-    - pyparsing
     - h-transport-materials==0.16
+    - foam2dolfinx
+    - openmc2dolfinx
+    - autoemulate

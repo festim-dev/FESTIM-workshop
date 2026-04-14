@@ -1,1 +1,0 @@
-# Challenge E: compute the extraction efficiency of a PAV extractor

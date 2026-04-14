@@ -4,49 +4,85 @@
 format: jb-book
 root: intro
 parts:
-  - caption: Basic
+  - caption: Getting started
     chapters:
-    - file: content/task01
-    - file: content/task02
-    - file: content/task03
-    - file: content/permeation_regimes
-    - file: content/task04
-    - file: content/task05
-    - file: content/task07
-    - file: content/task08
-    - file: content/task09
+    - file: content/applications/task01
 
-  - caption: Advanced
+  - caption: Fundamentals
     chapters:
-    - file: content/task06
-    - file: content/task10
-    - file: content/task11
-    - file: content/task12
-    - file: content/task13
-    - file: content/task14
-    - file: content/task15
-    - file: content/task16
-    - file: content/task17
+    - file: content/meshes/index
+      sections:
+      - file: content/meshes/mesh_festim
+      - file: content/meshes/mesh_fenics
+      - file: content/meshes/mesh_gmsh
+      - file: content/meshes/mesh_salome
 
-  - caption: Challenges
+    - file: content/material/index
+      sections:
+      - file: content/material/material_basics
+      - file: content/material/material_htm
+      - file: content/material/material_advanced
+
+    - file: content/boundary_conditions/index
+      sections:
+      - file: content/boundary_conditions/bc_intro
+      - file: content/boundary_conditions/h_transport_basic
+      - file: content/boundary_conditions/h_transport_advanced
+      - file: content/boundary_conditions/examples
+      - file: content/boundary_conditions/heat_transfer
+
+    - file: content/species_reactions/index
+      sections:
+      - file: content/species_reactions/species
+      - file: content/species_reactions/reactions
+      - file: content/species_reactions/surface_reactions
+    
+    - file: content/initial_conditions/index
+      sections:
+      - file: content/initial_conditions/concentration
+      - file: content/initial_conditions/temperature
+
+    - file: content/temperatures/index
+      sections:
+      - file: content/temperatures/temperatures_basic
+      - file: content/temperatures/temperatures_advanced
+      
+    - file: content/post_process/intro
+      sections:
+      - file: content/post_process/derived
+      - file: content/post_process/exports
+      - file: content/post_process/paraview
+      - file: content/post_process/pyvista
+
+    - file: content/misc/settings
+    - file: content/misc/stepsize
+
+  - caption: Misc
     chapters:
-    - file: content/challenges/challenge_a_head
+
+    - file: content/misc/festim_from_scratch
       sections:
-      - file: content/challenges/challenge_A
-      - file: content/challenges/solutions/solution_A
-    - file: content/challenges/challenge_b_head
+      - file: content/misc/dolfinx_steady
+      - file: content/misc/dolfinx_transient
+      - file: content/misc/dolfinx_temperature
+      - file: content/misc/dolfinx_fluxes
+    - file: content/misc/troubleshooting
+
+  - caption: Applications
+    chapters:
+    - file: content/applications/task02
+    - file: content/applications/task03
+    - file: content/applications/task04
+    - file: content/applications/task07
+    - file: content/applications/task08
+    - file: content/applications/task06
+    - file: content/applications/task10
+    - file: content/applications/microstructure
+    - file: content/applications/multiphysics/index
       sections:
-      - file: content/challenges/challenge_B
-      - file: content/challenges/solutions/solution_B
-    - file: content/challenges/challenge_c_head
+        - file: content/applications/multiphysics/cfd
+        - file: content/applications/multiphysics/neutronics
+    - file: content/applications/ml
       sections:
-      - file: content/challenges/challenge_C
-      - file: content/challenges/solutions/solution_C
-    - file: content/challenges/challenge_d_head
-      sections:
-      - file: content/challenges/challenge_D
-      - file: content/challenges/solutions/solution_D
-    - file: content/challenges/challenge_e_head
-      sections:
-      - file: content/challenges/challenge_E
-      - file: content/challenges/solutions/solution_E
+        - file: content/applications/surrogate
+        - file: content/applications/active_learning

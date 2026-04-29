@@ -122,7 +122,7 @@ Users can change the colormap by adjusting the `cmap` argument.
 
 Users can also use PyVista to visualize the fields in discontinuous problems.
 
-Let us consider the same __[multi-material problem](https://festim-workshop.readthedocs.io/en/festim2/content/material/material_basics.html#multi-material-example)__ in the Materials chapter, where we use `HydrogenTransportProblemDiscontinuous` to solve a multi-material problem.
+Let us consider the same __[multi-material problem](https://festim-workshop.readthedocs.io/en/latest/content/material/material_basics.html#multi-material-example)__ in the Materials chapter, where we use `HydrogenTransportProblemDiscontinuous` to solve a multi-material problem.
 
 ```{code-cell} ipython3
 :tags: [hide-input]

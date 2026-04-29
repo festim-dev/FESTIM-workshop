@@ -60,5 +60,5 @@ my_flux_bc = HeatFluxBC(subdomain=boundary, value=BC)
 ```
 
 ```{note}
-Read more about heat transfer settings __[here](https://festim-workshop.readthedocs.io/en/festim2/content/temperatures/temperatures_advanced)__.
+Read more about heat transfer settings __[here](https://festim-workshop.readthedocs.io/en/latest/content/temperatures/temperatures_advanced)__.
 ```

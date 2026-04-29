@@ -24,7 +24,7 @@ Objectives:
 
 ## Defining temperature initial conditions ##
 
-Similar to the __[concentration](https://festim-workshop.readthedocs.io/en/festim2/content/initial_conditions/concentration.html)__, we can define temperature initial conditions on volume subdomains using `InitialTemperature`:
+Similar to the __[concentration](https://festim-workshop.readthedocs.io/en/latest/content/initial_conditions/concentration.html)__, we can define temperature initial conditions on volume subdomains using `InitialTemperature`:
 
 ```{code-cell} ipython3
 import festim as F
@@ -36,7 +36,7 @@ IC = F.InitialTemperature(value=400, volume=vol)
 ```
 
 ```{note}
-Since initial conditions are only used in transient simulations, `thermal_conductivity`, `heat_capacity`, and `density` must be defined for the material. Learn more about defining thermal properties __[here](https://festim-workshop.readthedocs.io/en/festim2/content/material/material_basics.html#defining-thermal-properties)__.
+Since initial conditions are only used in transient simulations, `thermal_conductivity`, `heat_capacity`, and `density` must be defined for the material. Learn more about defining thermal properties __[here](https://festim-workshop.readthedocs.io/en/latest/content/material/material_basics.html#defining-thermal-properties)__.
 ```
 
 +++

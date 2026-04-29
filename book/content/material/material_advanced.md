@@ -12,6 +12,7 @@ kernelspec:
   name: python3
 ---
 
+(temperature-advanced)=
 # Advanced functionality #
 
 +++

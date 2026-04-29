@@ -107,7 +107,7 @@ ldc_reader = OpenFOAMReader(
     cell_type=12
 )
 
-velocity_field = ldc_reader.create_dolfinx_function(t=2.5, name="U")
+velocity_field = ldc_reader.create_dolfinx_function_with_point_data(t=2.5, name="U")
 ```
 
 We can visualize the velocity field using PyVista:

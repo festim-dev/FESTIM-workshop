@@ -36,6 +36,6 @@ dependencies:
   - nest-asyncio2
   - pip:
     - h-transport-materials==0.16
-    - foam2dolfinx
+    - foam2dolfinx>=1.1
     - openmc2dolfinx
     - autoemulate

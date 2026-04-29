@@ -14,7 +14,7 @@ kernelspec:
 
 # Basic functionality #
 
-Definition of a temperature field or problem is essential for hydrogen transport and FESTIM as a whole. Users can define it as a fixed value or as a function of space and time. Read more about temperature in FESTIM _[here](https://festim.readthedocs.io/en/fenicsx/userguide/temperature.html)_. FESTIM's unit for temperature is Kelvin.
+Definition of a temperature field or problem is essential for hydrogen transport and FESTIM as a whole. Users can define it as a fixed value or as a function of space and time. Read more about temperature in FESTIM _[here](https://festim.readthedocs.io/en/latest/userguide/temperature.html)_. FESTIM's unit for temperature is Kelvin.
 
 This tutorial will go over the basics of defining the temperature in a FESTIM simulation.
 

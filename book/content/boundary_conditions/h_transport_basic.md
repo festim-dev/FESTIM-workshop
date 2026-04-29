@@ -14,7 +14,7 @@ kernelspec:
 
 # Hydrogen transport: basic
 
-This section discusses how to implement basic boundary conditions (BCs) for hydrogen transport problems. Boundary conditions are essential to FESTIM simulations, as they describe the mathematical problem at the boundaries of the simulated domain. Read more about BCs _[here](https://festim.readthedocs.io/en/fenicsx/userguide/boundary_conditions.html)_.
+This section discusses how to implement basic boundary conditions (BCs) for hydrogen transport problems. Boundary conditions are essential to FESTIM simulations, as they describe the mathematical problem at the boundaries of the simulated domain. Read more about BCs _[here](https://festim.readthedocs.io/en/latest/userguide/boundary_conditions.html)_.
 
 Objectives:
 * Implement fixed concentration boundary conditions

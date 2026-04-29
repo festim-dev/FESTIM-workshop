@@ -145,7 +145,7 @@ We see that a huge spike in concentration in the first few nanometers of tungest
 
 ### Approximating plasma implantation using fixed concentration boundary conditions
 
-If recombination is fast enough, the spike shown above can be approximated as a fixed concentration boundary condition that mainly drives diffusion across the material. Learn more about the plasma implantation approximation approach _[here](https://festim.readthedocs.io/en/fenicsx/theory.html#plasma-implantation-approximation)_.
+If recombination is fast enough, the spike shown above can be approximated as a fixed concentration boundary condition that mainly drives diffusion across the material. Learn more about the plasma implantation approximation approach _[here](https://festim.readthedocs.io/en/latest/theory.html#plasma-implantation-approximation)_.
 
 To see how we might approximate this, let's define a maximum concentration to set on the left boundary, representing the spike from the implantation:
 

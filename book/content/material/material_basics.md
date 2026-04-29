@@ -14,7 +14,7 @@ kernelspec:
 
 # Basic functionality
 
-Materials are key components of hydrogen transport simulations. They hold the properties like diffusivity, solubility and even thermal properties like thermal conductivity or heat capacity. Read more about the `Materials` class and syntax at __[Materials](https://festim.readthedocs.io/en/fenicsx/userguide/subdomains.html)__.
+Materials are key components of hydrogen transport simulations. They hold the properties like diffusivity, solubility and even thermal properties like thermal conductivity or heat capacity. Read more about the `Materials` class and syntax at __[Materials](https://festim.readthedocs.io/en/latest/userguide/subdomains.html)__.
 
 
 Objectives:

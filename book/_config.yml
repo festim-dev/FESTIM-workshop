@@ -29,19 +29,20 @@ html:
   use_repository_button: true
   use_edit_page_button: true
   logo: true
+  announcement: ' 📢 Register now for the <a href="https://mit.zoom.us/meeting/register/PElrepT-Tpivqzu9Jepr_g#/registration" target="_blank">FESTIM 2.0 webinar on 15th May, 9:00 am EST'
   analytics:
     google_analytics_id: G-B9MJGSTP5V
   
 execute:
   # Force re-execution of notebooks on each build.
-  # See https://jupyterbook.org/content/execute.html
+  # See https://jupyter-book.readthedocs.io/v1/content/execute.html
   execute_notebooks: force
   timeout: -1  # Disable timeouts for executing notebooks cells
   # allow_errors: true  # Allow errors in notebook cells
 
 sphinx:
   config:
-    html_static_path: ["images"]
+    html_static_path: ["images", "_static"]
     html_last_updated_fmt: "%b %d, %Y"
     suppress_warnings:
       - "mystnb.unknown_mime_type"
@@ -64,8 +65,9 @@ sphinx:
       pyvista: ["https://docs.pyvista.org/", null]
       packaging: ["https://packaging.pypa.io/en/stable/", null]
       matplotlib: ["https://matplotlib.org/stable/", null]
-      festim: ["https://festim.readthedocs.io/en/stable/", null]
+      festim: ["https://festim.readthedocs.io/en/latest/", null]
     html_favicon: "images/festim logo symbol.png"
+    nb_execution_show_tb: True
 
   extra_extensions:
     - "sphinx.ext.autodoc"

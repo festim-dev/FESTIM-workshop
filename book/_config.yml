@@ -65,7 +65,7 @@ sphinx:
       pyvista: ["https://docs.pyvista.org/", null]
       packaging: ["https://packaging.pypa.io/en/stable/", null]
       matplotlib: ["https://matplotlib.org/stable/", null]
-      festim: ["https://festim.readthedocs.io/en/stable/", null]
+      festim: ["https://festim.readthedocs.io/en/latest/", null]
     html_favicon: "images/festim logo symbol.png"
     nb_execution_show_tb: True
 

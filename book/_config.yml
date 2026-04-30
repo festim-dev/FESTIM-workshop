@@ -67,7 +67,7 @@ sphinx:
       matplotlib: ["https://matplotlib.org/stable/", null]
       festim: ["https://festim.readthedocs.io/en/latest/", null]
     html_favicon: "images/festim logo symbol.png"
-    nb_execution_show_tb: True
+    # nb_execution_show_tb: True
 
   extra_extensions:
     - "sphinx.ext.autodoc"

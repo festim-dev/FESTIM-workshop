@@ -35,9 +35,8 @@ html:
   
 execute:
   # Force re-execution of notebooks on each build.
-  # See https://jupyterbook.org/content/execute.html
-  execute_notebooks: off
-  # execute_notebooks: force
+  # See https://jupyter-book.readthedocs.io/v1/content/execute.html
+  execute_notebooks: force
   timeout: -1  # Disable timeouts for executing notebooks cells
   # allow_errors: true  # Allow errors in notebook cells
 
@@ -68,6 +67,7 @@ sphinx:
       matplotlib: ["https://matplotlib.org/stable/", null]
       festim: ["https://festim.readthedocs.io/en/stable/", null]
     html_favicon: "images/festim logo symbol.png"
+    nb_execution_show_tb: True
 
   extra_extensions:
     - "sphinx.ext.autodoc"

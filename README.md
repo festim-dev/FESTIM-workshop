@@ -22,4 +22,8 @@ git clone https://github.com/festim-dev/FESTIM-workshop
 conda env create -f environment.yml
 ```
 
-3. You should then be able to execute the notebooks with the ``festim-workshop`` environment
+3. Compile the book locally
+
+```
+jupyter-book build book
+```

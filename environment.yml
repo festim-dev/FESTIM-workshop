@@ -34,4 +34,4 @@ dependencies:
     - h-transport-materials==0.16
     - foam2dolfinx>=1.1
     - openmc2dolfinx
-    - autoemulate>=2.1
+    - autoemulate

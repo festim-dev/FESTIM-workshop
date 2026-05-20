@@ -20,4 +20,4 @@ conda:
 sphinx:
   builder: html
   fail_on_warning: true
-  configuration: book/_config.yml
+  configuration: book/conf.py

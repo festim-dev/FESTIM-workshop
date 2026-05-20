@@ -230,15 +230,15 @@ We will train several models by simply instantiating `AutoEmulate` with our $X$ 
 :tags: [hide-output]
 
 from autoemulate import AutoEmulate
-# Run AutoEmulate with default settings
-ae = AutoEmulate(X, Y, log_level="info")
+
+ae = AutoEmulate(X, Y, log_level="info", models=["GaussianProcessRBF"])
 ```
 
 ```{code-cell} ipython3
 ae.summarise()
 ```
 
-<!-- Here we decide to select the `GaussianProcessRBF` model:
+Here we decide to select the `GaussianProcessRBF` model:
 
 ```{code-cell} ipython3
 # pick GaussianProcessRBF
@@ -289,4 +289,4 @@ print("Emulator runtime:")
 %timeit emulator.model.predict(torch.tensor([[5.0, 5.0]]))
 ```
 
-As you can see, substituting FESTIM with the emulator provides a substantial speed-up, highlighting the benefit of training surrogate models in scenarios where a model is evaluated repeatedly (like inference, uncertainty quantification or sensitivity analysis). -->
+As you can see, substituting FESTIM with the emulator provides a substantial speed-up, highlighting the benefit of training surrogate models in scenarios where a model is evaluated repeatedly (like inference, uncertainty quantification or sensitivity analysis).

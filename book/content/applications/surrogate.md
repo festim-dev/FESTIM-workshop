@@ -222,7 +222,7 @@ plt.colorbar(cax=fig.add_axes([0.92, 0.15, 0.02, 0.7]))
 plt.show()
 ```
 
-<!-- ## Training the surrogate models
+## Training the surrogate models
 
 We will train several models by simply instantiating `AutoEmulate` with our $X$ and $Y$ tensors. The library evaluates several typical regression algorithms (like Random Forests, Gaussian Processes, Multi-Layer Perceptrons, etc.) out-of-the-box using the provided data.
 
@@ -238,7 +238,7 @@ ae = AutoEmulate(X, Y, log_level="info")
 ae.summarise()
 ```
 
-Here we decide to select the `GaussianProcessRBF` model:
+<!-- Here we decide to select the `GaussianProcessRBF` model:
 
 ```{code-cell} ipython3
 # pick GaussianProcessRBF

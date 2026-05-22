@@ -34,5 +34,5 @@ dependencies:
     - h-transport-materials==0.16
     - foam2dolfinx>=1.1
     - openmc2dolfinx
-    - pytorch<2.12.0
+    - torch<2.12.0
     - autoemulate

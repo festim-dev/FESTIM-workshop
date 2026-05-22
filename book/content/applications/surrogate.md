@@ -230,8 +230,8 @@ We will train several models by simply instantiating `AutoEmulate` with our $X$ 
 :tags: [hide-output]
 
 from autoemulate import AutoEmulate
-# Run AutoEmulate with default settings
-ae = AutoEmulate(X, Y, log_level="info")
+
+ae = AutoEmulate(X, Y, log_level="info", models=["GaussianProcessRBF"])
 ```
 
 ```{code-cell} ipython3

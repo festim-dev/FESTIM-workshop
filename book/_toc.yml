@@ -7,6 +7,8 @@ parts:
   - caption: Getting started
     chapters:
     - file: content/applications/task01
+    - url: https://festim.readthedocs.io/en/latest/installation.html
+      title: Installation
 
   - caption: Fundamentals
     chapters:

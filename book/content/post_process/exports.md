@@ -183,7 +183,7 @@ If no `times` argument is given, the export stores results for all timesteps by 
 (checkpointing)=
 ## Checkpointing ##
 
-It may be helpful to store results from one simulation for later use in another (perhaps as an initial condition, see [](ic-checkpoint)). FESTIM includes this capability by incorporationg `adios4dolfinx` functionality, which stores mesh information and solutions into a `checkpoint.bp` file. Learn more about [checkpointing in DOLFINx here](https://jsdokken.com/adios4dolfinx/README.html).
+It may be helpful to store results from one simulation for later use in another (perhaps as an initial condition, see [](ic-checkpoint)). FESTIM includes this capability by incorporationg `io4dolfinx` functionality, which stores mesh information and solutions into a `checkpoint.bp` file. Learn more about [checkpointing in DOLFINx here](https://scientificcomputing.github.io/io4dolfinx/README.html).
 
 To store the species field as a checkpoint file, simply set the `checkpoint` argument to `True`:
 

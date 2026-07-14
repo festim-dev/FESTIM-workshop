@@ -21,6 +21,7 @@ Objectives:
 * Understanding how derived quantities are calculated
 * Exporting derived quantities in FESTIM
 * Working with data exported from FESTIM
+* Defining custom derived quantities
 
 +++
 
@@ -189,4 +190,89 @@ ax2.set_ylabel('Average Concentration', fontsize=12)
 
 plt.tight_layout()
 plt.show()
+```
+
++++
+
+## Custom derived quantities ##
+
+```{versionadded} 2.0
+`CustomQuantity` was introduced in FESTIM 2.0.
+```
+
+The built-in quantities above cover the most common needs, but sometimes you want to integrate an arbitrary expression over a volume or a surface. This is what `CustomQuantity` is for: you provide a callable that returns a [UFL](https://docs.fenicsproject.org/ufl/main/) expression, and FESTIM integrates it over the chosen subdomain:
+
+$$Q = \int_\Omega q \, d\Omega \qquad \text{or} \qquad Q = \int_\Gamma q \, d\Gamma$$
+
+The callable receives keyword arguments assembled by the problem. The most useful entries are:
+
+| Keyword | Meaning |
+|---|---|
+| species name (e.g. `"H"`) | the concentration of that species |
+| `"T"` | the temperature field |
+| `"D"`, `"D_H"`, ... | the diffusion coefficient (overall, or per species) |
+| `"n"` | the outward facet normal (for surface subdomains) |
+| `"x"` | the spatial coordinate |
+
+Let us reuse a steady-state 2D problem with $c_H = 1$ on the left and $c_H = 0$ on the right:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import numpy as np
+import festim as F
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+
+my_model = F.HydrogenTransportProblem()
+my_model.mesh = F.Mesh(create_unit_square(MPI.COMM_WORLD, 20, 20))
+mat = F.Material(D_0=1e-1, E_D=0)
+
+right_surface = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[0], 1.0))
+left_surface = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[0], 0.0))
+vol = F.VolumeSubdomain(id=1, material=mat)
+
+H = F.Species("H")
+
+my_model.subdomains = [right_surface, left_surface, vol]
+my_model.species = [H]
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=right_surface, value=0, species=H),
+    F.FixedConcentrationBC(subdomain=left_surface, value=1, species=H),
+]
+my_model.temperature = 400
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
+```
+
+We define two custom quantities. The first integrates $c_H^2$ over the volume; the second computes the diffusion flux $-D\,\nabla c_H \cdot \mathbf{n}$ on the right surface (which reproduces the built-in `SurfaceFlux`). Note the use of `ufl` to build the expression:
+
+```{code-cell} ipython3
+import ufl
+
+volume_quantity = F.CustomQuantity(
+    expr=lambda **kwargs: kwargs["H"] ** 2,
+    subdomain=vol,
+    title="int of c^2",
+)
+
+surface_quantity = F.CustomQuantity(
+    expr=lambda **kwargs: -kwargs["D"] * ufl.dot(ufl.grad(kwargs["H"]), kwargs["n"]),
+    subdomain=right_surface,
+    title="custom flux",
+)
+
+my_model.exports = [volume_quantity, surface_quantity]
+my_model.initialise()
+my_model.run()
+```
+
+Just like the built-in quantities, the results are stored in the `data` and `t` attributes:
+
+```{code-cell} ipython3
+print(f"Volume integral of c^2: {volume_quantity.data}")
+print(f"Custom surface flux: {surface_quantity.data}")
+```
+
+```{tip}
+Because `expr` can be any UFL expression, `CustomQuantity` is a convenient way to export quantities that don't have a dedicated class, such as a recombination flux $q = K_r\, c^2$ on a surface, or a temperature-weighted average in the volume.
 ```

@@ -18,6 +18,7 @@ parts:
       - file: content/meshes/mesh_fenics
       - file: content/meshes/mesh_gmsh
       - file: content/meshes/mesh_salome
+      - file: content/meshes/coordinate_systems
 
     - file: content/material/index
       sections:

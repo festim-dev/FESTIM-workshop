@@ -1,3 +1,30 @@
 html[data-theme="light"] .bd-header-announcement a {
   color: #ade0e9
 }
+
+/* Custom admonitions for the tutorial: `:class: objectives` and
+   `:class: exercise`. Colours and icons come from the theme's own variables,
+   so both follow light/dark mode. Mirrors how pydata styles its built-ins:
+     div.admonition.note{border-color:var(--pst-color-info)} */
+
+div.admonition.objectives {
+  border-color: var(--pst-color-success);
+}
+div.admonition.objectives > .admonition-title {
+  background-color: var(--pst-color-success-bg);
+}
+div.admonition.objectives > .admonition-title:after {
+  color: var(--pst-color-success);
+  content: var(--pst-icon-check-circle);
+}
+
+div.admonition.exercise {
+  border-color: var(--pst-color-accent);
+}
+div.admonition.exercise > .admonition-title {
+  background-color: var(--pst-color-accent-bg);
+}
+div.admonition.exercise > .admonition-title:after {
+  color: var(--pst-color-accent);
+  content: var(--pst-icon-admonition-todo);
+}

@@ -40,6 +40,30 @@ import festim as F
 mat = F.Material(D_0=1.11e-6, E_D=0.4)  # m2/s, eV
 ```
 
+```{admonition} Exercise: how much does temperature matter?
+:class: exercise
+
+This material has $D_0 = 1.11 \times 10^{-6}$ m2/s and $E_D = 0.4$ eV. Using $k_B = 8.617 \times 10^{-5}$ eV/K, estimate its diffusivity at 300 K and at 600 K.
+
+By roughly what factor does $D$ change? Guess an order of magnitude before working it out.
+```
+
+```{admonition} Solution
+:class: dropdown
+
+$$
+D(300\ \text{K}) = 1.11 \times 10^{-6} \exp{\left(\frac{-0.4}{8.617 \times 10^{-5} \times 300}\right)} \approx 2.1 \times 10^{-13}\ \text{m}^2/\text{s}
+$$
+
+$$
+D(600\ \text{K}) = 1.11 \times 10^{-6} \exp{\left(\frac{-0.4}{8.617 \times 10^{-5} \times 600}\right)} \approx 4.8 \times 10^{-10}\ \text{m}^2/\text{s}
+$$
+
+Doubling the temperature raises $D$ by a factor of about **2300**, not by 2. Most people guess far too low.
+
+This is the single most important intuition in hydrogen transport: the Arrhenius exponential means temperature dominates almost everything else. It is also why getting the temperature field right (see [](../temperatures/index.md)) usually matters more than fine-tuning $D_0$.
+```
+
 When considering chemical potential conservation at material interfaces, hydrogen solubility can be defined using the solubility coeffeicient prefactor `K_S_0`, solubility activation energy `E_K_S`, and solubility law `solubility_law` (either `"henry"` or `"sievert"`):
 
 ```{code-cell} ipython3
@@ -178,6 +202,34 @@ my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
 
 my_model.initialise()
 my_model.run()
+```
+
+```{admonition} Exercise: which way does the concentration jump?
+:class: exercise
+
+Material A (top) has $K_{S,0} = 2$ and Material B (bottom) has $K_{S,0} = 3$. Hydrogen is driven from the top surface, held at 1, down to the bottom surface, held at 0.
+
+The plot below shows a discontinuity at the interface. Before you look at it:
+
+1. Crossing the interface from A into B, does the concentration jump **up** or **down**?
+2. What sets the size of the jump: the diffusivities, or the solubilities?
+```
+
+```{admonition} Solution
+:class: dropdown
+
+1. It jumps **up**, by a factor of 3/2.
+2. The **solubilities**, not the diffusivities.
+
+What is actually continuous across the interface is the chemical potential, not the concentration. For Sieverts' law that means $c / K_S$ is continuous, so
+
+$$
+\frac{c_A}{K_{S,A}} = \frac{c_B}{K_{S,B}} \quad \Longrightarrow \quad \frac{c_B}{c_A} = \frac{K_{S,B}}{K_{S,A}} = \frac{3}{2}
+$$
+
+Material B dissolves hydrogen more readily, so it holds 1.5 times the concentration for the same chemical potential. The diffusivities set how *fast* hydrogen crosses each material, and so the slope within each half, but they do not set the size of the jump.
+
+This is exactly why the problem needs `HydrogenTransportProblemDiscontinuous`. A standard `HydrogenTransportProblem` forces a single continuous concentration field and cannot represent this jump.
 ```
 
 To visualize the results of the multi-material problem, we need to look at each subdomain separately. We can use ` H.subdomain_to_post_processing_solution ` to define a plotting function `make_ugrid` that visualizes each domain:

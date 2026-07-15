@@ -77,6 +77,13 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Book pages are MyST .md. Every page declares `formats: ipynb,md:myst`, so
+# `jupytext --sync` regenerates .ipynb twins locally. They must not be
+# committed: Sphinx resolves _toc.yml entries without an extension, so a .md
+# and .ipynb of the same name is an ambiguous source, and readthedocs builds
+# with fail_on_warning.
+book/content/**/*.ipynb
+
 # IPython
 profile_default/
 ipython_config.py

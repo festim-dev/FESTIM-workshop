@@ -32,6 +32,30 @@ const makeBadge = () => {
 
 const pagePath = (page) => `/${page.replace(/^\/+/, "")}.html`;
 
+// One badge per entry, however many pages or sections point at it.
+const badgedLinks = new Set();
+
+const badgeLink = (link) => {
+  if (!link || badgedLinks.has(link)) return;
+  badgedLinks.add(link);
+  link.appendChild(makeBadge());
+};
+
+// Badges a sidebar entry and every entry above it in the tree. Parents matter:
+// they are collapsible, so a badge on a nested page alone stays invisible until
+// the reader happens to expand the right dropdown.
+const badgeWithAncestors = (link) => {
+  badgeLink(link);
+
+  let li = link.closest("li");
+  while (li) {
+    const parentLi = li.parentElement && li.parentElement.closest("li");
+    if (!parentLi) break;
+    badgeLink(parentLi.querySelector(":scope > a"));
+    li = parentLi;
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   // A new section implies a new page. The Set keeps a page that is listed twice,
   // or that holds several new sections, down to a single sidebar badge.
@@ -54,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn(`new-badge.js: no page "${page}" in the navigation sidebar`);
       return;
     }
-    links.forEach((link) => link.appendChild(makeBadge()));
+    links.forEach(badgeWithAncestors);
   });
 
   NEW_SECTIONS.forEach((entry) => {

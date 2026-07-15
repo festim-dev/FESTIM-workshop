@@ -7,11 +7,16 @@
 // Badges the page's entry in the left-hand navigation sidebar.
 const NEW_PAGES = [
   "content/post_process/intro",
+  "content/applications/ml",
 ];
 
-// Badges a single section, both at its heading and in the right-hand "Contents"
-// panel. Add "#" and the section anchor, which you can copy from the "#"
-// permalink shown next to the heading.
+// Badges a single section at its heading and in the right-hand "Contents" panel,
+// and badges the page it lives on in the sidebar too, so the section is visible
+// before you are already on the page. Listing the page in NEW_PAGES as well is
+// therefore redundant, though harmless.
+//
+// Add "#" and the section anchor, which you can copy from the "#" permalink
+// shown next to the heading.
 const NEW_SECTIONS = [
   "content/post_process/derived#post-processing-of-derived-quantities",
 ];
@@ -26,12 +31,22 @@ const makeBadge = () => {
 const pagePath = (page) => `/${page.replace(/^\/+/, "")}.html`;
 
 document.addEventListener("DOMContentLoaded", () => {
-  NEW_PAGES.forEach((page) => {
+  // A new section implies a new page. The Set keeps a page that is listed twice,
+  // or that holds several new sections, down to a single sidebar badge.
+  const sidebarPages = new Set([
+    ...NEW_PAGES,
+    ...NEW_SECTIONS.map((entry) => entry.split("#")[0]),
+  ]);
+
+  const sidebarLinks = [...document.querySelectorAll("nav.bd-docs-nav a.reference.internal")];
+
+  sidebarPages.forEach((page) => {
     // Reading link.href rather than the raw attribute lets the browser resolve
     // the relative path for us. That also covers the page being viewed, whose
     // own sidebar link is rendered as "#".
-    const links = [...document.querySelectorAll("nav.bd-docs-nav a.reference.internal")]
-      .filter((link) => new URL(link.href).pathname.endsWith(pagePath(page)));
+    const links = sidebarLinks.filter(
+      (link) => new URL(link.href).pathname.endsWith(pagePath(page))
+    );
 
     if (!links.length) {
       console.warn(`new-badge.js: no page "${page}" in the navigation sidebar`);

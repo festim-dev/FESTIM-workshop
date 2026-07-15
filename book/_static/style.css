@@ -1,3 +1,17 @@
 html[data-theme="light"] .bd-header-announcement a {
   color: #ade0e9
 }
+
+/* "New!" badge in the sidebar. The pages it applies to are listed in new-badge.js. */
+.new-badge {
+  margin-left: 0.4em;
+  padding: 0 0.45em;
+  border-radius: 0.75em;
+  background-color: var(--pst-color-warning);
+  color: var(--pst-color-warning-text);
+  font-size: 0.7em;
+  font-weight: 700;
+  line-height: 1.7;
+  vertical-align: 0.12em;
+  white-space: nowrap;
+}

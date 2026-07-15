@@ -6,7 +6,6 @@
 
 // Badges the page's entry in the left-hand navigation sidebar.
 const NEW_PAGES = [
-  "content/post_process/intro",
   "content/applications/ml",
 ];
 
@@ -18,7 +17,10 @@ const NEW_PAGES = [
 // Add "#" and the section anchor, which you can copy from the "#" permalink
 // shown next to the heading.
 const NEW_SECTIONS = [
-  "content/post_process/derived#post-processing-of-derived-quantities",
+  "content/post_process/derived#custom-derived-quantities",
+  "content/post_process/exports#exporting-a-custom-field",
+  "content/post_process/exports#exporting-a-reaction-rate",
+  "content/boundary_conditions/h_transport_advanced#weakly-enforced-dirichlet-boundary-conditions"
 ];
 
 const makeBadge = () => {

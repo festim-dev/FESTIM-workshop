@@ -20,6 +20,8 @@ Objectives:
 * Writing VTX files for species and temperature fields
 * Additional options for VTX exports
 * Writing XDMF files for field exports
+* Exporting a custom field
+* Exporting a reaction rate
 
 +++
 
@@ -183,7 +185,7 @@ If no `times` argument is given, the export stores results for all timesteps by 
 (checkpointing)=
 ## Checkpointing ##
 
-It may be helpful to store results from one simulation for later use in another (perhaps as an initial condition, see [](ic-checkpoint)). FESTIM includes this capability by incorporationg `adios4dolfinx` functionality, which stores mesh information and solutions into a `checkpoint.bp` file. Learn more about [checkpointing in DOLFINx here](https://jsdokken.com/adios4dolfinx/README.html).
+It may be helpful to store results from one simulation for later use in another (perhaps as an initial condition, see [](ic-checkpoint)). FESTIM includes this capability by incorporationg `io4dolfinx` functionality, which stores mesh information and solutions into a `checkpoint.bp` file. Learn more about [checkpointing in DOLFINx here](https://scientificcomputing.github.io/io4dolfinx/README.html).
 
 To store the species field as a checkpoint file, simply set the `checkpoint` argument to `True`:
 
@@ -220,6 +222,139 @@ my_model.exports = [export]
 ```
 
 This will produce the corresponding export files (`my_export.xdmf` and `my_export.h5`).
+
++++
+
+## Exporting a custom field ##
+
+```{versionadded} 2.0
+`CustomFieldExport` was introduced in FESTIM 2.0.
+```
+
+Sometimes the field you want to visualise is not a species concentration or the temperature directly, but a quantity derived from them. `CustomFieldExport` writes an arbitrary field to a VTX file. You pass an `expression` (a callable) whose positional arguments can be `t` (time), `x` (spatial coordinate), `T` (temperature), or any species mapped through `species_dependent_value`.
+
+As an example, let us export the hydrogen concentration converted from $\mathrm{mol/m^3}$ to $\mathrm{atoms/m^3}$ by multiplying by Avogadro's constant:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import numpy as np
+import festim as F
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+
+my_model = F.HydrogenTransportProblem()
+my_model.mesh = F.Mesh(create_unit_square(MPI.COMM_WORLD, 10, 10))
+mat = F.Material(D_0=1e-2, E_D=0)
+
+right_surface = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[0], 1.0))
+left_surface = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[0], 0.0))
+vol = F.VolumeSubdomain(id=1, material=mat)
+
+H = F.Species("H")
+
+my_model.subdomains = [right_surface, left_surface, vol]
+my_model.species = [H]
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=right_surface, value=0, species=H),
+    F.FixedConcentrationBC(subdomain=left_surface, value=1, species=H),
+]
+my_model.temperature = 400
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1, final_time=5)
+```
+
+```{code-cell} ipython3
+NA = 6.022e23  # Avogadro's constant
+
+atoms_export = F.CustomFieldExport(
+    filename="H_atoms.bp",
+    expression=lambda H: H * NA,
+    species_dependent_value={"H": H},
+)
+
+my_model.exports = [atoms_export]
+my_model.initialise()
+my_model.run()
+```
+
+This produces a `H_atoms.bp` folder that can be opened in ParaView. The computed field is also available on the export object through its `function` attribute:
+
+```{code-cell} ipython3
+print(f"Max concentration in atoms/m3: {atoms_export.function.x.array.max():.3e}")
+```
+
+```{note}
+The keys of `species_dependent_value` must match the argument names of `expression`. To combine several species — for example to export the total hydrogen isotope concentration $c_\mathrm{H} + c_\mathrm{D}$ — map each argument to its `Species`: `species_dependent_value={"cH": H, "cD": D}` with `expression=lambda cH, cD: cH + cD`.
+```
+
++++
+
+## Exporting a reaction rate ##
+
+```{versionadded} 2.0
+`ReactionRateExport` was introduced in FESTIM 2.0.
+```
+
+When a model contains [reactions](../species_reactions/reactions.ipynb), it is often useful to visualise *where* and *how fast* a reaction proceeds. `ReactionRateExport` writes the rate of a given `Reaction` to a VTX file. The `direction` argument selects the `"forward"`, `"backward"`, or `"both"` (net) contribution.
+
+Here we set up a 1D trapping problem where mobile hydrogen is trapped, and export the net trapping rate:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+my_model = F.HydrogenTransportProblem()
+my_model.mesh = F.Mesh1D(np.linspace(0, 1, 100))
+
+mobile_H = F.Species("H")
+trapped_H = F.Species("H_trapped", mobile=False)
+empty_traps = F.ImplicitSpecies(n=2, others=[trapped_H], name="empty_traps")
+my_model.species = [mobile_H, trapped_H]
+
+material = F.Material(D_0=1, E_D=0)
+vol = F.VolumeSubdomain1D(id=1, borders=[0, 1], material=material)
+left_surf = F.SurfaceSubdomain1D(id=1, x=0)
+right_surf = F.SurfaceSubdomain1D(id=2, x=1)
+my_model.subdomains = [vol, left_surf, right_surf]
+
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(left_surf, value=10, species=mobile_H),
+    F.FixedConcentrationBC(right_surf, value=0, species=mobile_H),
+]
+my_model.temperature = 300
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, final_time=50)
+my_model.settings.stepsize = F.Stepsize(1)
+```
+
+We keep a reference to the `Reaction` object so we can pass it to the export:
+
+```{code-cell} ipython3
+trapping_reaction = F.Reaction(
+    reactant=[mobile_H, empty_traps],
+    product=[trapped_H],
+    k_0=0.01,
+    E_k=0,
+    p_0=0.1,
+    E_p=0,
+    volume=vol,
+)
+my_model.reactions = [trapping_reaction]
+
+rate_export = F.ReactionRateExport(
+    reaction=trapping_reaction,
+    filename="trapping_rate.bp",
+    direction="both",
+)
+
+my_model.exports = [rate_export]
+my_model.initialise()
+my_model.run()
+```
+
+The trapping rate field is written to `trapping_rate.bp` (viewable in ParaView) and is also accessible through the `function` attribute:
+
+```{code-cell} ipython3
+print(f"Max trapping rate: {rate_export.function.x.array.max():.3e}")
+```
 
 +++
 

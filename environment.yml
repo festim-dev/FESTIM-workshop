@@ -18,7 +18,7 @@ dependencies:
   - nbconvert
   - sphinx-codeautolink
   - fenics-dolfinx
-  - festim=2.0b2
+  - festim=2.1
   - pyvista<0.47.1
   - python-gmsh
   - shapely

@@ -20,6 +20,7 @@ Objectives:
 * Choose solubility laws (Henry's or Siervert's)
 * Implement surface reaction boundary conditions
 * Model isotopic exchange as a recombination flux
+* Weakly enforce a fixed concentration with Nitsche's method
 
 +++
 
@@ -476,3 +477,86 @@ plt.show()
 ```
 
 We see that the flux is higher with isotopic exchange, as we'd expect.
+
++++
+
+---
+
++++
+
+## Weakly enforced Dirichlet boundary conditions
+
+```{versionadded} 2.1
+Weakly enforced Dirichlet BCs were introduced in FESTIM 2.1.
+```
+
+By default, `FixedConcentrationBC` enforces the prescribed value *strongly*: the degrees of freedom located on the boundary are simply overwritten with the target value. Since FESTIM 2.1, a fixed concentration can also be enforced *weakly* using [Nitsche's method](https://jsdokken.com/dolfinx-tutorial/chapter1/nitsche.html). Rather than overwriting the boundary values, the constraint is added directly to the variational formulation, so the target value is only approximately satisfied.
+
+Weak enforcement is useful, for example, when flux conservation across the boundary is important, or when a Dirichlet constraint needs to be combined with other weak terms.
+
+To enforce a BC weakly, pass `enforce_weakly=True` together with a `penalty` parameter (the penalty is required when `enforce_weakly` is `True`):
+
+```{code-cell} ipython3
+import festim as F
+import numpy as np
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+
+
+def run_model(penalty):
+    my_model = F.HydrogenTransportProblem()
+    my_model.mesh = F.Mesh(create_unit_square(MPI.COMM_WORLD, 20, 20))
+
+    H = F.Species("H")
+    my_model.species = [H]
+
+    mat = F.Material(D_0=1, E_D=0)
+    my_model.material = mat
+    my_model.temperature = 500
+
+    left = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[0], 0))
+    right = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[0], 1))
+    vol = F.VolumeSubdomain(id=3, material=mat)
+    my_model.subdomains = [left, right, vol]
+
+    my_model.boundary_conditions = [
+        F.FixedConcentrationBC(
+            subdomain=left,
+            value=1.0,
+            species=H,
+            enforce_weakly=True,
+            penalty=penalty,
+        ),
+        F.FixedConcentrationBC(subdomain=right, value=0.0, species=H),
+    ]
+
+    my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
+    my_model.initialise()
+    my_model.run()
+    return H
+```
+
+Here we impose $c = 1$ on the left boundary *weakly* and $c = 0$ on the right boundary *strongly*. Because the weak constraint is only approximately satisfied, the concentration reached on the left boundary depends on the `penalty`: a larger penalty pushes the solution closer to the target value (approaching strong enforcement), whereas a small penalty allows a larger deviation.
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import matplotlib.pyplot as plt
+
+for penalty in [1, 10, 100]:
+    H = run_model(penalty)
+    c = H.post_processing_solution.x.array
+    x = H.post_processing_solution.function_space.mesh.geometry.x[:, 0]
+    order = np.argsort(x)
+    plt.plot(x[order], c[order], label=f"penalty = {penalty}")
+
+plt.axhline(1.0, color="k", linestyle="--", label="target value")
+plt.xlabel("x")
+plt.ylabel("Concentration")
+plt.legend()
+plt.show()
+```
+
+```{note}
+Increasing the penalty improves how well the target value is enforced, but very large values can degrade the conditioning of the linear system. In practice, the penalty should be chosen large enough to satisfy the constraint to the desired accuracy without harming convergence.
+```

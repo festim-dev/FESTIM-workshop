@@ -72,11 +72,7 @@ mat.density = lambda T: 7*T + 5
 
 Volume subdomains are used to assign different materials or define regions with specific physical properties. Each volume subdomain must be associated with a `festim.Material` object. Read more about subdomains __[here](https://festim-workshop.readthedocs.io/en/latest/content/meshes/mesh_fenics.html#defining-subdomains)__.
 
-Consider the following volume with two subdomains separated halfway through the mesh:
-
-+++
-
-To define one material on each subdomain:
+Consider a volume split into two subdomains, halfway through the mesh. To define one material on each subdomain:
 
 ```{code-cell} ipython3
 mat = F.Material(D_0=1.11e-6, E_D=0.4)  # m2/s, eV
@@ -97,9 +93,7 @@ bottom = F.VolumeSubdomain(id=2, material=mat2, locator=lambda x: x[0] < 0.5)
 
 ## Multi-material example ##
 
-Considering the following 2D example, where hydrogen diffuses through a 2D domain composed of two materials with different diffusion and solubility properties. The top half (Material A) has a lower diffusion coefficient and solubility than the bottom half (Material B). The interface at $𝑦=0.5$ clearly separates the two materials, and the steady-state hydrogen distribution illustrates how material properties impact transport.
-
-+++
+In this example, hydrogen diffuses through a 2D domain composed of two materials with different diffusion and solubility properties. The top half (Material A) has a lower diffusion coefficient and solubility than the bottom half (Material B). The interface at $y=0.5$ separates the two materials, and the steady-state hydrogen distribution illustrates how material properties impact transport.
 
 First, we create the mesh for our discontinuous (materials have different solubility properties) problem. Note that we use `HydrogenTransportProblemDiscontinuous` to define our multi-material problem:
 
@@ -212,6 +206,8 @@ else:
     figure = u_plotter.screenshot("concentration.png")
 ```
 
-<div class="alert alert-block alert-success">
-Success! We see diffusion from the top surface downwards, with a discontinuity at the interface! 
-</div>
+```{admonition} Success!
+:class: tip
+
+We see diffusion from the top surface downwards, with a discontinuity at the interface!
+```

@@ -38,6 +38,12 @@ execute:
   execute_notebooks: force
   timeout: -1  # Disable timeouts for executing notebooks cells
   # allow_errors: true  # Allow errors in notebook cells
+  exclude_patterns:
+    # openmc2dolfinx 1.0.1 is incompatible with the dolfinx>=0.11 required by FESTIM 2.2:
+    # its create_dolfinx_mesh() calls ufl.Cell.cellname(), which is now a str attribute
+    # (TypeError: 'str' object is not callable). Skip execution until openmc2dolfinx is
+    # released with dolfinx 0.11 support (upstream fix: cell.cellname() -> cell.cellname).
+    - "content/applications/multiphysics/neutronics.md"
 
 sphinx:
   config:

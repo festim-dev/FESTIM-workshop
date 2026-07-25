@@ -16,6 +16,14 @@ kernelspec:
 
 This tutorial discusses how to couple FESTIM to neutronics solvers such as OpenMC.
 
+```{warning}
+This page is currently **not executed** during the build. `openmc2dolfinx` 1.0.1 is not yet
+compatible with the `dolfinx >= 0.11` required by FESTIM 2.2 (its `create_dolfinx_mesh()` calls
+`ufl.Cell.cellname()`, which is now a string attribute rather than a method). Execution will be
+re-enabled once a compatible `openmc2dolfinx` release is available. The code below is still correct
+and can be run locally with a compatible environment.
+```
+
 ```{admonition} Objectives
 :class: objectives
 * Understanding the importance of neutronics in hydrogen transport

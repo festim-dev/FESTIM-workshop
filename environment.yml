@@ -1,4 +1,4 @@
-name: festim-workshop
+name: festim-workshop-new
 channels:
   - conda-forge
   - defaults
@@ -37,6 +37,6 @@ dependencies:
     - festim==2.2rc1  # gas enclosures, F.plot, discontiguous meshes (needs dolfinx>=0.11)
     - h-transport-materials==0.16
     - foam2dolfinx>=1.1
-    - openmc2dolfinx
+    - openmc2dolfinx>=1.0.2
     - torch<2.12.0
     - autoemulate

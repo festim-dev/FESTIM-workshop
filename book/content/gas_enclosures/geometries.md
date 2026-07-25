@@ -44,13 +44,13 @@ import festim as F
 area = 0.25
 V_enc, T = 1e-3, 500.0
 c_0 = 1e18
-k_d0, k_r0 = 1e17, 1e-21
+k_d0, k_r0 = 1e18, 1e-20
 dt, final_time = 5.0, 200.0
 
 my_model = F.HydrogenTransportProblemDiscontinuous()
 my_model.mesh = F.Mesh1D([np.linspace(0, 0.5, 30), np.linspace(1.0, 1.5, 30)])
 
-material = F.Material(D_0=1e-6, E_D=0.0, K_S_0=1, E_K_S=0)
+material = F.Material(D_0=1e-4, E_D=0.0, K_S_0=1, E_K_S=0)
 vol_left = F.VolumeSubdomain1D(id=1, borders=[0, 0.5], material=material)
 vol_right = F.VolumeSubdomain1D(id=2, borders=[1.0, 1.5], material=material)
 # the two surfaces facing the gap

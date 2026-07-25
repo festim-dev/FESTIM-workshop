@@ -1,4 +1,4 @@
-name: festim-workshop-new
+name: festim-workshop
 channels:
   - conda-forge
   - defaults

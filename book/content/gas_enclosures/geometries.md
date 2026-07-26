@@ -18,8 +18,8 @@ An enclosure is not tied to a single wall or a single mesh. Its `surfaces` argum
 contact surfaces to their area, and those surfaces can even belong to physically disconnected pieces of the
 domain. This page shows two cases:
 
-* a **discontiguous 1D mesh** — two separate slabs sharing one enclosure;
-* a **2D geometry** — a square solid with a quarter-circle void acting as the enclosure.
+* a **discontiguous 1D mesh**: two separate slabs sharing one enclosure;
+* a **2D geometry**: a square solid with a quarter-circle void acting as the enclosure.
 
 +++
 
@@ -64,7 +64,7 @@ my_model.species = [H]
 my_model.temperature = T
 ```
 
-The enclosure is in contact with **both** inner surfaces — its `surfaces` dict simply lists both:
+The enclosure is in contact with **both** inner surfaces, so its `surfaces` dict simply lists both:
 
 ```{code-cell} ipython3
 H2 = F.GasSpecies(name="H2", initial_pressure=0.0)
@@ -165,7 +165,7 @@ mesh = gmshio.model_to_mesh(gmsh.model, MPI.COMM_WORLD, 0, gdim=2).mesh
 gmsh.finalize()
 ```
 
-The arc is identified with a `locator` function — it is where $x^2 + y^2 = R^2$. We don't tag the outer
+The arc is identified with a `locator` function: it is where $x^2 + y^2 = R^2$. We don't tag the outer
 edges: with no boundary condition there, they are no-flux by default.
 
 ```{code-cell} ipython3
@@ -205,7 +205,7 @@ print(f"enclosure pressure: {H2.value:.2f} Pa")
 ```
 
 The concentration field is visualised in one line with `festim.plot`. Because the problem is solved
-on a submesh, we pass the volume subdomain — notice the depletion near the arc, where hydrogen leaves the
+on a submesh, we pass the volume subdomain. Notice the depletion near the arc, where hydrogen leaves the
 solid for the gas:
 
 ```{code-cell} ipython3

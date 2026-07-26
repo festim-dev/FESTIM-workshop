@@ -20,13 +20,13 @@ Gas enclosures were introduced in FESTIM 2.2. They require `dolfinx >= 0.11` and
 `festim.HydrogenTransportProblemDiscontinuous` class.
 ```
 
-FESTIM has always been able to impose a gas pressure on a surface — via `SievertsBC.pressure`,
-`HenrysBC.pressure` or `SurfaceReactionBC.gas_pressure` — but only as an **input**: a number (or a
+FESTIM has always been able to impose a gas pressure on a surface, via `SievertsBC.pressure`,
+`HenrysBC.pressure` or `SurfaceReactionBC.gas_pressure`, but only as an **input**: a number (or a
 function of time) that you prescribe. There was no way to let the pressure of a gas volume *evolve* in
 response to what permeates into or out of it.
 
 A `festim.Enclosure` fixes that. It is a **0D gas volume** whose partial pressure is a genuine
-unknown of the problem, solved **monolithically** with the transport problem — not updated in a separate,
+unknown of the problem, solved **monolithically** with the transport problem, not updated in a separate,
 staggered step between timesteps. Under the hood the pressure lives in a "real" function space (a single
 global degree of freedom, native to dolfinx 0.11), so the pressure balance goes directly into the
 variational form and the Newton solver sees the full coupling between the gas and the solid.
@@ -46,14 +46,14 @@ $\Gamma$, $A_\Gamma$ the physical area of that surface, and $Q$ the molar flow r
 
 ## What this part covers
 
-- [](enclosure_intro.md) — the basics: a slab filling a plenum, with the pressure as an unknown, coupled
+- [](enclosure_intro.md): the basics, a slab filling a plenum, with the pressure as an unknown, coupled
   through a surface reaction ($2\,\mathrm{H} \rightleftharpoons \mathrm{H_2}$).
-- [](coupling.md) — the two ways an enclosure couples to the solid: a **flux** coupling
+- [](coupling.md): the two ways an enclosure couples to the solid, a **flux** coupling
   (`SurfaceReactionBC`) and a **Dirichlet / concentration** coupling (`SievertsBC` / `HenrysBC`), verified
   against the TMAP analytical solution.
-- [](openings.md) — letting gas in or out: `festim.Pump`, `festim.Reservoir`,
+- [](openings.md): letting gas in or out with `festim.Pump`, `festim.Reservoir`,
   `festim.PrescribedFlowRate` and `festim.EnclosureConnection`.
-- [](geometries.md) — enclosures on discontiguous 1D meshes and on 2D geometries.
+- [](geometries.md): enclosures on discontiguous 1D meshes and on 2D geometries.
 
 ## The building blocks
 
@@ -78,7 +78,7 @@ enclosure
 The area turns a flux through a surface into a number of particles per second. How you provide it
 depends on the mesh dimension:
 
-- **1D**: a surface is a point and carries no extent — pass the membrane area facing the enclosure (m²).
-- **2D**: a surface is a line — pass the out-of-plane depth of the model (m).
-- **3D**: the mesh already measures the area — pass `1.0` (a plain list of surfaces is also accepted).
+- **1D**: a surface is a point and carries no extent, so pass the membrane area facing the enclosure (m²).
+- **2D**: a surface is a line, so pass the out-of-plane depth of the model (m).
+- **3D**: the mesh already measures the area, so pass `1.0` (a plain list of surfaces is also accepted).
 ```

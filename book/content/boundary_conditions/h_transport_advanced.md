@@ -569,7 +569,7 @@ Since FESTIM 2.2, the `value` of a `festim.ParticleSource` or a `festim.Particle
 can depend on the concentration of *another* species, in addition to space `x`, time `t` and temperature
 `T`. You declare the dependency with `species_dependent_value`, a dict that maps each species-argument name
 in your callable to a `festim.Species`. FESTIM binds those arguments to the live species solution,
-so the term is evaluated — and differentiated in the Newton solve — against the coupled concentration field.
+so the term is evaluated, and differentiated in the Newton solve, against the coupled concentration field.
 
 As an example, we drive a species `A` in from the left boundary and produce a second species `B` locally at
 a rate proportional to the concentration of `A`, i.e. $S_B = 0.5\,c_A$:
@@ -628,5 +628,5 @@ plt.show()
 ```
 
 The same `species_dependent_value` argument works on `festim.ParticleFluxBC`, letting a surface
-flux depend on a species' concentration — for example `value=lambda c: k * c` with
+flux depend on a species' concentration, for example `value=lambda c: k * c` with
 `species_dependent_value={"c": my_species}`.

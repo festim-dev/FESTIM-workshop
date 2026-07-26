@@ -16,11 +16,11 @@ kernelspec:
 
 An enclosure can be coupled to the solid in two ways:
 
-* **Flux coupling** — a `festim.SurfaceReactionBC` whose `gas_pressure` is the `GasSpecies`.
+* **Flux coupling**: a `festim.SurfaceReactionBC` whose `gas_pressure` is the `GasSpecies`.
   The gas exchanges with the solid through an explicit surface reaction
   ($2\,\mathrm{H} \rightleftharpoons \mathrm{H_2}$), as in [](enclosure_intro.md). Use this when the
   recombination/dissociation kinetics matter.
-* **Dirichlet (concentration) coupling** — a `festim.SievertsBC` or `festim.HenrysBC`
+* **Dirichlet (concentration) coupling**: a `festim.SievertsBC` or `festim.HenrysBC`
   whose `pressure` is the `GasSpecies`. The surface concentration is tied *instantaneously* to the gas
   pressure through the solubility law ($c = S\sqrt{P}$ for Sieverts, $c = K_H P$ for Henry). Use this
   when the surface is assumed to be at equilibrium with the gas.
@@ -89,7 +89,7 @@ def build(length, area, volume, D_0=1e-1, T=500.0, P0=1e5, K_H=1e15,
     return model, H2, pressure
 ```
 
-## Verification 1 — a closed enclosure reaches equilibrium
+## Verification 1: a closed enclosure reaches equilibrium
 
 With no sink, the enclosure and the slab share a fixed number of hydrogen atoms. At equilibrium the
 concentration is uniform and in equilibrium with the gas ($c = K_H P_\infty$ everywhere), so conservation
@@ -130,7 +130,7 @@ plt.grid(alpha=0.3)
 plt.show()
 ```
 
-## Verification 2 — the TMAP permeation case (issue #996)
+## Verification 2: the TMAP permeation case (issue #996)
 
 Now add a perfect sink on the far side. Hydrogen coupled in through Henry's law on the left permeates
 across the slab and is pumped away on the right, so the enclosure pressure decays. Separating variables

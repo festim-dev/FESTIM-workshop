@@ -73,8 +73,8 @@ my_model.species = [H]
 my_model.temperature = TEMPERATURE
 ```
 
-Now the gas side. We create a `festim.GasSpecies` — the species whose partial pressure is the
-unknown — and put it in an `festim.Enclosure`. Because the slab is 1D, its right surface is a
+Now the gas side. We create a `festim.GasSpecies`, the species whose partial pressure is the
+unknown, and put it in an `festim.Enclosure`. Because the slab is 1D, its right surface is a
 point and carries no area, so we give the enclosure the membrane area explicitly.
 
 ```{code-cell} ipython3

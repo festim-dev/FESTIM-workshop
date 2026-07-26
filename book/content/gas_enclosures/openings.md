@@ -144,7 +144,7 @@ assert abs(H2.value - expected) / expected < 1e-8
 
 An `festim.EnclosureConnection` couples two enclosures through a conductance. Their pressure
 difference decays as $\exp\!\big(-C(1/V_1 + 1/V_2)\,t\big)$ while the volume-weighted mean is conserved.
-The connection is declared in the openings of **one** enclosure only — the mirror term is added to the
+The connection is declared in the openings of **one** enclosure only, and the mirror term is added to the
 partner automatically.
 
 ```{code-cell} ipython3

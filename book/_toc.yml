@@ -49,7 +49,14 @@ parts:
       sections:
       - file: content/temperatures/temperatures_basic
       - file: content/temperatures/temperatures_advanced
-      
+
+    - file: content/gas_enclosures/index
+      sections:
+      - file: content/gas_enclosures/enclosure_intro
+      - file: content/gas_enclosures/coupling
+      - file: content/gas_enclosures/openings
+      - file: content/gas_enclosures/geometries
+
     - file: content/post_process/intro
       sections:
       - file: content/post_process/derived
@@ -80,6 +87,7 @@ parts:
     - file: content/applications/task08
     - file: content/applications/task06
     - file: content/applications/task10
+    - file: content/applications/task11
     - file: content/applications/microstructure
     - file: content/applications/multiphysics/index
       sections:

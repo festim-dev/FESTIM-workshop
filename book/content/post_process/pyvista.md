@@ -21,9 +21,53 @@ PyVista is not suitable for transient data, and is used throughout this workshop
 ```
 
 Objectives: 
+* Plotting a solution in one line with `F.plot`
 * Plotting the solution for continuous problems
 * Plotting the solution for discontinuous problems
 * Inspecting meshes in 3D interactive scenes
+
++++
+
+## The quick way: `F.plot` ##
+
+Since FESTIM 2.2, `festim.plot` wraps the whole PyVista set-up into a single call. Once a model has
+run, pass the species (or a list of species) and FESTIM builds the scene for you. The manual approach in the
+sections below is still useful when you need finer control, but for a quick look `F.plot` is all you need.
+
+```{code-cell} ipython3
+import festim as F
+import numpy as np
+from dolfinx.mesh import create_unit_square
+from mpi4py import MPI
+import pyvista
+
+pyvista.set_jupyter_backend("html")
+
+my_model = F.HydrogenTransportProblem()
+my_model.mesh = F.Mesh(create_unit_square(MPI.COMM_WORLD, 20, 20))
+mat = F.Material(D_0=1, E_D=0)
+vol = F.VolumeSubdomain(id=1, material=mat)
+top = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[1], 1.0))
+bottom = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[1], 0.0))
+my_model.subdomains = [vol, top, bottom]
+
+H = F.Species("H")
+my_model.species = [H]
+my_model.temperature = 500
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=top, value=1, species=H),
+    F.FixedConcentrationBC(subdomain=bottom, value=0, species=H),
+]
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
+my_model.initialise()
+my_model.run()
+
+F.plot(H)
+```
+
+`F.plot` also accepts a list of species (laid out as subplots), `show_edges=True` to overlay the mesh, a
+`subdomain=` argument for discontinuous problems (see [](../gas_enclosures/geometries)), and a `filename=`
+to save a screenshot. Any extra keyword arguments are forwarded to `pyvista.Plotter.add_mesh`.
 
 +++
 

@@ -356,3 +356,25 @@ plt.ylim(bottom=-0.001)
 plt.xlim(source_start - 10, source_end + 20)
 plt.show()
 ```
+
++++
+
+### Milestone tolerance ###
+
+A time is considered to have hit a milestone when it lands within a small relative tolerance of it. Since
+FESTIM 2.2 this tolerance is configurable through the `milestone_tolerance` argument of `F.Stepsize`
+(it is passed as the `rtol` of {py:func}`numpy.isclose`, and defaults to `1e-5`):
+
+```{code-cell} ipython3
+F.Stepsize(
+    initial_value=20,
+    growth_factor=1.1,
+    cutback_factor=0.9,
+    target_nb_iterations=4,
+    milestones=[source_start, source_end],
+    milestone_tolerance=1e-8,  # require times to align very closely with a milestone
+)
+```
+
+Tighten it when milestones are very close together or when you need a timestep to land almost exactly on a
+milestone; loosen it if rounding in your milestone list is causing a milestone to be skipped.

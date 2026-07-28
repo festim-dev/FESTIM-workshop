@@ -7,6 +7,12 @@
 // Badges the page's entry in the left-hand navigation sidebar.
 const NEW_PAGES = [
   "content/applications/ml",
+  "content/applications/task11",
+  "content/gas_enclosures/index",
+  "content/gas_enclosures/enclosure_intro",
+  "content/gas_enclosures/coupling",
+  "content/gas_enclosures/openings",
+  "content/gas_enclosures/geometries",
 ];
 
 // Badges a single section at its heading and in the right-hand "Contents" panel,

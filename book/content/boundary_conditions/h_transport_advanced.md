@@ -560,3 +560,73 @@ plt.show()
 ```{note}
 Increasing the penalty improves how well the target value is enforced, but very large values can degrade the conditioning of the linear system. In practice, the penalty should be chosen large enough to satisfy the constraint to the desired accuracy without harming convergence.
 ```
+
++++
+
+## Concentration-dependent inputs
+
+Since FESTIM 2.2, the `value` of a `festim.ParticleSource` or a `festim.ParticleFluxBC`
+can depend on the concentration of *another* species, in addition to space `x`, time `t` and temperature
+`T`. You declare the dependency with `species_dependent_value`, a dict that maps each species-argument name
+in your callable to a `festim.Species`. FESTIM binds those arguments to the live species solution,
+so the term is evaluated, and differentiated in the Newton solve, against the coupled concentration field.
+
+As an example, we drive a species `A` in from the left boundary and produce a second species `B` locally at
+a rate proportional to the concentration of `A`, i.e. $S_B = 0.5\,c_A$:
+
+```{code-cell} ipython3
+import festim as F
+import numpy as np
+from dolfinx.mesh import create_unit_interval
+from mpi4py import MPI
+
+model = F.HydrogenTransportProblem()
+model.mesh = F.Mesh(create_unit_interval(MPI.COMM_WORLD, 40))
+material = F.Material(D_0=1.0, E_D=0.0)
+vol = F.VolumeSubdomain(id=1, material=material)
+left = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[0], 0.0))
+model.subdomains = [vol, left]
+
+A = F.Species("A")
+B = F.Species("B")
+model.species = [A, B]
+model.temperature = 500.0
+
+# the argument name "c_A" in the callable is bound to species A's concentration
+model.sources = [
+    F.ParticleSource(
+        value=lambda c_A: 0.5 * c_A,
+        volume=vol,
+        species=B,
+        species_dependent_value={"c_A": A},
+    )
+]
+model.boundary_conditions = [F.FixedConcentrationBC(subdomain=left, value=1.0, species=A)]
+model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=True,
+                            final_time=0.3, stepsize=0.02)
+
+model.initialise()
+model.run()
+```
+
+`B` appears wherever `A` has diffused, without any explicit coupling term written by hand:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import matplotlib.pyplot as plt
+
+x = A.post_processing_solution.function_space.tabulate_dof_coordinates()[:, 0]
+order = np.argsort(x)
+plt.plot(x[order], A.post_processing_solution.x.array[order], label="A (driven in)")
+plt.plot(x[order], B.post_processing_solution.x.array[order], label="B (produced from A)")
+plt.xlabel("x")
+plt.ylabel("concentration")
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()
+```
+
+The same `species_dependent_value` argument works on `festim.ParticleFluxBC`, letting a surface
+flux depend on a species' concentration, for example `value=lambda c: k * c` with
+`species_dependent_value={"c": my_species}`.

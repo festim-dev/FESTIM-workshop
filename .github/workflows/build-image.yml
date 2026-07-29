@@ -68,6 +68,28 @@ jobs:
           # logging out and pulling, so it fails while the package is still private.
           PUBLIC_REGISTRY_CHECK: true
 
+      # Pre-warm mybinder.org so the first visitor does not sit through the image transfer.
+      # mybinder keys its cache on the resolved commit SHA, so EVERY push to main makes it pull
+      # this image from GHCR and re-push it into its own registry. That transfer -- not a conda
+      # build -- is the wait you see after clicking the Binder badge. Doing it here moves that
+      # wait off whoever clicks first.
+      #
+      # This is the replacement for the action's own MYBINDERORG_TAG, which curls a hardcoded and
+      # now-decommissioned gke.mybinder.org. Best-effort only: this must never fail a run whose
+      # image and binder/Dockerfile have already published successfully.
+      - name: Pre-warm mybinder.org
+        continue-on-error: true
+        run: |
+          # The action just pushed a new binder/Dockerfile commit; give the ref a moment to settle
+          # so mybinder resolves `main` to that commit and not the previous one.
+          sleep 15
+          URL="https://mybinder.org/build/gh/${GITHUB_REPOSITORY}/main"
+          echo "Triggering build: $URL"
+          # Server-sent event stream. curl exiting 28 (--max-time reached) is the normal outcome
+          # and simply means the build is still going; it continues server-side either way.
+          curl -sSL -N --connect-timeout 30 --max-time 900 "$URL" | tail -n 30 || true
+          echo "Pre-warm request ended; any remaining build continues on mybinder."
+
       # Runs even when the build/push step fails or times out, so a stalled push tells us the
       # layer sizes instead of leaving us to guess. Keep the largest layer comfortably under 10 GB.
       - name: Report image size and layer breakdown

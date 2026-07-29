@@ -1,0 +1,4 @@
+libgl1
+libglx-mesa0
+libxrender1
+xvfb

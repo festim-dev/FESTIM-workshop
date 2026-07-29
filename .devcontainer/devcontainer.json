@@ -1,14 +1,25 @@
 {
+    // Uses the same prebuilt image as Binder, built by .github/workflows/build-image.yml.
+    // Building the conda environment at container-create time took tens of minutes and ran
+    // out of resources on the default Codespaces machine, so we pull instead of solve.
     "name": "festim-workshop",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": ".."
-        // "args": {
-        //     "VARIANT": "3.10-bullseye"
-        // }
+    "image": "ghcr.io/festim-dev/festim-workshop:latest",
+
+    // repo2docker images run as jovyan (uid 1000) and install into /srv/conda/envs/notebook
+    // -- not into an env named after `name:` in environment.yml, which repo2docker discards.
+    "remoteUser": "jovyan",
+
+    // conda is activated by /etc/profile.d/activate-conda.sh, which only runs for login
+    // shells; without this the VS Code terminal and Jupyter extension would miss the env.
+    "remoteEnv": {
+        "PATH": "/srv/conda/envs/notebook/bin:${containerEnv:PATH}"
     },
-    // Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "conda init",
+
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "16gb",
+        "storage": "64gb"
+    },
 
     // Configure tool-specific properties.
     "customizations": {
@@ -16,18 +27,7 @@
         "vscode": {
             // Set *default* container specific settings.json values on container create.
             "settings": {
-                "python.defaultInterpreterPath": "/opt/conda/bin/python",
-                "python.linting.enabled": true,
-                "python.linting.pylintEnabled": true,
-                "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
-                "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-                "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
-                "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
-                "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-                "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-                "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-                "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-                "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+                "python.defaultInterpreterPath": "/srv/conda/envs/notebook/bin/python"
             },
             // Add the IDs of extensions you want installed when the container is created.
             "extensions": [
@@ -37,9 +37,9 @@
             ]
         }
     },
+
     // Allows port 8888 used for Jupyter Notebook to be available locally.
     "forwardPorts": [
         8888
     ]
-    // "remoteUser": "vscode"
 }

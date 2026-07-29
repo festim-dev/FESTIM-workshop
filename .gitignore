@@ -133,5 +133,8 @@ dmypy.json
 *.h5
 *.xdmf
 *.txt
+# repo2docker config file (system packages for the Binder / devcontainer image) -- must not be
+# swallowed by the blanket *.txt rule above.
+!apt.txt
 *.csv
 *.bp

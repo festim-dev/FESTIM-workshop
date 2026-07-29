@@ -1,0 +1,58 @@
+name: Build workshop image
+
+# Builds the workshop environment once, in CI, and pushes it to GHCR. Binder and the
+# devcontainer then only ever *pull* that image instead of solving conda themselves --
+# the full environment (dolfinx + vtk + qt6 + ffmpeg + occt + torch) is far too heavy to
+# resolve inside a mybinder build.
+#
+# The repo2docker-action does three things for us:
+#   1. deletes binder/ before building, so the image is always rebuilt from the root
+#      environment.yml + apt.txt (no self-reference through binder/Dockerfile),
+#   2. pushes ghcr.io/festim-dev/festim-workshop tagged with both the short SHA and latest,
+#   3. commits binder/Dockerfile (`FROM <image>:<shortSHA>`) back to main -- that generated
+#      file is what makes Binder launches a pull instead of a build.
+#
+# This runs on EVERY push to main, not just environment.yml changes: binder/Dockerfile is
+# only a `FROM`, so repo2docker does not re-copy the repo and notebook edits reach Binder
+# solely via a rebuild. --cache-from keeps content-only rebuilds cheap.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # the action commits binder/Dockerfile back to main
+  packages: write # push to ghcr.io
+
+concurrency:
+  group: build-image
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # This image lands in the 10-20 GB range; the default runner does not have room for it.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup
+          df -h
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and push image, update binder/Dockerfile
+        uses: jupyterhub/repo2docker-action@master
+        with:
+          DOCKER_REGISTRY: ghcr.io
+          DOCKER_USERNAME: ${{ github.actor }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_NAME: festim-dev/festim-workshop
+          BINDER_CACHE: true
+          COMMIT_MSG: "Update Binder image tag [skip ci]"
+          # Pre-warms mybinder.org so the first user click after a rebuild is instant.
+          MYBINDERORG_TAG: main
+          # Enable once the GHCR package has been made public -- it verifies visibility by
+          # logging out and pulling, so it fails while the package is still private.
+          # PUBLIC_REGISTRY_CHECK: true

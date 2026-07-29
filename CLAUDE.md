@@ -20,9 +20,31 @@ conda env create -f environment.yml   # first time
 conda activate festim-workshop
 ```
 
-Key pinned deps: `festim=2.1`, `fenics-dolfinx`, `h-transport-materials` (material property DB),
-`foam2dolfinx` (OpenFOAM→dolfinx CFD coupling), `openmc2dolfinx` (neutronics), `autoemulate`+`torch`
-(ML surrogates), `python-gmsh`, `pyvista`/`trame` (3D viz). Python is pinned `<3.13`.
+Key pinned deps: `festim==2.2rc1`, `fenics-dolfinx>=0.11`, `h-transport-materials` (material
+property DB), `foam2dolfinx` (OpenFOAM→dolfinx CFD coupling), `openmc2dolfinx` (neutronics),
+`autoemulate`+`torch` (ML surrogates), `python-gmsh`, `pyvista`/`trame` (3D viz).
+
+**Python must stay an exact pin (`python=3.12`), never a `<3.13`-style constraint.** repo2docker —
+which builds both the Binder image and the devcontainer image — only honours the requested Python
+when it is pinned exactly; with a constraint it builds its base env on its own default Python and
+then rewrites the entire stack on top, which produced mixed py310/py312 builds of
+`petsc4py`/`kahip`/`netcdf4` and a failed Binder build.
+
+## Binder, live code, and Codespaces
+
+The environment is too heavy (dolfinx + vtk + qt6 + ffmpeg + occt + torch) to resolve inside a
+mybinder build, so `.github/workflows/build-image.yml` builds it once per push to `main` via
+`jupyterhub/repo2docker-action` and pushes `ghcr.io/festim-dev/festim-workshop`. Consequences:
+
+- `binder/Dockerfile` is **generated** (`FROM <image>:<sha>`) and committed by that workflow.
+  Never edit it, and never add other files to `binder/` — the action aborts if it finds any.
+- `apt.txt` at the repo root supplies system GL for pyvista. The blanket `*.txt` rule in
+  `.gitignore` is negated by a `!apt.txt` line; keep that negation if you touch `.gitignore`.
+- The workflow must stay triggered on **every** push to `main`: `binder/Dockerfile` is only a
+  `FROM`, so repo2docker does not re-copy the repo and notebook edits reach Binder only by rebuild.
+- The image's env lives at `/srv/conda/envs/notebook` (not `festim-workshop`) and runs as `jovyan`
+  — that is what `.devcontainer/devcontainer.json` points at.
+- The GHCR package must be **public** or Binder cannot pull it.
 
 ## Build the book
 

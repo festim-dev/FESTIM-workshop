@@ -15,11 +15,12 @@
         "PATH": "/srv/conda/envs/notebook/bin:${containerEnv:PATH}"
     },
 
-    "hostRequirements": {
-        "cpus": 4,
-        "memory": "16gb",
-        "storage": "64gb"
-    },
+    // Deliberately NO "hostRequirements". It filters the machine-type list, and asking for
+    // storage 64gb matched nothing (the common Codespaces tiers ship 32 GB), which surfaces as
+    // "A codespace cannot be created because no machine types are available" with Machine
+    // type: None. There is also nothing left to resource: the environment is a prebuilt image
+    // now, so container creation is a pull, not a conda solve. If you ever re-add a floor, set
+    // only cpus/memory, never storage, and check the org's allowed machine types first.
 
     // Configure tool-specific properties.
     "customizations": {

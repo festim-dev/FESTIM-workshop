@@ -40,13 +40,21 @@ The environment is too heavy (dolfinx + occt + gcc + torch) to resolve inside a 
   GHCR refuses layers over 10 GB and times out uploads after 10 minutes. `docker push` prints no
   byte-level progress outside a TTY, so a big layer looks exactly like a hung job — the log just
   stops after `<layer>: Preparing` for many minutes. Check the layer-size report the workflow
-  prints at the end before adding a heavy dependency. Known headroom: the env deliberately uses
-  the `vtk-base` that pyvista actually depends on rather than the `vtk` metapackage (which adds
-  qt6/pyside6/ffmpeg/OpenVINO), and the PyPI `torch` wheel still carries ~3.3 GB of CUDA runtime
-  that conda-forge `pytorch-cpu` would remove if space ever gets tight.
+  prints at the end before adding a heavy dependency. Measured as of July 2026: 7.62 GB total,
+  of which the single conda layer is 6.90 GB — about 3.1 GB of headroom. The two levers if that
+  gets tight are (a) conda-forge `pytorch-cpu` instead of the PyPI `torch` wheel, which carries
+  ~3.3 GB of CUDA runtime no target can use, and (b) relaxing `pyvista<0.47.1` — that pin
+  resolves to pyvista 0.44.1, which requires the `vtk` metapackage (qt6/pyside6/ffmpeg/OpenVINO);
+  pyvista >=0.48 uses `vtk-base` and accepts vtk 9.6.
 - **Never set `MYBINDERORG_TAG`** on the action: it curls a hardcoded `gke.mybinder.org`, a
   decommissioned federation member now serving `CN=TRAEFIK DEFAULT CERT`, so curl exits 60 and
-  fails the job *after* the image has already been published.
+  fails the job *after* the image has already been published. The workflow's own "Pre-warm
+  mybinder.org" step replaces it, hitting the live `https://mybinder.org/build/gh/...` endpoint.
+- **Every push to `main` costs mybinder a full image transfer.** It caches per resolved commit
+  SHA, so any commit — even a typo fix — makes it pull the whole image from GHCR and re-push it
+  into its own registry. That transfer, not a conda solve, is the delay after clicking the Binder
+  badge. The pre-warm step moves that wait off the first visitor but does not remove it, which is
+  the strongest argument for keeping the image small.
 
 - `binder/Dockerfile` is **generated** (`FROM <image>:<sha>`) and committed by that workflow.
   Never edit it, and never add other files to `binder/` — the action aborts if it finds any.

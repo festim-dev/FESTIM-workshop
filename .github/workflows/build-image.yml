@@ -66,7 +66,7 @@ jobs:
           # is only a `FROM`, so a cold mybinder launch is a pull rather than a build.
           # Enable once the GHCR package has been made public -- it verifies visibility by
           # logging out and pulling, so it fails while the package is still private.
-          # PUBLIC_REGISTRY_CHECK: true
+          PUBLIC_REGISTRY_CHECK: true
 
       # Runs even when the build/push step fails or times out, so a stalled push tells us the
       # layer sizes instead of leaving us to guess. Keep the largest layer comfortably under 10 GB.

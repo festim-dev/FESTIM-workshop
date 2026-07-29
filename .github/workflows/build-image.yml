@@ -32,8 +32,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
-      # This image lands in the 10-20 GB range; the default runner does not have room for it.
+      # This image is several GB; the default runner does not have room for it.
       - name: Free disk space
         run: |
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup
@@ -42,7 +43,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # GHCR rejects any single layer over 10 GB and times out uploads after 10 minutes, and
+      # repo2docker puts the whole conda environment in ONE layer. `docker push` prints no
+      # byte-level progress outside a TTY, so a too-large layer looks exactly like a hang: the
+      # log stops after "<layer>: Preparing" and the client retries forever. The step timeout
+      # plus the `if: always()` size report below turn that silence into an actual diagnosis.
       - name: Build and push image, update binder/Dockerfile
+        timeout-minutes: 90
         uses: jupyterhub/repo2docker-action@master
         with:
           DOCKER_REGISTRY: ghcr.io
@@ -51,8 +58,27 @@ jobs:
           IMAGE_NAME: festim-dev/festim-workshop
           BINDER_CACHE: true
           COMMIT_MSG: "Update Binder image tag [skip ci]"
-          # Pre-warms mybinder.org so the first user click after a rebuild is instant.
-          MYBINDERORG_TAG: main
+          # NB: do NOT set MYBINDERORG_TAG. The action's trigger_binder.sh curls a hardcoded
+          # https://gke.mybinder.org/build/... -- that federation member is decommissioned and now
+          # answers with a placeholder "CN=TRAEFIK DEFAULT CERT", so curl exits 60 (self-signed
+          # certificate) and fails the whole job *after* the image and binder/Dockerfile are
+          # already published. The pre-warm it provided is not worth much anyway: binder/Dockerfile
+          # is only a `FROM`, so a cold mybinder launch is a pull rather than a build.
           # Enable once the GHCR package has been made public -- it verifies visibility by
           # logging out and pulling, so it fails while the package is still private.
           # PUBLIC_REGISTRY_CHECK: true
+
+      # Runs even when the build/push step fails or times out, so a stalled push tells us the
+      # layer sizes instead of leaving us to guess. Keep the largest layer comfortably under 10 GB.
+      - name: Report image size and layer breakdown
+        if: always()
+        run: |
+          docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' || true
+          IMAGE=$(docker images --format '{{.Repository}}:{{.Tag}}' \
+            | grep '^ghcr.io/festim-dev/festim-workshop:' | head -1)
+          if [ -n "$IMAGE" ]; then
+            echo "--- layers of $IMAGE (largest first) ---"
+            docker history --no-trunc --format '{{.Size}}\t{{.CreatedBy}}' "$IMAGE" \
+              | sort -h -r | head -15 | cut -c1-200
+          fi
+          df -h

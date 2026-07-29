@@ -32,9 +32,21 @@ then rewrites the entire stack on top, which produced mixed py310/py312 builds o
 
 ## Binder, live code, and Codespaces
 
-The environment is too heavy (dolfinx + vtk + qt6 + ffmpeg + occt + torch) to resolve inside a
-mybinder build, so `.github/workflows/build-image.yml` builds it once per push to `main` via
+The environment is too heavy (dolfinx + occt + gcc + torch) to resolve inside a mybinder build, so
+`.github/workflows/build-image.yml` builds it once per push to `main` via
 `jupyterhub/repo2docker-action` and pushes `ghcr.io/festim-dev/festim-workshop`. Consequences:
+
+- **Watch the image size.** repo2docker puts the entire conda environment in a *single* layer, and
+  GHCR refuses layers over 10 GB and times out uploads after 10 minutes. `docker push` prints no
+  byte-level progress outside a TTY, so a big layer looks exactly like a hung job — the log just
+  stops after `<layer>: Preparing` for many minutes. Check the layer-size report the workflow
+  prints at the end before adding a heavy dependency. Known headroom: the env deliberately uses
+  the `vtk-base` that pyvista actually depends on rather than the `vtk` metapackage (which adds
+  qt6/pyside6/ffmpeg/OpenVINO), and the PyPI `torch` wheel still carries ~3.3 GB of CUDA runtime
+  that conda-forge `pytorch-cpu` would remove if space ever gets tight.
+- **Never set `MYBINDERORG_TAG`** on the action: it curls a hardcoded `gke.mybinder.org`, a
+  decommissioned federation member now serving `CN=TRAEFIK DEFAULT CERT`, so curl exits 60 and
+  fails the job *after* the image has already been published.
 
 - `binder/Dockerfile` is **generated** (`FROM <image>:<sha>`) and committed by that workflow.
   Never edit it, and never add other files to `binder/` — the action aborts if it finds any.

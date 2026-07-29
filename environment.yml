@@ -30,7 +30,10 @@ dependencies:
   - pyparsing
   - imageio
   - trame
-  - vtk
+  # NB: deliberately NOT the `vtk` metapackage. pyvista depends on `vtk-base`; `vtk` additionally
+  # drags in qt6-main, pyside6, ffmpeg, OpenVINO and intel-media-driver (GBs of desktop-GUI and
+  # video codecs) that no notebook uses -- nothing here imports vtk directly or opens an mp4,
+  # and `open_gif` goes through imageio.
   - trame-vtk<2.10.3
   - trame-vuetify
   - nest-asyncio2
@@ -38,5 +41,9 @@ dependencies:
     - h-transport-materials==0.16
     - foam2dolfinx>=1.1
     - openmc2dolfinx>=1.0.2
+    # NB: this pulls the CUDA build (nvidia-cublas/cudnn/cusolver/cusparse/cufft/nccl + triton,
+    # ~3.3 GB of wheels) even though Binder, Codespaces and RTD are all CPU-only. Swapping it for
+    # conda-forge `pytorch-cpu` would shed most of that -- worth revisiting once the workflow's
+    # layer-size report shows how close the single conda layer is to GHCR's 10 GB limit.
     - torch<2.12.0
     - autoemulate

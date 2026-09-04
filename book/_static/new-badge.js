@@ -6,13 +6,24 @@
 
 // Badges the page's entry in the left-hand navigation sidebar.
 const NEW_PAGES = [
-  "content/applications/ml",
+  // Gas enclosures, and the application built on them (FESTIM 2.2)
   "content/applications/task11",
   "content/gas_enclosures/index",
   "content/gas_enclosures/enclosure_intro",
   "content/gas_enclosures/coupling",
   "content/gas_enclosures/openings",
   "content/gas_enclosures/geometries",
+  // Drift terms (FESTIM 2.2)
+  "content/drift/index",
+  "content/drift/soret",
+  "content/drift/electromigration",
+  "content/drift/advection",
+  // Codimensional (manifold) subdomains (FESTIM 2.2)
+  "content/manifolds/index",
+  "content/manifolds/manifold_basics",
+  "content/manifolds/pipe_wall",
+  // The reworked reaction hierarchy (FESTIM 2.2)
+  "content/species_reactions/generic_reactions",
 ];
 
 // Badges a single section at its heading and in the right-hand "Contents" panel,
@@ -23,10 +34,9 @@ const NEW_PAGES = [
 // Add "#" and the section anchor, which you can copy from the "#" permalink
 // shown next to the heading.
 const NEW_SECTIONS = [
-  "content/post_process/derived#custom-derived-quantities",
-  "content/post_process/exports#exporting-a-custom-field",
-  "content/post_process/exports#exporting-a-reaction-rate",
-  "content/boundary_conditions/h_transport_advanced#weakly-enforced-dirichlet-boundary-conditions"
+  // Selectable export formats (FESTIM 2.2)
+  "content/post_process/exports#available-formats",
+  "content/post_process/exports#one-file-for-a-multi-material-model",
 ];
 
 const makeBadge = () => {

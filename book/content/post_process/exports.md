@@ -21,7 +21,7 @@ argument says *how* to write it.
 ```{versionadded} 2.2
 Before FESTIM 2.2 each format had its own class. {py:class}`festim.SpeciesExport` and
 {py:class}`festim.TemperatureExport` with a `format` argument replace them; the old names still work
-but are deprecated, see [](#deprecated-export-classes).
+but are deprecated, see [](deprecated-export-classes).
 ```
 
 Objectives:
@@ -111,7 +111,7 @@ Four formats are available, chosen with the `format` argument:
 | `"vtx"` | `.bp` | yes | The default. Written by DOLFINx as an ADIOS2 directory of files. |
 | `"vtkhdf"` | `.vtkhdf` | yes | A single HDF5 file rather than a directory. Several exports may share one filename, becoming separate blocks of the same file. |
 | `"xdmf"` | `.xdmf` | yes | Writes an `.xdmf` file next to an `.h5` file holding the data. |
-| `"checkpoint"` | `.bp` / `.h5` | no | For restarting a simulation, not for viewing. See [](#checkpointing). |
+| `"checkpoint"` | `.bp` / `.h5` | no | For restarting a simulation, not for viewing. See [](checkpointing). |
 
 The three visualisation formats interpolate the field onto the mesh nodes. `"checkpoint"` stores it
 in its own function space instead, so it can be read back exactly.

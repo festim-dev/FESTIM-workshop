@@ -147,7 +147,7 @@ becomes $J/\lambda$. Keeping the problem dimensionally consistent is up to you.
 The manifold has ends of its own: the two points where the line meets the bottom and top edges of the
 mesh. The loading surface loads the mouth of the grain boundary as well as the grain, so we put a
 concentration on the bottom end; that is covered in more detail
-[below](#boundary-conditions-at-the-ends-of-a-manifold).
+[below](boundary-conditions-at-the-ends-of-a-manifold).
 
 ```{code-cell} ipython3
 def run(with_gb):

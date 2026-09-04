@@ -48,3 +48,10 @@ dependencies:
     # layer-size report shows how close the single conda layer is to GHCR's 10 GB limit.
     - torch<2.12.0
     - autoemulate
+    # autoemulate >=2.1 pulls in `harmonic`, whose 1.3.0 release publishes only a cp311 macOS
+    # wheel -- no Linux wheel at all -- so pip falls back to its sdist, which no longer compiles
+    # (`model_legacy.pyx:433: Cannot assign type 'double' to 'long'`). 1.3.1 ships a cp312
+    # manylinux wheel and needs no compilation, so require it explicitly to keep the resolver
+    # off 1.3.0. This broke the Read the Docs build even though the pip section had not changed:
+    # its fresh env backtracked one release further than a local resolve does.
+    - harmonic>=1.3.1

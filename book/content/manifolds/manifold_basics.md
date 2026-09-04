@@ -116,7 +116,6 @@ def build(n=60):
     bcs = [
         F.FixedConcentrationBC(subdomain=bottom, value=1.0, species=H_bulk),
         F.FixedConcentrationBC(subdomain=top, value=0.0, species=H_bulk),
-        exchange_bc,
     ]
     return {
         "mesh": mesh,
@@ -127,7 +126,8 @@ def build(n=60):
         "H_bulk": H_bulk,
         "H_gb": H_gb,
         "bcs": bcs,
-        "sources": [exchange_source],
+        "exchange_bc": exchange_bc,
+        "exchange_source": exchange_source,
     }
 ```
 
@@ -164,18 +164,17 @@ def run(with_gb):
         )
         subdomains += [p["gb"], gb_mouth]
         species.append(p["H_gb"])
-        sources = p["sources"]
-        bcs.append(
-            F.FixedConcentrationBC(subdomain=gb_mouth, value=1.0, species=p["H_gb"])
-        )
+        sources.append(p["exchange_source"])
+        bcs += [
+            p["exchange_bc"],
+            F.FixedConcentrationBC(subdomain=gb_mouth, value=1.0, species=p["H_gb"]),
+        ]
         exports += [
             F.TotalVolume(field=p["H_gb"], volume=p["gb"]),
             F.AverageVolume(field=p["H_gb"], volume=p["gb"]),
             F.SurfaceFlux(field=p["H_bulk"], surface=p["gb"]),
             F.SurfaceFlux(field=p["H_gb"], surface=gb_mouth),
         ]
-    else:
-        bcs.remove(p["bcs"][-1])  # no manifold, no exchange
 
     my_model = F.HydrogenTransportProblemDiscontinuous(
         mesh=F.Mesh(p["mesh"]),

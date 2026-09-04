@@ -62,7 +62,7 @@ my_model.boundary_conditions = [
 ]
 
 my_model.exports = [
-    F.VTXSpeciesExport(filename="paraview/out.bp",field=H,subdomain=vol,checkpoint=False)
+    F.SpeciesExport(filename="paraview/out.bp",field=H,subdomain=vol)
 ]
 
 my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
@@ -167,7 +167,7 @@ my_model.boundary_conditions = [
 ]
 
 
-my_model.exports = [F.VTXSpeciesExport(filename="paraview/1d_out.bp", field=H)]
+my_model.exports = [F.SpeciesExport(filename="paraview/1d_out.bp", field=H)]
 my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1,final_time=100) 
 
 my_model.initialise()
@@ -267,7 +267,7 @@ my_model.boundary_conditions = [
     F.FixedConcentrationBC(subdomain=side_surfaces, value=0.0, species=H),
 ]
 
-my_model.exports = [F.VTXSpeciesExport(filename="paraview/3d_cube.bp", field=H, subdomain=volume, checkpoint=False)]
+my_model.exports = [F.SpeciesExport(filename="paraview/3d_cube.bp", field=H, subdomain=volume)]
 my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
 
 my_model.initialise()

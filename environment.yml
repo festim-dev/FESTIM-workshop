@@ -22,7 +22,7 @@ dependencies:
   - nbconvert
   - sphinx-codeautolink
   - fenics-dolfinx>=0.11.0  # >=0.11 required for FESTIM 2.2 gas enclosures (real elements)
-  - festim==2.2rc1
+  - festim==2.2rc2
   - pyvista<0.47.1
   - python-gmsh
   - shapely

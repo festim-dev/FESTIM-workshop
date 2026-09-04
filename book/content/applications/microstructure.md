@@ -370,7 +370,7 @@ my_model.boundary_conditions = [
 my_model.settings = F.Settings(atol=1e-10, rtol=1e-20, final_time=1.5)
 my_model.settings.stepsize = 0.01
 
-my_model.exports = [F.VTXSpeciesExport(filename="out.bp", field=H)]
+my_model.exports = [F.SpeciesExport(filename="out.bp", field=H)]
 
 my_model.initialise()
 my_model.run()

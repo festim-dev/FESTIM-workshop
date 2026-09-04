@@ -248,48 +248,86 @@ plotter.show()
 (ic-checkpoint)=
 ## Initial condition from a checkpoint file ##
 
-It is also possible to read a `dolfinx.fem.Function` from a checkpoint file and then use it as initial condition.
+A simulation can be restarted from a **checkpoint** written by an earlier one. Unlike the
+visualisation formats, a checkpoint stores the field in its own function space, so it comes back
+exactly as it was written -- see {ref}`checkpointing`.
 
-Here we use `io4dolfinx` to create a checkpoint file `checkpoint_file.bp` containing a function at time `10.0`. This could also be done by setting the `checkpoint=True` option in the VTX export (see {ref}`checkpointing`).
+Here we run a short simulation and checkpoint the hydrogen field with
+`format="checkpoint"`:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-import io4dolfinx
 from mpi4py import MPI
 import dolfinx
+import numpy as np
+import festim as F
 
 mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
-V = dolfinx.fem.functionspace(mesh, ("Lagrange", 1))
 
-u_out = dolfinx.fem.Function(V)
-u_out.interpolate(lambda x: x[0] + x[1])  # u = x + y
+first_model = F.HydrogenTransportProblem()
+first_model.mesh = F.Mesh(mesh)
+vol = F.VolumeSubdomain(id=1, material=F.Material(D_0=1e-2, E_D=0))
+left = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[0], 0.0))
+right = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[0], 1.0))
+first_model.subdomains = [vol, left, right]
 
-io4dolfinx.write_mesh("checkpoint_file.bp", mesh)
-io4dolfinx.write_function("checkpoint_file.bp", u_out, time=10.0, name="u")
+H = F.Species("H")
+first_model.species = [H]
+first_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=left, value=1, species=H),
+    F.FixedConcentrationBC(subdomain=right, value=0, species=H),
+]
+first_model.temperature = 400
+first_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1, final_time=10)
 ```
 
-The mesh of the function can then be read with:
-
 ```{code-cell} ipython3
-mesh_in = io4dolfinx.read_mesh("checkpoint_file.bp", MPI.COMM_WORLD)
+first_model.exports = [
+    F.SpeciesExport("checkpoint_file.bp", field=H, subdomain=vol, format="checkpoint")
+]
+first_model.initialise()
+first_model.run()
 ```
 
-From this mesh, we create an appropriate function space, and a `dolfinx.fem.Function` `u_in` to read the file _in_.
-```{code-cell} ipython3
-V_in = dolfinx.fem.functionspace(mesh_in, ("Lagrange", 1))
-u_in = dolfinx.fem.Function(V_in)
-```
-
-Finally we read the function from the file:
-```{code-cell} ipython3
-io4dolfinx.read_function("checkpoint_file.bp", u=u_in, time=10.0, name="u")
-```
-
-We can see that `u_in` has data:
+{py:func}`festim.read_function_from_file` reads it back, given the name of the species and the
+timestamp to read:
 
 ```{code-cell} ipython3
+u_in = F.read_function_from_file(
+    filename="checkpoint_file.bp", name="H", timestamp=10.0
+)
 print(u_in.x.array[:])
 ```
 
-`u_in` can then be used as an initial condition for a species as explained in {ref}`ic-functions`.
+```{note}
+Pass `backend="h5py"` if the checkpoint was written to a plain `.h5` file rather than the ADIOS2
+default. Only checkpoints can be read back this way: the visualisation formats store values
+interpolated onto the mesh nodes rather than the degrees of freedom.
+```
+
+`u_in` is an ordinary `dolfinx.fem.Function`, so it can be used as an initial condition for a species
+exactly as explained in {ref}`ic-functions`:
+
+```{code-cell} ipython3
+second_model = F.HydrogenTransportProblem()
+second_model.mesh = F.Mesh(mesh)
+second_model.subdomains = [vol, left, right]
+
+H2 = F.Species("H")
+second_model.species = [H2]
+second_model.initial_conditions = [
+    F.InitialConcentration(value=u_in, species=H2, volume=vol)
+]
+second_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=left, value=1, species=H2),
+    F.FixedConcentrationBC(subdomain=right, value=0, species=H2),
+]
+second_model.temperature = 400
+second_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1, final_time=5)
+
+second_model.initialise()
+second_model.run()
+
+print(f"restarted and ran on to t = {second_model.t.value}")
+```

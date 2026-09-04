@@ -306,28 +306,18 @@ default. Only checkpoints can be read back this way: the visualisation formats s
 interpolated onto the mesh nodes rather than the degrees of freedom.
 ```
 
-`u_in` is an ordinary `dolfinx.fem.Function`, so it can be used as an initial condition for a species
-exactly as explained in {ref}`ic-functions`:
+`u_in` is an ordinary `dolfinx.fem.Function`, so it can be used as an initial condition for a
+species exactly as explained in {ref}`ic-functions`:
 
-```{code-cell} ipython3
-second_model = F.HydrogenTransportProblem()
-second_model.mesh = F.Mesh(mesh)
-second_model.subdomains = [vol, left, right]
-
-H2 = F.Species("H")
-second_model.species = [H2]
-second_model.initial_conditions = [
-    F.InitialConcentration(value=u_in, species=H2, volume=vol)
+```python
+my_model.initial_conditions = [
+    F.InitialConcentration(value=u_in, species=H, volume=vol)
 ]
-second_model.boundary_conditions = [
-    F.FixedConcentrationBC(subdomain=left, value=1, species=H2),
-    F.FixedConcentrationBC(subdomain=right, value=0, species=H2),
-]
-second_model.temperature = 400
-second_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1, final_time=5)
+```
 
-second_model.initialise()
-second_model.run()
-
-print(f"restarted and ran on to t = {second_model.t.value}")
+```{warning}
+The function read back lives on the mesh stored **in the checkpoint**, which is a different object
+from any mesh you build in the new script -- even one with identical geometry. Build the restarted
+model on that mesh, reachable as `u_in.function_space.mesh`, rather than on a freshly created one:
+interpolating between two distinct meshes is not supported and raises.
 ```

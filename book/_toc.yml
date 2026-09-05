@@ -39,6 +39,7 @@ parts:
       - file: content/species_reactions/species
       - file: content/species_reactions/reactions
       - file: content/species_reactions/surface_reactions
+      - file: content/species_reactions/generic_reactions
     
     - file: content/initial_conditions/index
       sections:
@@ -49,6 +50,17 @@ parts:
       sections:
       - file: content/temperatures/temperatures_basic
       - file: content/temperatures/temperatures_advanced
+
+    - file: content/drift/index
+      sections:
+      - file: content/drift/soret
+      - file: content/drift/electromigration
+      - file: content/drift/advection
+
+    - file: content/manifolds/index
+      sections:
+      - file: content/manifolds/manifold_basics
+      - file: content/manifolds/pipe_wall
 
     - file: content/gas_enclosures/index
       sections:

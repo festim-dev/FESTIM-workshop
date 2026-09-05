@@ -221,10 +221,12 @@ We use a `lambda` function to utilize transient velocity fields, although our ex
 
 +++
 
-We add this to our problem's `advection_terms` attribute:
+We add this to our problem's `drift_terms` attribute, which holds every transport term driven by
+something other than the concentration gradient — advection, [Soret](../../drift/soret.md) and
+[electromigration](../../drift/electromigration.md) alike:
 
 ```{code-cell} ipython3
-my_model.advection_terms = [advection]
+my_model.drift_terms = [advection]
 ```
 
 Let us solve and visualize the results:
@@ -260,7 +262,7 @@ else:
 Compare this to the results without advection:
 
 ```{code-cell} ipython3
-my_model.advection_terms = []
+my_model.drift_terms = []
 my_model.initialise()
 my_model.run()
 ```
@@ -405,13 +407,13 @@ plotter.view_xy()
 plotter.show()
 ```
 
-To add this field to FESTIM, we create an `AdvectionTerm` and add it to our problem's `advection_terms`, just as above:
+To add this field to FESTIM, we create an `AdvectionTerm` and add it to our problem's `drift_terms`, just as above:
 
 ```{code-cell} ipython3
 import festim as F
 
 dolfinx_velocity = F.AdvectionTerm(velocity=u_h, species=H, subdomain=fluid)
-my_model.advection_terms = [dolfinx_velocity]
+my_model.drift_terms = [dolfinx_velocity]
 my_model.initialise()
 my_model.run()
 ```

@@ -14,20 +14,27 @@ kernelspec:
 
 # Exporting fields #
 
-FESTIM has convenience classes that allow users to create XDMF and VTX exports, which can then be viewed in Paraview.
+A **field export** writes a whole field -- a species concentration, the temperature, a custom
+expression -- to a file at every timestep. The class says *what* to export, and the `format`
+argument says *how* to write it.
+
+```{versionadded} 2.2
+Before FESTIM 2.2 each format had its own class. {py:class}`festim.SpeciesExport` and
+{py:class}`festim.TemperatureExport` with a `format` argument replace them; the old names still work
+but are deprecated, see [](deprecated-export-classes).
+```
 
 Objectives:
-* Writing VTX files for species and temperature fields
-* Additional options for VTX exports
-* Writing XDMF files for field exports
-* Exporting a custom field
-* Exporting a reaction rate
+* Writing species and temperature fields to a file
+* Choosing an output format
+* Writing a multi-material model into a single file
+* Exporting at chosen timesteps
+* Checkpointing a field and reading it back
+* Exporting a custom field and a reaction rate
 
 +++
 
-## Writing VTX files for species and temperature fields ##
-
-Users can export concentration fields to VTX using `VTXSpeciesExport`, and then view their exports in ParaView. This example will discuss how to define the export, and what result should you expect to see.
+## Exporting a field ##
 
 Let us setup a 2D, transient problem with the following boundary conditions:
 
@@ -63,20 +70,22 @@ my_model.temperature = lambda x: 400 + 10*x[0] + 2*x[1]
 my_model.settings = F.Settings(atol=1e-10,rtol=1e-10,stepsize=1, final_time=10)
 ```
 
-We can export the concentration field by defining a `VTXSpeciesExport` object for our model. The required arguments are a filename path (which must end in `.bp`) and the field (species) you want to export:
+{py:class}`festim.SpeciesExport` writes a species concentration. The required arguments are a
+filename and the field to export. The extension has to match the format -- `.bp` for the default
+VTX -- and FESTIM substitutes the right one with a warning if it does not:
 
 ```{code-cell} ipython3
-H_export = F.VTXSpeciesExport(filename="H_concentration.bp", field=H)
+H_export = F.SpeciesExport(filename="H_concentration.bp", field=H)
 ```
 
 ```{note}
-If we had several `Species`, we would create several `VTXSpeciesExport` objects, one per species.
+`field` also accepts a list of `Species`, to write several of them into one file.
 ```
 
-If needed, we can also export the temperature field this way using `VTXTemperatureExport`
+{py:class}`festim.TemperatureExport` does the same for the temperature:
 
 ```{code-cell} ipython3
-temp_export = F.VTXTemperatureExport(filename="temperature.bp")
+temp_export = F.TemperatureExport(filename="temperature.bp")
 ```
 
 Then, we just pass these exports to `my_model.exports` as a list:
@@ -89,6 +98,23 @@ my_model.run()
 ```
 
 We should expect to see two new folders called `H_concentration.bp` and `temperature.bp`. To view the results, we can use ParaView (see the [ParaView section](paraview.md) to learn more).
+
++++
+
+(export-formats)=
+## Available formats ##
+
+Four formats are available, chosen with the `format` argument:
+
+| `format` | Extension | Opens in ParaView | Notes |
+| --- | --- | --- | --- |
+| `"vtx"` | `.bp` | yes | The default. Written by DOLFINx as an ADIOS2 directory of files. |
+| `"vtkhdf"` | `.vtkhdf` | yes | A single HDF5 file rather than a directory. Several exports may share one filename, becoming separate blocks of the same file. |
+| `"xdmf"` | `.xdmf` | yes | Writes an `.xdmf` file next to an `.h5` file holding the data. |
+| `"checkpoint"` | `.bp` / `.h5` | no | For restarting a simulation, not for viewing. See [](checkpointing). |
+
+The three visualisation formats interpolate the field onto the mesh nodes. `"checkpoint"` stores it
+in its own function space instead, so it can be read back exactly.
 
 +++
 
@@ -145,8 +171,8 @@ my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, transient=False)
 We can specify separate export objects for the top and bottom domains using the `subdomain` argument, and should expect to see two new folders created named `top.bp` and `bottom.bp`:
 
 ```{code-cell} ipython3
-top_export = F.VTXSpeciesExport(filename="top.bp", field=H, subdomain=top_volume)
-bottom_export = F.VTXSpeciesExport(filename="bottom.bp", field=H, subdomain=bottom_volume)
+top_export = F.SpeciesExport(filename="top.bp", field=H, subdomain=top_volume)
+bottom_export = F.SpeciesExport(filename="bottom.bp", field=H, subdomain=bottom_volume)
 my_model.exports = [
     top_export,
     bottom_export,
@@ -171,30 +197,120 @@ For multi-material discontinuous problems, each .bp file only shows its correspo
 
 +++
 
+## One file for a multi-material model ##
+
+```{versionadded} 2.2
+The `"vtkhdf"` format was introduced in FESTIM 2.2.
+```
+
+In a `HydrogenTransportProblemDiscontinuous` each subdomain has its own mesh, so each export normally
+produces its own file -- which is why the example above wrote two. The `"vtkhdf"` format lets them
+share one instead, each subdomain stored as a named block:
+
+```{code-cell} ipython3
+my_model.exports = [
+    F.SpeciesExport("results.vtkhdf", field=H, subdomain=top_volume, format="vtkhdf"),
+    F.SpeciesExport("results.vtkhdf", field=H, subdomain=bottom_volume, format="vtkhdf"),
+]
+my_model.initialise()
+my_model.run()
+```
+
+This writes a single `results.vtkhdf` file holding both subdomains.
+
+```{note}
+Writing `.vtkhdf` files relies on `h5py`. To write them from more than one MPI process, `h5py` must
+be built with MPI support -- which is the case in this workshop's environment. FESTIM raises an error
+explaining this if it is missing.
+```
+
++++
+
 ## Exporting fields at specific timesteps ##
 Users can also specify which timesteps they'd like to export using the `times` argument (which must be a list):
 
 ```{code-cell} ipython3
-export = F.VTXSpeciesExport(filename="H_concentration.bp", field=H, times=[0, 5, 10])
+export = F.SpeciesExport(filename="H_concentration.bp", field=H, times=[0, 5, 10])
 ```
 
-If no `times` argument is given, the export stores results for all timesteps by default.
+If no `times` argument is given, the export stores results for all timesteps by default. Those times
+are added to the stepsize milestones, so they are hit exactly.
 
 +++
 
 (checkpointing)=
 ## Checkpointing ##
 
-It may be helpful to store results from one simulation for later use in another (perhaps as an initial condition, see [](ic-checkpoint)). FESTIM includes this capability by incorporationg `io4dolfinx` functionality, which stores mesh information and solutions into a `checkpoint.bp` file. Learn more about [checkpointing in DOLFINx here](https://scientificcomputing.github.io/io4dolfinx/README.html).
+It may be helpful to store results from one simulation for later use in another, perhaps as an
+initial condition (see [](ic-checkpoint)). A **checkpoint** stores the field in its own function
+space rather than interpolated onto the mesh nodes, so it can be read back exactly -- and on a
+different number of processes than it was written on.
 
-To store the species field as a checkpoint file, simply set the `checkpoint` argument to `True`:
-
-```{code-cell} ipython3
-export = F.VTXSpeciesExport(filename="H_concentration.bp", field=H, checkpoint=True)
+```{versionadded} 2.2
+Checkpointing is now selected with `format="checkpoint"`. The old `checkpoint=True` argument is
+deprecated.
 ```
 
-```{Note}
+Let us run a short simulation and checkpoint the hydrogen field:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+mesh = create_unit_square(MPI.COMM_WORLD, 10, 10)
+my_model = F.HydrogenTransportProblem()
+my_model.mesh = F.Mesh(mesh)
+
+vol = F.VolumeSubdomain(id=1, material=F.Material(D_0=1e-2, E_D=0))
+right_surface = F.SurfaceSubdomain(id=1, locator=lambda x: np.isclose(x[0], 1.0))
+left_surface = F.SurfaceSubdomain(id=2, locator=lambda x: np.isclose(x[0], 0.0))
+my_model.subdomains = [right_surface, left_surface, vol]
+
+H = F.Species("H")
+my_model.species = [H]
+my_model.boundary_conditions = [
+    F.FixedConcentrationBC(subdomain=right_surface, value=0, species=H),
+    F.FixedConcentrationBC(subdomain=left_surface, value=1, species=H),
+]
+my_model.temperature = 400
+my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, stepsize=1, final_time=10)
+```
+
+```{code-cell} ipython3
+my_model.exports = [
+    F.SpeciesExport("state.bp", field=H, subdomain=vol, format="checkpoint")
+]
+my_model.initialise()
+my_model.run()
+```
+
+```{note}
 Checkpointed files cannot be viewed in ParaView.
+```
+
+The field is read back with {py:func}`festim.read_function_from_file`, giving the name of the species
+and the timestamp to read:
+
+```{code-cell} ipython3
+restart = F.read_function_from_file(filename="state.bp", name="H", timestamp=10.0)
+print(f"read back a field with {restart.x.array.size} degrees of freedom")
+print(f"ranging from {restart.x.array.min():.3f} to {restart.x.array.max():.3f}")
+```
+
+which can then be handed to a new simulation as an initial condition:
+
+```python
+my_other_model.initial_conditions = [
+    F.InitialConcentration(value=restart, species=H, volume=vol)
+]
+```
+
+Pass `backend="h5py"` to write a plain `.h5` file instead of the ADIOS2 default; the same `backend`
+must then be given when reading it back.
+
+```{warning}
+Only checkpoints can be read back this way. The visualisation formats store values interpolated onto
+the mesh nodes rather than the degrees of freedom, so `read_function_from_file` cannot restart a
+simulation from them.
 ```
 
 +++
@@ -205,23 +321,12 @@ Checkpointed files cannot be viewed in ParaView.
 Exporting to VTX is preferable over XDMF, as XDMF functionality will soon be deprecated. Additionally, you cannot view transient results using XDMF.
 ```
 
-Users can export functions to XDMF files using the `XDMFExport` class, which requires a `filename` and `field`:
+XDMF is selected with `format="xdmf"`, which produces a pair of files -- `my_export.xdmf` alongside
+`my_export.h5` holding the data:
 
 ```{code-cell} ipython3
-import festim as F
-
-H = F.Species("H")
-export = F.XDMFExport(filename="my_export.xdmf", field=H)
+export = F.SpeciesExport(filename="my_export.xdmf", field=H, format="xdmf")
 ```
-
-To export this in a FESTIM simulation, add the export to your problem's `export` attribute:
-
-```{code-cell} ipython3
-my_model = F.HydrogenTransportProblem()
-my_model.exports = [export]
-```
-
-This will produce the corresponding export files (`my_export.xdmf` and `my_export.h5`).
 
 +++
 
@@ -231,7 +336,7 @@ This will produce the corresponding export files (`my_export.xdmf` and `my_expor
 `CustomFieldExport` was introduced in FESTIM 2.0.
 ```
 
-Sometimes the field you want to visualise is not a species concentration or the temperature directly, but a quantity derived from them. `CustomFieldExport` writes an arbitrary field to a VTX file. You pass an `expression` (a callable) whose positional arguments can be `t` (time), `x` (spatial coordinate), `T` (temperature), or any species mapped through `species_dependent_value`.
+Sometimes the field you want to visualise is not a species concentration or the temperature directly, but a quantity derived from them. `CustomFieldExport` writes an arbitrary field to a file. You pass an `expression` (a callable) whose positional arguments can be `t` (time), `x` (spatial coordinate), `T` (temperature), or any species mapped through `species_dependent_value`.
 
 As an example, let us export the hydrogen concentration converted from $\mathrm{mol/m^3}$ to $\mathrm{atoms/m^3}$ by multiplying by Avogadro's constant:
 
@@ -287,6 +392,8 @@ print(f"Max concentration in atoms/m3: {atoms_export.function.x.array.max():.3e}
 The keys of `species_dependent_value` must match the argument names of `expression`. To combine several species — for example to export the total hydrogen isotope concentration $c_\mathrm{H} + c_\mathrm{D}$ — map each argument to its `Species`: `species_dependent_value={"cH": H, "cD": D}` with `expression=lambda cH, cD: cH + cD`.
 ```
 
+`CustomFieldExport` takes the same `format` argument as the others.
+
 +++
 
 ## Exporting a reaction rate ##
@@ -295,7 +402,7 @@ The keys of `species_dependent_value` must match the argument names of `expressi
 `ReactionRateExport` was introduced in FESTIM 2.0.
 ```
 
-When a model contains [reactions](../species_reactions/reactions.ipynb), it is often useful to visualise *where* and *how fast* a reaction proceeds. `ReactionRateExport` writes the rate of a given `Reaction` to a VTX file. The `direction` argument selects the `"forward"`, `"backward"`, or `"both"` (net) contribution.
+When a model contains [reactions](../species_reactions/reactions.ipynb), it is often useful to visualise *where* and *how fast* a reaction proceeds. `ReactionRateExport` writes the rate of a given reaction to a file. The `direction` argument selects the `"forward"`, `"backward"`, or `"both"` (net) contribution.
 
 Here we set up a 1D trapping problem where mobile hydrogen is trapped, and export the net trapping rate:
 
@@ -325,10 +432,10 @@ my_model.settings = F.Settings(atol=1e-10, rtol=1e-10, final_time=50)
 my_model.settings.stepsize = F.Stepsize(1)
 ```
 
-We keep a reference to the `Reaction` object so we can pass it to the export:
+We keep a reference to the reaction object so we can pass it to the export:
 
 ```{code-cell} ipython3
-trapping_reaction = F.Reaction(
+trapping_reaction = F.ArrheniusReaction(
     reactant=[mobile_H, empty_traps],
     product=[trapped_H],
     k_0=0.01,
@@ -358,3 +465,15 @@ print(f"Max trapping rate: {rate_export.function.x.array.max():.3e}")
 
 +++
 
+(deprecated-export-classes)=
+## Deprecated export classes ##
+
+Before formats were selectable, each format had its own class. These still work but emit a
+`DeprecationWarning` and will be removed in a future release:
+
+| Deprecated | Use instead |
+| --- | --- |
+| `F.VTXSpeciesExport(...)` | `F.SpeciesExport(...)` (VTX is the default) |
+| `F.VTXTemperatureExport(...)` | `F.TemperatureExport(...)` |
+| `F.XDMFExport(...)` | `F.SpeciesExport(..., format="xdmf")` |
+| `F.CustomFieldExport(..., checkpoint=True)` | `F.CustomFieldExport(..., format="checkpoint")` |

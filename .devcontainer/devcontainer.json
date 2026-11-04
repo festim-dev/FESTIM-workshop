@@ -31,7 +31,12 @@
     // PyVista/VTK need an X display to render, even for the notebook (html) backend; without
     // one VTK aborts the kernel. Xvfb (from apt.txt) is started by postStartCommand on :99.
     "containerEnv": {
-        "DISPLAY": ":99"
+        "DISPLAY": ":99",
+        // Default PyVista to the self-contained "html" notebook backend. Its default ("trame")
+        // shows an iframe pointing at a server on a random localhost port, which a codespace
+        // does not forward, so the plot comes up blank (affects any cell that never calls
+        // pyvista.set_jupyter_backend).
+        "PYVISTA_JUPYTER_BACKEND": "html"
     },
 
     // Deliberately NO "hostRequirements". It filters the machine-type list, and asking for

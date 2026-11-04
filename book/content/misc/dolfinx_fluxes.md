@@ -168,6 +168,8 @@ print(
 import pyvista
 from dolfinx import plot
 
+pyvista.set_jupyter_backend("html")
+
 u_topology, u_cell_types, u_geometry = plot.vtk_mesh(u.sub(0).function_space.collapse()[0])
 
 u_plotter = pyvista.Plotter()

@@ -221,6 +221,8 @@ ct_post = ct_post.collapse()
 import pyvista
 from dolfinx import plot
 
+pyvista.set_jupyter_backend("html")
+
 tdim = domain.topology.dim
 fdim = tdim - 1
 domain.topology.create_connectivity(tdim, tdim)

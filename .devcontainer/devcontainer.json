@@ -55,16 +55,17 @@
 
     "customizations": {
         "codespaces": {
-            // Not a notebook: notebooks opened at boot render as raw JSON, because the Jupyter
-            // extension is still installing when the editor first appears.
-            "openFiles": ["README.md"]
+            // Open on the first tutorial. The *.ipynb association below forces the notebook editor:
+            // without it, a notebook opened at boot can render as raw JSON.
+            "openFiles": ["book/content/01_getting_started/01_simple_simulation.ipynb"]
         },
         "vscode": {
             "settings": {
                 "python.defaultInterpreterPath": "/srv/conda/envs/notebook/bin/python",
-                // Show the README rendered rather than as markdown source.
+                // Always open notebooks in the notebook editor ("jupyter-notebook" is VS Code's
+                // built-in .ipynb editor), never as raw JSON text.
                 "workbench.editorAssociations": {
-                    "README.md": "vscode.markdown.preview.editor"
+                    "*.ipynb": "jupyter-notebook"
                 },
                 // The image's env is already on PATH; activation would only add noise.
                 "python.terminal.activateEnvironment": false,

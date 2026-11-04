@@ -6,7 +6,7 @@ root: intro
 parts:
   - caption: Getting started
     chapters:
-    - file: content/01_getting_started/01_task01
+    - file: content/01_getting_started/01_simple_simulation
     - url: https://festim.readthedocs.io/en/latest/installation.html
       title: Installation
 
@@ -92,14 +92,14 @@ parts:
 
   - caption: Applications
     chapters:
-    - file: content/04_applications/01_task02
-    - file: content/04_applications/02_task03
-    - file: content/04_applications/03_task04
-    - file: content/04_applications/04_task07
-    - file: content/04_applications/05_task08
-    - file: content/04_applications/06_task06
-    - file: content/04_applications/07_task10
-    - file: content/04_applications/08_task11
+    - file: content/04_applications/01_tds_simulation
+    - file: content/04_applications/02_simple_permeation
+    - file: content/04_applications/03_permeation_barrier
+    - file: content/04_applications/04_heat_transfer
+    - file: content/04_applications/05_monoblock
+    - file: content/04_applications/06_advection_diffusion
+    - file: content/04_applications/07_tds_fitting
+    - file: content/04_applications/08_pumped_interspace
     - file: content/04_applications/09_microstructure
     - file: content/04_applications/10_multiphysics/00_index
       sections:

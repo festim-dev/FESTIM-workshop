@@ -83,7 +83,7 @@ Two build behaviors matter when editing content:
 Run a single notebook without a full book build to check it executes:
 
 ```bash
-jupyter nbconvert --to notebook --execute book/content/04_applications/01_task02.ipynb --stdout > /dev/null
+jupyter nbconvert --to notebook --execute book/content/04_applications/01_tds_simulation.ipynb --stdout > /dev/null
 # MyST-markdown pages: convert first with jupytext, or open in Jupyter (they are paired notebooks)
 jupytext --to notebook book/content/02_fundamentals/02_material/01_material_basics.md -o /tmp/out.ipynb
 ```
@@ -106,7 +106,7 @@ jupytext --to notebook book/content/02_fundamentals/02_material/01_material_basi
 
 Every tutorial page is an **executable notebook** in one of two formats; treat both as code:
 
-1. `.ipynb` — standard Jupyter notebooks (most of the `taskNN` applications).
+1. `.ipynb` — standard Jupyter notebooks (most of the applications).
 2. `.md` with a `jupytext` YAML header (`formats: ipynb,md:myst`) — MyST-markdown notebooks. These
    are notebooks stored as text and are executed by the build exactly like `.ipynb`. Editing the
    Python inside a fenced ```` ```{code-cell} ```` block is editing runnable code.

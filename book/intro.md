@@ -26,9 +26,9 @@ from IPython.display import HTML
 # Developers! Add new cards to this list.
 cards_data = [
     {"title": "Microstructure", "text": "Learn about capturing microstructural effects.", "link": "content/04_applications/09_microstructure.html", "image": "_static/microstructure.png"},
-    {"title": "Plasma Facing Components", "text": "", "link": "content/04_applications/05_task08.html", "image": "_static/monoblock.png"},
-    {"title": "TDS analysis", "text": "Simulate thermo-desorption experiments.", "link": "content/04_applications/01_task02.html", "image": "_static/tds.png"},
-    {"title": "TDS fit", "text": "Automatically fit a TDS", "link": "content/04_applications/07_task10.html", "image": "_static/fitting_tds.png"},
+    {"title": "Plasma Facing Components", "text": "", "link": "content/04_applications/05_monoblock.html", "image": "_static/monoblock.png"},
+    {"title": "TDS analysis", "text": "Simulate thermo-desorption experiments.", "link": "content/04_applications/01_tds_simulation.html", "image": "_static/tds.png"},
+    {"title": "TDS fit", "text": "Automatically fit a TDS", "link": "content/04_applications/07_tds_fitting.html", "image": "_static/fitting_tds.png"},
     {"title": "Machine Learning", "text": "Machine learning applications in FESTIM.", "link": "content/04_applications/11_ml/00_ml.html", "image": "_static/ml.png"},
 ]
 

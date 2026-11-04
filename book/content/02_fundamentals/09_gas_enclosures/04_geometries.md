@@ -142,7 +142,7 @@ build a square solid (1 mm side) with a quarter-circle void cut out of one corne
 the void is the enclosure interface. The solid starts loaded with hydrogen, its outer edges are left as
 no-flux boundaries (the default), so all the hydrogen desorbs into the void and fills the enclosure.
 
-We build the geometry with the GMSH Python API (see also [](../meshes/mesh_gmsh)) and convert it to a
+We build the geometry with the GMSH Python API (see also [](../01_meshes/03_mesh_gmsh.ipynb)) and convert it to a
 DOLFINx mesh:
 
 ```{code-cell} ipython3

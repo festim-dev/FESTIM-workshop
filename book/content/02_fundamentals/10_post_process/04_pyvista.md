@@ -66,7 +66,7 @@ F.plot(H)
 ```
 
 `F.plot` also accepts a list of species (laid out as subplots), `show_edges=True` to overlay the mesh, a
-`subdomain=` argument for discontinuous problems (see [](../gas_enclosures/geometries)), and a `filename=`
+`subdomain=` argument for discontinuous problems (see [](../09_gas_enclosures/04_geometries.md)), and a `filename=`
 to save a screenshot. Any extra keyword arguments are forwarded to `pyvista.Plotter.add_mesh`.
 
 +++

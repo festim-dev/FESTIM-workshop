@@ -19,7 +19,10 @@ build:
         # an X display. PyVista/VTK need one to render; without it the newer VTK either kills the
         # kernel or blocks (pyvista.start_xvfb(), which notebooks used to call, was removed in
         # pyvista 0.48). Matches the Codespaces setup, which runs Xvfb on :99.
-        - cd book && xvfb-run -a -s "-screen 0 1920x1080x24" python -m sphinx -T -W --keep-going -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
+        # TEMPORARY DIAGNOSTICS (remove once the PR build passes): PR builds keep running ~16 min
+        # after Sphinx exits until RTD's time limit kills them, with no output. Bound Sphinx with a
+        # timeout, then report its exit code, any processes it left behind, and the output size.
+        - cd book && (timeout --kill-after=30 1200 xvfb-run -a -s "-screen 0 1920x1080x24" python -m sphinx -T -W --keep-going -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html; rc=$?; echo "=== sphinx exit $rc at $(date -u +%T)"; echo "=== processes after sphinx:"; ps -eo pid,ppid,etime,stat,args | cut -c1-200; echo "=== output size:"; du -sh $READTHEDOCS_OUTPUT/html; exit $rc)
 
 conda:
   environment: environment.yml

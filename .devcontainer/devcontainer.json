@@ -55,11 +55,17 @@
 
     "customizations": {
         "codespaces": {
-            "openFiles": ["book/content/applications/task01.ipynb"]
+            // Not a notebook: notebooks opened at boot render as raw JSON, because the Jupyter
+            // extension is still installing when the editor first appears.
+            "openFiles": ["README.md"]
         },
         "vscode": {
             "settings": {
                 "python.defaultInterpreterPath": "/srv/conda/envs/notebook/bin/python",
+                // Show the README rendered rather than as markdown source.
+                "workbench.editorAssociations": {
+                    "README.md": "vscode.markdown.preview.editor"
+                },
                 // The image's env is already on PATH; activation would only add noise.
                 "python.terminal.activateEnvironment": false,
                 // Only one environment exists here; don't make people pick it.

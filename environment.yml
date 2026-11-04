@@ -52,6 +52,10 @@ dependencies:
     # above the plain PyPI release.
     - --extra-index-url https://download.pytorch.org/whl/cpu
     - h-transport-materials==0.16
+    # pint 0.26 (pulled in unpinned by h-transport-materials) raises OffsetUnitCalculusError
+    # ("Ambiguous operation with offset unit (degree_Celsius)") in material_htm and tds_fitting,
+    # which also crashes sphinx-codeautolink and fails the whole book build. 0.25.3 works.
+    - pint<0.26
     - foam2dolfinx>=1.1
     - openmc2dolfinx>=1.0.2
     - torch<2.12.0

@@ -113,7 +113,6 @@ model.run()
 import pyvista
 from dolfinx import plot
 
-pyvista.start_xvfb()
 pyvista.set_jupyter_backend("html")
 
 T = model.u

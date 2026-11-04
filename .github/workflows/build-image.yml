@@ -8,7 +8,8 @@ name: Build workshop image
 # The repo2docker-action does three things for us:
 #   1. deletes binder/ before building, so the image is always rebuilt from the root
 #      environment.yml + apt.txt (no self-reference through binder/Dockerfile),
-#   2. pushes ghcr.io/festim-dev/festim-workshop tagged with both the short SHA and latest,
+#   2. pushes ghcr.io/<owner>/festim-workshop (festim-dev upstream, your user on a fork),
+#      tagged with both the short SHA and latest,
 #   3. commits binder/Dockerfile (`FROM <image>:<shortSHA>`) back to main -- that generated
 #      file is what makes Binder launches a pull instead of a build.
 #
@@ -55,7 +56,11 @@ jobs:
           DOCKER_REGISTRY: ghcr.io
           DOCKER_USERNAME: ${{ github.actor }}
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE_NAME: festim-dev/festim-workshop
+          # Owner-relative so a fork builds and pushes its own image (GITHUB_TOKEN cannot push to
+          # festim-dev from a fork). binder/Dockerfile, and through it the devcontainer, then
+          # points at that image. A fork's first push creates the package as private: make it
+          # public in the package settings, or PUBLIC_REGISTRY_CHECK below fails.
+          IMAGE_NAME: ${{ github.repository_owner }}/festim-workshop
           BINDER_CACHE: true
           COMMIT_MSG: "Update Binder image tag [skip ci]"
           # NB: do NOT set MYBINDERORG_TAG. The action's trigger_binder.sh curls a hardcoded
@@ -97,7 +102,7 @@ jobs:
         run: |
           docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' || true
           IMAGE=$(docker images --format '{{.Repository}}:{{.Tag}}' \
-            | grep '^ghcr.io/festim-dev/festim-workshop:' | head -1)
+            | grep "^ghcr.io/${{ github.repository_owner }}/festim-workshop:" | head -1)
           if [ -n "$IMAGE" ]; then
             echo "--- layers of $IMAGE (largest first) ---"
             docker history --no-trunc --format '{{.Size}}\t{{.CreatedBy}}' "$IMAGE" \

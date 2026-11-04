@@ -70,7 +70,7 @@ mat.density = lambda T: 7*T + 5
 
 ## Defining materials on different subdomains ##
 
-Volume subdomains are used to assign different materials or define regions with specific physical properties. Each volume subdomain must be associated with a `festim.Material` object. Read more about subdomains __[here](https://festim-workshop.readthedocs.io/en/latest/content/02_fundamentals/01_meshes/02_mesh_fenics.html#defining-subdomains)__.
+Volume subdomains are used to assign different materials or define regions with specific physical properties. Each volume subdomain must be associated with a `festim.Material` object. Read more about subdomains __[here](../01_meshes/02_mesh_fenics.ipynb#defining-subdomains)__.
 
 Consider the following volume with two subdomains separated halfway through the mesh:
 

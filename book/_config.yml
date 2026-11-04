@@ -67,6 +67,8 @@ sphinx:
       festim: ["https://festim.readthedocs.io/en/latest/", null]
     html_favicon: "images/festim logo symbol.png"
     nb_execution_show_tb: True
+    # Anchors for `##` headings, so pages can link to a section: [text](page.md#section-title)
+    myst_heading_anchors: 2
     # Pages moved into numbered folders mirroring the table of contents (Nov 2026). These keep
     # the old URLs (bookmarks, links from the FESTIM docs and papers) working: each old page
     # becomes a stub that forwards to the new one. Targets are relative to the old page.

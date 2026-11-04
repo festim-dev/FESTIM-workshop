@@ -36,7 +36,9 @@ execute:
   # Force re-execution of notebooks on each build.
   # See https://jupyter-book.readthedocs.io/v1/content/execute.html
   execute_notebooks: force
-  timeout: -1  # Disable timeouts for executing notebooks cells
+  # Per-cell timeout (s). The slowest whole notebook takes ~1 min on RTD; this only turns a
+  # hung cell (e.g. VTK waiting for a display) into an error instead of a build that never ends.
+  timeout: 600
   # allow_errors: true  # Allow errors in notebook cells
 
 sphinx:

@@ -83,27 +83,30 @@ Two build behaviors matter when editing content:
 Run a single notebook without a full book build to check it executes:
 
 ```bash
-jupyter nbconvert --to notebook --execute book/content/applications/task02.ipynb --stdout > /dev/null
+jupyter nbconvert --to notebook --execute book/content/04_applications/01_task02.ipynb --stdout > /dev/null
 # MyST-markdown pages: convert first with jupytext, or open in Jupyter (they are paired notebooks)
-jupytext --to notebook book/content/material/material_basics.md -o /tmp/out.ipynb
+jupytext --to notebook book/content/02_fundamentals/02_material/01_material_basics.md -o /tmp/out.ipynb
 ```
 
 ## Content structure
 
 - `book/intro.md` — landing page; `book/_config.yml` — Jupyter Book config; `book/_toc.yml` — table
   of contents. **Any new page must be registered in `book/_toc.yml` or it won't appear.**
-- `book/content/` is organized by concept, mirroring FESTIM's building blocks:
-  `meshes/`, `material/`, `boundary_conditions/`, `species_reactions/`, `initial_conditions/`,
-  `temperatures/`, `post_process/`, `misc/`, and `applications/` (end-to-end `taskNN` cases plus
-  `multiphysics/` CFD+neutronics and `ml/` surrogate/active-learning).
-- `book/content/misc/festim_from_scratch.md` + `dolfinx_*.md` show the same physics written in raw
-  dolfinx rather than the FESTIM API — useful when explaining what FESTIM does under the hood.
+- `book/content/` mirrors the sidebar: one numbered folder per `_toc.yml` part
+  (`01_getting_started/`, `02_fundamentals/`, `03_misc/`, `04_applications/`), inside it one
+  numbered folder per chapter that has sections (`02_fundamentals/01_meshes/`), with the chapter's
+  own page as `00_<name>` and its sections numbered in order. Chapters without sections are
+  numbered files in the part folder. **Keep the numbers in sync with `_toc.yml` when adding or
+  reordering pages**, and add a `redirects` entry in `_config.yml` for any page you move.
+  Numbers appear in URLs only; titles and the sidebar come from page headings and `_toc.yml`.
+- `03_misc/01_festim_from_scratch/` shows the same physics written in raw dolfinx rather than the
+  FESTIM API — useful when explaining what FESTIM does under the hood.
 
 ### Page formats — two interchangeable notebook types
 
 Every tutorial page is an **executable notebook** in one of two formats; treat both as code:
 
-1. `.ipynb` — standard Jupyter notebooks (most `applications/taskNN`).
+1. `.ipynb` — standard Jupyter notebooks (most of the `taskNN` applications).
 2. `.md` with a `jupytext` YAML header (`formats: ipynb,md:myst`) — MyST-markdown notebooks. These
    are notebooks stored as text and are executed by the build exactly like `.ipynb`. Editing the
    Python inside a fenced ```` ```{code-cell} ```` block is editing runnable code.
@@ -118,4 +121,4 @@ There are no plain prose `.md` files — every `.md` under `book/content/` is a 
 - `.bp`, `.h5`/`.xdmf`, `.msh` files committed next to notebooks are simulation outputs / meshes that
   cells read or write — don't assume they're stale artifacts before checking the notebook that uses them.
 - Note: `.github/workflows/test_notebooks.yml` still targets an old flat `tasks/` directory that no
-  longer exists (content moved under `book/content/applications/`); that workflow is stale.
+  longer exists (content moved under `book/content/04_applications/`); that workflow is stale.

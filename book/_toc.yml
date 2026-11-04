@@ -6,106 +6,106 @@ root: intro
 parts:
   - caption: Getting started
     chapters:
-    - file: content/applications/task01
+    - file: content/01_getting_started/01_task01
     - url: https://festim.readthedocs.io/en/latest/installation.html
       title: Installation
 
   - caption: Fundamentals
     chapters:
-    - file: content/meshes/index
+    - file: content/02_fundamentals/01_meshes/00_index
       sections:
-      - file: content/meshes/mesh_festim
-      - file: content/meshes/mesh_fenics
-      - file: content/meshes/mesh_gmsh
-      - file: content/meshes/mesh_salome
-      - file: content/meshes/coordinate_systems
+      - file: content/02_fundamentals/01_meshes/01_mesh_festim
+      - file: content/02_fundamentals/01_meshes/02_mesh_fenics
+      - file: content/02_fundamentals/01_meshes/03_mesh_gmsh
+      - file: content/02_fundamentals/01_meshes/04_mesh_salome
+      - file: content/02_fundamentals/01_meshes/05_coordinate_systems
 
-    - file: content/material/index
+    - file: content/02_fundamentals/02_material/00_index
       sections:
-      - file: content/material/material_basics
-      - file: content/material/material_htm
-      - file: content/material/material_advanced
+      - file: content/02_fundamentals/02_material/01_material_basics
+      - file: content/02_fundamentals/02_material/02_material_htm
+      - file: content/02_fundamentals/02_material/03_material_advanced
 
-    - file: content/boundary_conditions/index
+    - file: content/02_fundamentals/03_boundary_conditions/00_index
       sections:
-      - file: content/boundary_conditions/bc_intro
-      - file: content/boundary_conditions/h_transport_basic
-      - file: content/boundary_conditions/h_transport_advanced
-      - file: content/boundary_conditions/examples
-      - file: content/boundary_conditions/heat_transfer
+      - file: content/02_fundamentals/03_boundary_conditions/01_bc_intro
+      - file: content/02_fundamentals/03_boundary_conditions/02_h_transport_basic
+      - file: content/02_fundamentals/03_boundary_conditions/03_h_transport_advanced
+      - file: content/02_fundamentals/03_boundary_conditions/04_examples
+      - file: content/02_fundamentals/03_boundary_conditions/05_heat_transfer
 
-    - file: content/species_reactions/index
+    - file: content/02_fundamentals/04_species_reactions/00_index
       sections:
-      - file: content/species_reactions/species
-      - file: content/species_reactions/reactions
-      - file: content/species_reactions/surface_reactions
-      - file: content/species_reactions/generic_reactions
+      - file: content/02_fundamentals/04_species_reactions/01_species
+      - file: content/02_fundamentals/04_species_reactions/02_reactions
+      - file: content/02_fundamentals/04_species_reactions/03_surface_reactions
+      - file: content/02_fundamentals/04_species_reactions/04_generic_reactions
     
-    - file: content/initial_conditions/index
+    - file: content/02_fundamentals/05_initial_conditions/00_index
       sections:
-      - file: content/initial_conditions/concentration
-      - file: content/initial_conditions/temperature
+      - file: content/02_fundamentals/05_initial_conditions/01_concentration
+      - file: content/02_fundamentals/05_initial_conditions/02_temperature
 
-    - file: content/temperatures/index
+    - file: content/02_fundamentals/06_temperatures/00_index
       sections:
-      - file: content/temperatures/temperatures_basic
-      - file: content/temperatures/temperatures_advanced
+      - file: content/02_fundamentals/06_temperatures/01_temperatures_basic
+      - file: content/02_fundamentals/06_temperatures/02_temperatures_advanced
 
-    - file: content/drift/index
+    - file: content/02_fundamentals/07_drift/00_index
       sections:
-      - file: content/drift/soret
-      - file: content/drift/electromigration
-      - file: content/drift/advection
+      - file: content/02_fundamentals/07_drift/01_soret
+      - file: content/02_fundamentals/07_drift/02_electromigration
+      - file: content/02_fundamentals/07_drift/03_advection
 
-    - file: content/manifolds/index
+    - file: content/02_fundamentals/08_manifolds/00_index
       sections:
-      - file: content/manifolds/manifold_basics
-      - file: content/manifolds/pipe_wall
+      - file: content/02_fundamentals/08_manifolds/01_manifold_basics
+      - file: content/02_fundamentals/08_manifolds/02_pipe_wall
 
-    - file: content/gas_enclosures/index
+    - file: content/02_fundamentals/09_gas_enclosures/00_index
       sections:
-      - file: content/gas_enclosures/enclosure_intro
-      - file: content/gas_enclosures/coupling
-      - file: content/gas_enclosures/openings
-      - file: content/gas_enclosures/geometries
+      - file: content/02_fundamentals/09_gas_enclosures/01_enclosure_intro
+      - file: content/02_fundamentals/09_gas_enclosures/02_coupling
+      - file: content/02_fundamentals/09_gas_enclosures/03_openings
+      - file: content/02_fundamentals/09_gas_enclosures/04_geometries
 
-    - file: content/post_process/intro
+    - file: content/02_fundamentals/10_post_process/00_intro
       sections:
-      - file: content/post_process/derived
-      - file: content/post_process/exports
-      - file: content/post_process/paraview
-      - file: content/post_process/pyvista
+      - file: content/02_fundamentals/10_post_process/01_derived
+      - file: content/02_fundamentals/10_post_process/02_exports
+      - file: content/02_fundamentals/10_post_process/03_paraview
+      - file: content/02_fundamentals/10_post_process/04_pyvista
 
-    - file: content/misc/settings
-    - file: content/misc/stepsize
+    - file: content/02_fundamentals/11_settings
+    - file: content/02_fundamentals/12_stepsize
 
   - caption: Misc
     chapters:
 
-    - file: content/misc/festim_from_scratch
+    - file: content/03_misc/01_festim_from_scratch/00_festim_from_scratch
       sections:
-      - file: content/misc/dolfinx_steady
-      - file: content/misc/dolfinx_transient
-      - file: content/misc/dolfinx_temperature
-      - file: content/misc/dolfinx_fluxes
-    - file: content/misc/troubleshooting
+      - file: content/03_misc/01_festim_from_scratch/01_dolfinx_steady
+      - file: content/03_misc/01_festim_from_scratch/02_dolfinx_transient
+      - file: content/03_misc/01_festim_from_scratch/03_dolfinx_temperature
+      - file: content/03_misc/01_festim_from_scratch/04_dolfinx_fluxes
+    - file: content/03_misc/02_troubleshooting
 
   - caption: Applications
     chapters:
-    - file: content/applications/task02
-    - file: content/applications/task03
-    - file: content/applications/task04
-    - file: content/applications/task07
-    - file: content/applications/task08
-    - file: content/applications/task06
-    - file: content/applications/task10
-    - file: content/applications/task11
-    - file: content/applications/microstructure
-    - file: content/applications/multiphysics/index
+    - file: content/04_applications/01_task02
+    - file: content/04_applications/02_task03
+    - file: content/04_applications/03_task04
+    - file: content/04_applications/04_task07
+    - file: content/04_applications/05_task08
+    - file: content/04_applications/06_task06
+    - file: content/04_applications/07_task10
+    - file: content/04_applications/08_task11
+    - file: content/04_applications/09_microstructure
+    - file: content/04_applications/10_multiphysics/00_index
       sections:
-        - file: content/applications/multiphysics/cfd
-        - file: content/applications/multiphysics/neutronics
-    - file: content/applications/ml
+        - file: content/04_applications/10_multiphysics/01_cfd
+        - file: content/04_applications/10_multiphysics/02_neutronics
+    - file: content/04_applications/11_ml/00_ml
       sections:
-        - file: content/applications/surrogate
-        - file: content/applications/active_learning
+        - file: content/04_applications/11_ml/01_surrogate
+        - file: content/04_applications/11_ml/02_active_learning

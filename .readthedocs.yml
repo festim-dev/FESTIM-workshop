@@ -13,6 +13,15 @@ build:
     pre_build:
       # Generate the Sphinx configuration for this Jupyter Book so it builds.
       - "jupyter-book config sphinx book/"
+    build:
+      html:
+        # Same as RTD's default Sphinx command, but under xvfb-run so the executed notebooks have
+        # an X display. PyVista/VTK need one to render; without it the newer VTK either kills the
+        # kernel or blocks (pyvista.start_xvfb(), which notebooks used to call, was removed in
+        # pyvista 0.48). Matches the Codespaces setup, which runs Xvfb on :99.
+        # The timeout makes a hang fail the build with a clear exit code, instead of RTD's 30-min limit
+        # killing it with no output (which happened on several PR builds; the cause was not found).
+        - cd book && timeout --kill-after=30 1200 xvfb-run -a -s "-screen 0 1920x1080x24" python -m sphinx -T -W --keep-going -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
 
 conda:
   environment: environment.yml

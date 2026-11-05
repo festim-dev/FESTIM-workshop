@@ -31,6 +31,12 @@ concurrency:
 
 jobs:
   build:
+    # Upstream only. Forks (e.g. one that hosts a Codespaces prebuild for a workshop) reuse the
+    # public festim-dev image through binder/Dockerfile. If this ran on a fork's synced main it
+    # would build a private ghcr.io/<fork-owner> image and commit a binder/Dockerfile pointing
+    # at it, so the fork's codespaces would stop using the shared image and its main would
+    # diverge from upstream.
+    if: github.repository == 'festim-dev/FESTIM-workshop'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:

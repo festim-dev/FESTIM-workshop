@@ -21,31 +21,43 @@ dependencies:
   - ipykernel
   - nbconvert
   - sphinx-codeautolink
+  - sphinx-reredirects  # old page URLs -> numbered folders (see book/_config.yml)
   - fenics-dolfinx>=0.11.0  # >=0.11 required for FESTIM 2.2 gas enclosures (real elements)
   - festim==2.2rc2
-  - pyvista<0.47.1
+  # >=0.48: the first pyvista that works with vtk 9.6. The old `<0.47.1` pin resolved to 0.44.1,
+  # but conda still paired it with vtk 9.6.2, so `import pyvista` failed outright
+  # (vtkCapsuleSource is gone from vtk 9.6). 0.48 also depends on `vtk-base` rather than the full
+  # `vtk` metapackage. pyvista 0.48 removed `start_xvfb()`; the devcontainer starts Xvfb itself.
+  - pyvista>=0.48
+  # pyvista >=0.49 moved its notebook (trame) integration into this separate package; without
+  # it `pyvista.set_jupyter_backend("html")` raises "Please install trame dependencies". It
+  # pulls trame/trame-vtk/trame-vuetify at the versions it needs -- the old `trame-vtk<2.10.3`
+  # pin conflicts with it, so trame is no longer listed here directly. anywidget and
+  # jupyter-server-proxy are the rest of pyvista's `jupyter` extra.
+  - trame-pyvista
+  - anywidget
+  - jupyter-server-proxy
   - python-gmsh
   - shapely
   - scipy
   - pyparsing
   - imageio
-  - trame
-  # No explicit `vtk` entry: it arrives anyway via pyvista, so listing it changed nothing (an
-  # image built without it came out byte-identical). Note the `pyvista<0.47.1` pin resolves to
-  # pyvista 0.44.1, which requires the full `vtk` metapackage -- qt6-main, pyside6, ffmpeg,
-  # OpenVINO, intel-media-driver. pyvista >=0.46 moved to `vtk-base` and >=0.48 is the first
-  # that accepts vtk 9.6, so shedding those GBs means relaxing the pyvista pin.
-  - trame-vtk<2.10.3
-  - trame-vuetify
+  # No explicit `vtk` entry. The full `vtk` metapackage (qt6, pyside6, ffmpeg) still arrives via
+  # occt and the trame stack; pinning occt's novtk build alone did not remove it.
   - nest-asyncio2
   - pip:
+    # CPU-only torch wheels. Nothing here has a GPU (Codespaces, RTD, Binder) and FESTIM/dolfinx
+    # are CPU-only, but the default Linux torch wheel pulls ~3 GB of CUDA libraries (nvidia-*,
+    # triton). pip prefers the `+cpu` build from this index because a local version label sorts
+    # above the plain PyPI release.
+    - --extra-index-url https://download.pytorch.org/whl/cpu
     - h-transport-materials==0.16
+    # pint 0.26 (pulled in unpinned by h-transport-materials) raises OffsetUnitCalculusError
+    # ("Ambiguous operation with offset unit (degree_Celsius)") in material_htm and tds_fitting,
+    # which also crashes sphinx-codeautolink and fails the whole book build. 0.25.3 works.
+    - pint<0.26
     - foam2dolfinx>=1.1
     - openmc2dolfinx>=1.0.2
-    # NB: this pulls the CUDA build (nvidia-cublas/cudnn/cusolver/cusparse/cufft/nccl + triton,
-    # ~3.3 GB of wheels) even though Binder, Codespaces and RTD are all CPU-only. Swapping it for
-    # conda-forge `pytorch-cpu` would shed most of that -- worth revisiting once the workflow's
-    # layer-size report shows how close the single conda layer is to GHCR's 10 GB limit.
     - torch<2.12.0
     # Must stay <2.1: autoemulate 2.1 added a dependency on `harmonic`, which cannot be
     # satisfied alongside fenics-dolfinx -- pinning `harmonic>=1.3.1` (the only release with a

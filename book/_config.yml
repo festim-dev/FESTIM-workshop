@@ -36,7 +36,9 @@ execute:
   # Force re-execution of notebooks on each build.
   # See https://jupyter-book.readthedocs.io/v1/content/execute.html
   execute_notebooks: force
-  timeout: -1  # Disable timeouts for executing notebooks cells
+  # Per-cell timeout (s). The slowest whole notebook takes ~1 min on RTD; this only turns a
+  # hung cell (e.g. VTK waiting for a display) into an error instead of a build that never ends.
+  timeout: 600
   # allow_errors: true  # Allow errors in notebook cells
 
 sphinx:
@@ -67,11 +69,86 @@ sphinx:
       festim: ["https://festim.readthedocs.io/en/latest/", null]
     html_favicon: "images/festim logo symbol.png"
     nb_execution_show_tb: True
+    # Anchors for `##` headings, so pages can link to a section: [text](page.md#section-title)
+    myst_heading_anchors: 2
+    # Pages moved into numbered folders mirroring the table of contents (Nov 2026). These keep
+    # the old URLs (bookmarks, links from the FESTIM docs and papers) working: each old page
+    # becomes a stub that forwards to the new one. Targets are relative to the old page.
+    redirects:
+      "content/applications/task01": "../01_getting_started/01_simple_simulation.html"
+      "content/meshes/index": "../02_fundamentals/01_meshes/00_index.html"
+      "content/meshes/mesh_festim": "../02_fundamentals/01_meshes/01_mesh_festim.html"
+      "content/meshes/mesh_fenics": "../02_fundamentals/01_meshes/02_mesh_fenics.html"
+      "content/meshes/mesh_gmsh": "../02_fundamentals/01_meshes/03_mesh_gmsh.html"
+      "content/meshes/mesh_salome": "../02_fundamentals/01_meshes/04_mesh_salome.html"
+      "content/meshes/coordinate_systems": "../02_fundamentals/01_meshes/05_coordinate_systems.html"
+      "content/material/index": "../02_fundamentals/02_material/00_index.html"
+      "content/material/material_basics": "../02_fundamentals/02_material/01_material_basics.html"
+      "content/material/material_htm": "../02_fundamentals/02_material/02_material_htm.html"
+      "content/material/material_advanced": "../02_fundamentals/02_material/03_material_advanced.html"
+      "content/boundary_conditions/index": "../02_fundamentals/03_boundary_conditions/00_index.html"
+      "content/boundary_conditions/bc_intro": "../02_fundamentals/03_boundary_conditions/01_bc_intro.html"
+      "content/boundary_conditions/h_transport_basic": "../02_fundamentals/03_boundary_conditions/02_h_transport_basic.html"
+      "content/boundary_conditions/h_transport_advanced": "../02_fundamentals/03_boundary_conditions/03_h_transport_advanced.html"
+      "content/boundary_conditions/examples": "../02_fundamentals/03_boundary_conditions/04_examples.html"
+      "content/boundary_conditions/heat_transfer": "../02_fundamentals/03_boundary_conditions/05_heat_transfer.html"
+      "content/species_reactions/index": "../02_fundamentals/04_species_reactions/00_index.html"
+      "content/species_reactions/species": "../02_fundamentals/04_species_reactions/01_species.html"
+      "content/species_reactions/reactions": "../02_fundamentals/04_species_reactions/02_reactions.html"
+      "content/species_reactions/surface_reactions": "../02_fundamentals/04_species_reactions/03_surface_reactions.html"
+      "content/species_reactions/generic_reactions": "../02_fundamentals/04_species_reactions/04_generic_reactions.html"
+      "content/initial_conditions/index": "../02_fundamentals/05_initial_conditions/00_index.html"
+      "content/initial_conditions/concentration": "../02_fundamentals/05_initial_conditions/01_concentration.html"
+      "content/initial_conditions/temperature": "../02_fundamentals/05_initial_conditions/02_temperature.html"
+      "content/temperatures/index": "../02_fundamentals/06_temperatures/00_index.html"
+      "content/temperatures/temperatures_basic": "../02_fundamentals/06_temperatures/01_temperatures_basic.html"
+      "content/temperatures/temperatures_advanced": "../02_fundamentals/06_temperatures/02_temperatures_advanced.html"
+      "content/drift/index": "../02_fundamentals/07_drift/00_index.html"
+      "content/drift/soret": "../02_fundamentals/07_drift/01_soret.html"
+      "content/drift/electromigration": "../02_fundamentals/07_drift/02_electromigration.html"
+      "content/drift/advection": "../02_fundamentals/07_drift/03_advection.html"
+      "content/manifolds/index": "../02_fundamentals/08_manifolds/00_index.html"
+      "content/manifolds/manifold_basics": "../02_fundamentals/08_manifolds/01_manifold_basics.html"
+      "content/manifolds/pipe_wall": "../02_fundamentals/08_manifolds/02_pipe_wall.html"
+      "content/gas_enclosures/index": "../02_fundamentals/09_gas_enclosures/00_index.html"
+      "content/gas_enclosures/enclosure_intro": "../02_fundamentals/09_gas_enclosures/01_enclosure_intro.html"
+      "content/gas_enclosures/coupling": "../02_fundamentals/09_gas_enclosures/02_coupling.html"
+      "content/gas_enclosures/openings": "../02_fundamentals/09_gas_enclosures/03_openings.html"
+      "content/gas_enclosures/geometries": "../02_fundamentals/09_gas_enclosures/04_geometries.html"
+      "content/post_process/intro": "../02_fundamentals/10_post_process/00_intro.html"
+      "content/post_process/derived": "../02_fundamentals/10_post_process/01_derived.html"
+      "content/post_process/exports": "../02_fundamentals/10_post_process/02_exports.html"
+      "content/post_process/paraview": "../02_fundamentals/10_post_process/03_paraview.html"
+      "content/post_process/pyvista": "../02_fundamentals/10_post_process/04_pyvista.html"
+      "content/misc/settings": "../02_fundamentals/11_settings.html"
+      "content/misc/stepsize": "../02_fundamentals/12_stepsize.html"
+      "content/misc/festim_from_scratch": "../03_misc/01_festim_from_scratch/00_festim_from_scratch.html"
+      "content/misc/dolfinx_steady": "../03_misc/01_festim_from_scratch/01_dolfinx_steady.html"
+      "content/misc/dolfinx_transient": "../03_misc/01_festim_from_scratch/02_dolfinx_transient.html"
+      "content/misc/dolfinx_temperature": "../03_misc/01_festim_from_scratch/03_dolfinx_temperature.html"
+      "content/misc/dolfinx_fluxes": "../03_misc/01_festim_from_scratch/04_dolfinx_fluxes.html"
+      "content/misc/troubleshooting": "../03_misc/02_troubleshooting.html"
+      "content/applications/task02": "../04_applications/01_tds_simulation.html"
+      "content/applications/task03": "../04_applications/02_simple_permeation.html"
+      "content/applications/task04": "../04_applications/03_permeation_barrier.html"
+      "content/applications/task07": "../04_applications/04_heat_transfer.html"
+      "content/applications/task08": "../04_applications/05_monoblock.html"
+      "content/applications/task06": "../04_applications/06_advection_diffusion.html"
+      "content/applications/task10": "../04_applications/07_tds_fitting.html"
+      "content/applications/task11": "../04_applications/08_pumped_interspace.html"
+      "content/applications/microstructure": "../04_applications/09_microstructure.html"
+      "content/applications/multiphysics/index": "../../04_applications/10_multiphysics/00_index.html"
+      "content/applications/multiphysics/cfd": "../../04_applications/10_multiphysics/01_cfd.html"
+      "content/applications/multiphysics/neutronics": "../../04_applications/10_multiphysics/02_neutronics.html"
+      "content/applications/ml": "../04_applications/11_ml/00_ml.html"
+      "content/applications/surrogate": "../04_applications/11_ml/01_surrogate.html"
+      "content/applications/active_learning": "../04_applications/11_ml/02_active_learning.html"
 
   extra_extensions:
     - "sphinx.ext.autodoc"
     - "sphinx.ext.intersphinx"
     - "sphinx_codeautolink"
+    - "sphinx_reredirects"
 
 parse:
   myst_enable_extensions:

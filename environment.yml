@@ -13,6 +13,7 @@ dependencies:
   # 3.12 because autoemulate is not compatible with Python 3.13 yet.
   - python=3.12
   - pip
+  - jupyterlab  # `jupyter lab` for local installs (repo2docker adds its own, so Binder/Codespaces never needed it)
   - jupytext # necessary to open MyST files using BinderHub https://jupyterbook.org/en/stable/interactive/launchbuttons.html#launchbuttons-binder
   - sphinx-tags
   - ipywidgets
